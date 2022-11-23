@@ -3,6 +3,7 @@ import { Box, Grid, TextField, styled} from '@mui/material'
 import Navbar from '../components/Navbar'
 import Slideshow from '../components/Slideshow'
 import Listcard from '../components/Listcard'
+import SearchIcon from '@mui/icons-material/Search';
 
 
 const proposals = () => {

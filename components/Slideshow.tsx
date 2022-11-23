@@ -9,10 +9,10 @@ const Slideshow = () =>{
         <>
          <Splide aria-label="My Favorite Images">
                 <SplideSlide>
-                <img src="/img/jonas-leupe-7RI1YkIbCDI-unsplash.jpg" alt="Image 1"/>
+                <img src=" /img/le-buzz-studio-KiEiI2b9GkU-unsplash.jpg" alt="Image 1"/>
                   </SplideSlide>
                   <SplideSlide>
-                <img src="/img/le-buzz-studio-KiEiI2b9GkU-unsplash.jpg" alt="Image 2"/>
+                <img src="/img/jonas-leupe-7RI1YkIbCDI-unsplash.jpg" alt="Image 2"/>
                </SplideSlide>
                  </Splide>
         </>
