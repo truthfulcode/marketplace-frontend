@@ -2,7 +2,7 @@ import React from 'react'
 import {Box, TextField} from "@mui/material";
 import Navbar from '../components/Navbar';
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
-import CustomForm from '../components/customForm';
+import CustomForm from '../components/CustomForm';
 
 const forgot = () => {
   return (
