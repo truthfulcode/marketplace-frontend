@@ -8,6 +8,7 @@ export default function Home() {
   const CategoryText = styled(Typography)({
     color:"black"
   })
+  
   return (
     <div >
       <Head>

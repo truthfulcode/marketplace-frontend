@@ -1,5 +1,7 @@
 import { AppBar, Typography, Button, styled } from '@mui/material'
-// general styling
+
+import { Splide, SplideSlide } from '@splidejs/react-splide';
+import '@splidejs/react-splide/css';
 export const styles = {
     textCenter:{
         textAlign:"center",
@@ -64,4 +66,7 @@ export const TitleText = styled(Typography)({
     fontWeight:"bold",
     fontSize:28,
     paddingBottom:16,
+})
+export const MainSplide = styled(Splide)({
+    width:"100%"
 })
