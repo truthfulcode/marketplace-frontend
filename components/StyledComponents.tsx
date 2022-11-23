@@ -1,4 +1,4 @@
-import { AppBar, Typography, Button, styled } from '@mui/material'
+import { AppBar, Typography, Button, styled ,Paper } from '@mui/material'
 
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
@@ -70,3 +70,10 @@ export const TitleText = styled(Typography)({
 export const MainSplide = styled(Splide)({
     width:"100%"
 })
+export const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  }));
