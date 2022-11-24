@@ -21,7 +21,7 @@ export default function Home() {
       backgroundPosition: "80% 100%",
       backgroundSize: "auto",
       }}>
-        <Navbar/>
+        <Navbar home={false}/>
           <Box sx={styles.headerContent}>
             <Typography fontSize={32}>Looking for a freelancer? <br/> We've got your back.</Typography>
             <TextField inputProps={{

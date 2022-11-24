@@ -3,7 +3,7 @@ import Image from 'next/image'
 import React from 'react' 
 import { MainButton } from './StyledComponents'
 
-const Navbar = ({signIn = true, signUp = true}) => {
+const Navbar = ({signIn = true, signUp = true, home = true}) => {
   return (
     <Box position="static" sx={{p:0,flexDirection:"row", display:"flex", alignItems:"center", backgroundColor:"transparent"}}>
         <Box sx={{flex:1}}>
@@ -15,6 +15,9 @@ const Navbar = ({signIn = true, signUp = true}) => {
             :""}
             {signUp ? 
                 <MainButton >Sign Up</MainButton>
+            :""}
+            {home ? 
+                <MainButton >Home</MainButton>
             :""}
         </Box>
     </Box>
