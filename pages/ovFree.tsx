@@ -13,11 +13,12 @@ const OrderViewFreelancer = () => {
       backgroundSize: "cover",}}>
   <Navbar signUp={false} signIn={false} />
   <CustomForm>
-      <TitleText>View order by</TitleText>
-      <SubmitButton>Client name</SubmitButton>
-      <SubmitButton>Active order</SubmitButton>
-      <SubmitButton>Unpaid order</SubmitButton>
-      <SubmitButton>Unfulfilled order</SubmitButton>
+      <TitleText>View client orders by</TitleText>
+      <SubmitButton>All orders</SubmitButton>
+      <SubmitButton>Active orders</SubmitButton>
+      <SubmitButton>Unpaid orders</SubmitButton>
+      <SubmitButton>Unfulfilled orders</SubmitButton>
+      <SubmitButton>Completed orders</SubmitButton>
   </CustomForm>
 
 </Box>

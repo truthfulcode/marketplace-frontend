@@ -13,14 +13,14 @@ const contactUs = () => {
                 backgroundSize: "cover",}}>
             <Navbar signUp={false} signIn={false}/>
             <CustomForm>
-            <TitleText>Contact Us</TitleText>
+            <TitleText>Comment and suggestions</TitleText>
                 <TextField placeholder='Name'/>
 		            <TextField placeholder='Email'/>
                 <TextField placeholder='Message'/>
                 <SubmitButton>SEND</SubmitButton>
               <TitleText>Our Contact</TitleText>
                 <SubmitButton>EMAIL SUPPORT</SubmitButton>
-                <SubmitButton>WHATSAPP NUMBER</SubmitButton>
+                <SubmitButton>WHATSAPP</SubmitButton>
             </CustomForm>
 
         </Box>

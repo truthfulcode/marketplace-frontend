@@ -14,10 +14,11 @@ const OrderViewCustomer = () => {
   <Navbar signUp={false} signIn={false} />
   <CustomForm>
       <TitleText>View your orders by</TitleText>
-      <SubmitButton>Order date</SubmitButton>
-      <SubmitButton></SubmitButton>
-      <SubmitButton></SubmitButton>
-      <SubmitButton></SubmitButton>
+      <SubmitButton>All Orders</SubmitButton>
+      <SubmitButton>Date orders</SubmitButton>
+      <SubmitButton>Active orders</SubmitButton>
+      <SubmitButton>Completed orders</SubmitButton>
+      <SubmitButton>Cancelled orders</SubmitButton>
   </CustomForm>
 
 </Box>
