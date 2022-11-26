@@ -26,9 +26,9 @@ a {
 }
 
 .splide__slide img {
-  width: 100%;
-   align-self: center;
-   padding: 0px 45px;
-  height: auto;
+  align-self: center;
+  padding: 0px 45px;
+  height: 90vh;
+  background-size: cover;
   object-fit: contain;
 }
