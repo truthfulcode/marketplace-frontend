@@ -58,7 +58,15 @@ tr:hover .questionsRight svg{
   transition: all 0.5s ease-in-out;
   fill: #07aee6;
 }
+input[type="text"]{
+  outline: none;
+  border: 2px solid lightgray;
+  border-radius: 0 !important;
+}
 
+fieldset[class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"]{
+  display: none;
+}
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

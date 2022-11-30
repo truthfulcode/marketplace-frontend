@@ -51,6 +51,13 @@ export const styles = {
         font: "inherit",
         padding: "10px"
     },
+    formSelect:{
+        background: "inherit",
+        height: "150px",
+        color: "black",
+        font: "inherit",
+        padding: "3px"
+    },
     wrapper:{
         marginTop:"50px !important",
         border:"1px solid lightgrey",
@@ -71,6 +78,13 @@ export const styles = {
         font: "inherit",
         textAlign:"left",
         paddingBottom:16,
+    },
+    listingBox:{
+        height:"360px",
+        width:"285px",
+        marginBottom:"50px",
+        border: "1px solid #bfbfbf",
+        backgroundColor: "#e6e8e6"
     }
 
 }
@@ -93,5 +107,5 @@ export const TitleText = styled(Typography)({
     textAlign:"center",
     fontWeight:"bold",
     fontSize:28,
-    paddingBottom:16,
+    paddingBottom:16
 })
