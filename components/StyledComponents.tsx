@@ -5,6 +5,23 @@ export const styles = {
     textCenter:{
         textAlign:"center",
     },
+    sideBarText:{
+        width:"100%",
+        textAlign:"center"
+    },
+    text:{
+
+    },
+    button:{
+        color:"black",
+        backgroundColor:"#E9DAC1"
+    },
+    background:{
+        backgroundColor:"#E9DAC1"
+    },
+    textBackground:{
+        backgroundColor:"#F7ECDE"
+    },
     header:{
         position:"relative",
         minHeight: "560px",
@@ -16,6 +33,11 @@ export const styles = {
     center:{
         display:"flex",
         justifyContent:"center",
+        alignItems:"center"
+    },
+    right:{
+        display:"flex",
+        justifyContent:"right",
         alignItems:"center"
     },
     headerContent:{

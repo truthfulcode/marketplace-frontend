@@ -23,7 +23,7 @@ export default function Home() {
       }}>
         <Navbar home={false}/>
           <Box sx={styles.headerContent}>
-            <Typography fontSize={32}>Looking for a freelancer? <br/> We've got your back.</Typography>
+            <Typography fontSize={32}>Looking for a freelancer? <br/> Weve got your back.</Typography>
             <TextField inputProps={{
               style:{
                 padding:12
@@ -37,7 +37,7 @@ export default function Home() {
         </TitleText>
         <Grid container spacing={2}>
           {["Web Design","Programming","Audio & Music","Business","Writing & Translation","Marketing",].map((value,index)=>(
-            <Grid item sx={{flexDirection:"column", ...styles.center }} xs={4}>
+            <Grid item sx={{flexDirection:"column", ...styles.center }} key={index} xs={4}>
               <Box sx={{border:"2px solid black",borderRadius:16, p:2, m:1}}>
                 <Image width={40} height={40} alt="category image" src={"/img/landing-categories/landingCategory"+(index).toString()+".png"}/>
               </Box>
