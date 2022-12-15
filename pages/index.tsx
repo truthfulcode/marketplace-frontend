@@ -38,7 +38,7 @@ export default function Home() {
         </TitleText>
         <Grid container spacing={2}>
           {["Web Design","Programming","Audio & Music","Business","Writing & Translation","Marketing",].map((value,index)=>(
-            <Grid item sx={{flexDirection:"column", ...styles.center }} xs={4}>
+            <Grid item key={index} sx={{flexDirection:"column", ...styles.center }} xs={4}>
               <Box sx={{border:"2px solid black",borderRadius:16, p:2, m:1}}>
                 <Image width={40} height={40} alt="category image" src={"/img/landing-categories/landingCategory"+(index).toString()+".png"}/>
               </Box>
