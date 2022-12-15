@@ -1,0 +1,143 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  username   String   @unique
+  password   String
+  firstName    String
+  lastName    String
+  address    String
+  phoneNumber String
+  paymentType AccountType
+  Transaction Transaction[]
+  freelancerAccount Freelancer? @relation("freelancerAccount")
+  customerAccount Customer? @relation("customerAccount")
+}
+
+model Freelancer {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  proposals Proposal[]
+  orders Order[]
+  account Account? @relation("freelancerAccount",fields: [id],references: [id])
+}
+
+model Customer {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  listings Listing[]
+  orders Order[]
+  account Account? @relation("customerAccount",fields: [id],references: [id])
+}
+
+model Listing {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  price   Float
+  title String
+  description String
+  files String[]
+  proposals Proposal[]
+  customerId String @db.ObjectId
+  order Order? @relation("listingOrder")
+  listingAuthor Customer @relation(fields:[id],references: [id])
+}
+
+model Order {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  price Float
+  title String
+  date DateTime
+  status OrderStatus
+  listing Listing @relation("listingOrder",fields:[id],references: [id])
+  transaction Transaction @relation(fields:[id],references: [txId])
+  orderFreelancer Freelancer @relation(fields:[id],references: [id])
+  orderAuthor Customer @relation(fields:[id],references: [id])
+}
+
+
+
+model Proposal{
+    id String @id @default(auto()) @map("_id") @db.ObjectId 
+    freelancerId String @db.ObjectId
+    title String
+    description String
+    duration Int
+    status ProposalStatus
+    listing Listing @relation(fields:[id],references: [id])
+    proposalAuthor Freelancer @relation(fields:[id],references: [id])
+}
+
+model Transaction {
+    txId String @id @default(auto()) @map("_id") @db.ObjectId 
+    timestamp DateTime @default(now())
+    status TransactionStatus
+    description String
+    customerId String @db.ObjectId
+    orderId String
+    order Order?
+    paymentType PaymentType
+    account Account? @relation(fields: [txId],references: [id])
+    cryptoPayment Crypto? @relation("cryptoPayment")
+    paypalPayment Paypal? @relation("paypalPayment")
+    files String[]
+}
+
+model Crypto{
+    onChainTx String @id @map("_id")
+    tokenType TokenType
+    amount Int
+    transaction Transaction? @relation("cryptoPayment",fields: [onChainTx],references: [txId])
+}
+
+model Paypal{
+    paypalTx String @id @map("_id")
+    paymentEmail String
+    amount Int
+    transaction Transaction? @relation("paypalPayment",fields: [paypalTx],references: [txId])
+}
+enum PaymentType {
+    Bank
+    Crypto
+}
+enum PaymentPage {
+    Activity
+    Deposit
+    Withdraw
+    Setting 
+}
+enum ProposalStatus {
+    APPROVED
+    PENDING
+    REJECTED
+}
+enum OrderStatus {
+    SUCCESSFUL
+    PENDING
+    CANCELLED
+}
+enum TransactionStatus {
+    COMPLETED
+    PENDING
+    FAILED
+}
+enum TransactionType {
+    DEPOSIT
+    WITHDRAW
+    PAYMENT
+    REFUND
+}
+enum TokenType {
+    DAI
+    USDT
+    USDC
+}
+enum AccountType{
+    Customer
+    Freelancer
+}
