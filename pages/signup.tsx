@@ -5,11 +5,12 @@ import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
 import CustomForm from '../components/CustomForm'
 const signup = () => {
     return (
-        <Box sx={{...styles.header, ...styles.shadow,
+        <Box sx={{...styles.header,
                 backgroundImage: "url(/img/white-bg.png)",
                 height:"100vh",
                 backgroundRepeat:"no-repeat",
-                backgroundSize: "cover",}}>
+                backgroundSize: "cover",
+               }}>
             <Navbar signUp={false}/>
             <CustomForm>
                 <TitleText>SIGN UP</TitleText>
