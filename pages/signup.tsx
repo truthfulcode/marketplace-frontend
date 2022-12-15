@@ -2,7 +2,7 @@ import React from 'react'
 import {Typography, Box, Grid, TextField, styled} from '@mui/material'
 import Navbar from '../components/Navbar'
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
-import CustomForm from '../components/customForm'
+import CustomForm from '../components/CustomForm'
 const signup = () => {
     return (
         <Box sx={{...styles.header, ...styles.shadow,
