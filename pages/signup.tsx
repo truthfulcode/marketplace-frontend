@@ -25,4 +25,9 @@ const signup = () => {
       )
 }
 
+
 export default signup
+
+export async function getServerSideProps(){
+
+}
