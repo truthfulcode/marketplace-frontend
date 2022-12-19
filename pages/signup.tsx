@@ -14,6 +14,9 @@ const signup = () => {
             <CustomForm>
                 <TitleText>SIGN UP</TitleText>
                 <TextField variant="outlined" placeholder='Username'/>
+                <TextField variant="outlined" placeholder='First Name'/>
+                <TextField variant="outlined" placeholder='Last Name'/>
+                <TextField variant="outlined" placeholder='Username'/>
                 <TextField variant="outlined" placeholder='Email'/>
                 <TextField variant="outlined" placeholder='Password'/>
                 <TextField variant="outlined" placeholder='Phone Nmber'/>

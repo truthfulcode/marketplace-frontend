@@ -14,7 +14,7 @@ model Account {
   password   String
   firstName    String
   lastName    String
-  address    String
+  email   String
   phoneNumber String
   accountType AccountType
   Transaction Transaction[]
