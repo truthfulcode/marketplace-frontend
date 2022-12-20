@@ -11,7 +11,7 @@ interface BioProps {
     description: string,
   }
 const Listcard: FC<BioProps> = (props): JSX.Element => {
-    
+  
     return(
         <>       
         <Card sx={{ maxWidth: 350 }}>

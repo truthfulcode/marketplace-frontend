@@ -2,15 +2,15 @@ import React from 'react'
 import { Box,Typography , Grid, TextField, styled} from '@mui/material'
 import Navbar from '../components/Navbar'
 import Listcard from '../components/Listcard'
-import Button from '@mui/material/Button';
+import Button from '@mui/material/Button'
 
-const grid2 = () =>{
-    <Grid item xs={8} md={3}>
-    <Listcard  service='UI/UX'
-description='we offer the best freelancers for interfce design and development'
-/>
-</Grid>
-}
+// const grid2 = () =>{
+//     <Grid item xs={8} md={3}>
+//     <Listcard  service='UI/UX'
+//         description='we offer the best freelancers for interfce design and development'
+//         />
+//     </Grid>
+// }
 
 
 const freelancerList = ()=> {
@@ -26,7 +26,6 @@ const freelancerList = ()=> {
                 On proggres projects
         </Typography>
             <Grid container spacing={3}>
-               
                 <Grid item xs={8} md={3}>
                     <Listcard  service='UI/UX'
                 description='we offer the best freelancers for interfce design and development'
