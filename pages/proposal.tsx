@@ -36,7 +36,7 @@ const proposals = () => {
                 <Grid  sx={{padding:"10px 0px"}} 
                 container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 3 }}
                 >
-                <Grid item xs={8} md={3}>
+                <Grid  item xs={8} md={3}>
                 <Listcard 
                 service='UI/UX'
                 description='we offer the best freelancers for interfce design and development'
@@ -52,7 +52,7 @@ const proposals = () => {
                   />
                       </Grid>
                       <Grid item xs={8} md={3}>
-                  <Listcard 
+                  <Listcard   
                   service='UI/UX'
                   description='we offer the best freelancers for interfce design and development'
                   />

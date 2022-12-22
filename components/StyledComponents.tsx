@@ -1,4 +1,4 @@
-import { AppBar, Typography, Button, styled ,Paper } from '@mui/material'
+import { Box, AppBar, Typography, Button, styled ,Paper } from '@mui/material'
 
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
@@ -47,6 +47,7 @@ export const styles = {
         }
     }
 }
+
 // custom components styling
 export const MainButton = styled(Button)({
     padding:"8px 24px",

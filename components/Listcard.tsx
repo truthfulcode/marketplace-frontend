@@ -11,7 +11,10 @@ interface BioProps {
     description: string,
   }
 const Listcard: FC<BioProps> = (props): JSX.Element => {
-  
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    //navigate to view page
+   //navigator('/second'); 
+  }; 
     return(
         <>       
         <Card sx={{ maxWidth: 350 }}>
@@ -30,8 +33,8 @@ const Listcard: FC<BioProps> = (props): JSX.Element => {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="small">Share</Button>
-                    <Button size="small">Learn More</Button>
+                    <Button onClick={handleClick}  size="small">View</Button>
+                    
                   </CardActions>
                 </Card>
         </>

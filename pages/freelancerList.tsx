@@ -11,9 +11,7 @@ import Button from '@mui/material/Button'
 //         />
 //     </Grid>
 // }
-
-
-const freelancerList = ()=> {
+const freelancerList = () => {
     return(
         <>
         <Navbar />
@@ -57,18 +55,8 @@ const freelancerList = ()=> {
                 />
                 </Grid>
             </Grid>
-
-       
-       
-
         </Box>
-
-
-
-
         </Box>
-        
-        
         </>
 
     )
