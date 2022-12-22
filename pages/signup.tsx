@@ -27,7 +27,7 @@ const signup = () => {
                 },
                 body: JSON.stringify(_account),
               }).then((res)=>{
-                console.log(res.ok ? "PASSED" : "ERROR OCCURED")
+                console.log(res, res.ok ? "PASSED" : "ERROR OCCURED")
               })
         }catch(err){
             console.error(err)
