@@ -10,7 +10,7 @@ generator client {
 
 model Account {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  username   String   @unique
+  username   String   @unique 
   password   String
   firstName    String
   lastName    String
@@ -102,8 +102,8 @@ model Paypal{
     transaction Transaction? @relation("paypalPayment",fields: [paypalTx],references: [txId])
 }
 enum PaymentType {
-    Bank
-    Crypto
+    BANK
+    CRYPTO
 }
 enum PaymentPage {
     Activity
@@ -138,6 +138,6 @@ enum TokenType {
     USDC
 }
 enum AccountType{
-    Customer
-    Freelancer
+    CUSTOMER
+    FREELANCER
 }
