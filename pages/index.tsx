@@ -24,7 +24,7 @@ export default function Home() {
       }}>
         <Navbar/>
           <Box sx={styles.headerContent}>
-            <Typography fontSize={32}>Looking for a freelancer? <br/> We've got your back.</Typography>
+            <Typography fontSize={32}>Looking for a freelancer? <br/> Weve got your back.</Typography>
             <TextField inputProps={{
               style:{
                 padding:12
