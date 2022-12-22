@@ -17,3 +17,4 @@ export enum OrderStatus {SUCCESSFUL,PENDING,CANCELLED}
 export enum TransactionStatus {COMPLETED,PENDING,FAILED}
 export enum TransactionType {DEPOSIT,WITHDRAW,PAYMENT,REFUND}
 export enum TokenType {DAI,USDT,USDC}
+export enum AccountType{ CUSTOMER, FREELANCER }
