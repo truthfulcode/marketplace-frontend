@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, Link } from '@mui/material';
+import { Container, Typography, Link, makeStyles } from '@mui/material';
 import { Box, Grid, TextField, styled} from '@mui/material'
 import {Card,CardActions,CardContent,CardMedia} from '@mui/material'
 import Button from '@mui/material/Button';
@@ -9,18 +9,17 @@ import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
 import Navbar from '../components/Navbar'
 
 
+
 const ViewProposal = ()=>{
   return(
     <Container>
       <Navbar />
-      <Grid
-  
-></Grid>
       <Grid container
-  direction="column"
-  justifyContent="center"
-  alignItems="center"
-  spacing={4}
+      marginTop={5}
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          spacing={3}
   >
 
       <Grid  item xs={3}>
@@ -30,17 +29,11 @@ const ViewProposal = ()=>{
       </Grid>
      {/**<Image src="my-self.jpeg" sx={{ borderRadius: 16 }} />**/}
      <Grid  item xs={3}>
-     <img src="/img/luke-peters-B6JINerWMz0-unsplash.jpg" style={{borderRadius: 16,width:"300px"}} />
+     <img src="/img/luke-peters-B6JINerWMz0-unsplash.jpg" style={{borderRadius: 20,width:"300px"}} />
      </Grid>
      </Grid>
   </Container>
   )
-
-
-
-
-
-
 
 
 }
