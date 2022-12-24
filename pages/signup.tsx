@@ -3,6 +3,8 @@ import {Typography, Box, Grid, TextField, styled} from '@mui/material'
 import Navbar from '../components/Navbar'
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
 import CustomForm from '../components/CustomForm'
+import { sha512 } from '../utils/helpers'
+
 const signup = () => {
     const [account, setAccount] = useState(new Map<FormInput,String>())
     const createUser = async () => {

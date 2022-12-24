@@ -8,72 +8,40 @@ import  { FC } from 'react'
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
 import Navbar from '../components/Navbar'
 
-interface Props {
-  name: string;
-  address: string;
-  phoneNumber: string;
-  hours: string;
-  website: string;
-  facebookUrl: string;
-  twitterUrl: string;
-  instagramUrl: string;
-}
 
-const ViewProposal: React.FC<Props> = ({
-  name,
-  address,
-  phoneNumber,
-  hours,
-  website,
-  facebookUrl,
-  twitterUrl,
-  instagramUrl,
-}) => {
-  return (
+const ViewProposal = ()=>{
+  return(
     <Container>
-        <Navbar />
-       <Typography sx={{...styles.center}} variant="h2" align="center" gutterBottom>
-        UI/UX
-      </Typography>
-      <Box sx={{...styles.center}}>
-        <img src="/img/luke-peters-B6JINerWMz0-unsplash.jpg" alt="" width={"200px"} />
-        </Box>
+      <Navbar />
+      <Grid
+  
+></Grid>
+      <Grid container
+  direction="column"
+  justifyContent="center"
+  alignItems="center"
+  spacing={4}
+  >
 
-    <Box sx={{...styles.center}} >
-      <Typography sx={{}} variant="h4" align="center" gutterBottom>
-        {name}
-      </Typography>
-      <Typography variant="h6" align="center" gutterBottom>
-        {address}
-      </Typography>
-      <Typography variant="h6" align="center" gutterBottom>
-        {phoneNumber}
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Hours
-      </Typography>
-      <Typography variant="body1">{hours}</Typography>
-      <Typography variant="h5" gutterBottom>
-        Website
-      </Typography>
-      <Link href={website}>{website}</Link>
-      <Typography variant="h5" gutterBottom>
-        Social Media
-      </Typography>
-      <ul>
-        <li>
-          <Link href={facebookUrl}>Facebook</Link>
-        </li>
-        <li>
-          <Link href={twitterUrl}>Twitter</Link>
-        </li>
-        <li>
-          <Link href={instagramUrl}>Instagram</Link>
-        </li>
-      </ul>
-      </Box>
-    </Container>
-  );
-};
+      <Grid  item xs={3}>
+      <Typography sx={{...styles.center}} variant='h2' >UI/UX</Typography></Grid>
+      <Grid  item xs={3}>
+      <Typography sx={{...styles.center}} variant='h5' >Im intoducing the best UI/UX designs </Typography>
+      </Grid>
+     {/**<Image src="my-self.jpeg" sx={{ borderRadius: 16 }} />**/}
+     <Grid  item xs={3}>
+     <img src="/img/luke-peters-B6JINerWMz0-unsplash.jpg" style={{borderRadius: 16,width:"300px"}} />
+     </Grid>
+     </Grid>
+  </Container>
+  )
 
+
+
+
+
+
+
+
+}
 export default ViewProposal;
