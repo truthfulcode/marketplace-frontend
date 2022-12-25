@@ -1,5 +1,6 @@
 import { AppBar, Typography, Button, Box } from '@mui/material'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react' 
 import { MainButton } from './StyledComponents'
 
@@ -11,10 +12,14 @@ const Navbar = ({signIn = true, signUp = true}) => {
         </Box>
         <Box>
             {signIn ? 
+            <Link href="signin">
                 <MainButton >Sign In</MainButton>
+            </Link>
             :""}
             {signUp ? 
+            <Link href="signup">
                 <MainButton >Sign Up</MainButton>
+            </Link>
             :""}
         </Box>
     </Box>

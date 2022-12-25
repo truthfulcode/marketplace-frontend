@@ -1,5 +1,13 @@
 export type TxType = "deposit" | "withdraw" | "payment" | "refund"
 export type Status = "success" | "pending" | "error"
+export type FormInput =
+  | "USERNAME"
+  | "FIRST_NAME"
+  | "LAST_NAME"
+  | "EMAIL"
+  | "PASSWORD"
+  | "PHONE_NUMBER"
+  | "USER_TYPE";
 export type transaction = {
     txId: string,
     txType:TxType,
