@@ -31,7 +31,15 @@ const ViewProposal = ()=>{
      <Grid  item xs={3}>
      <img src="/img/luke-peters-B6JINerWMz0-unsplash.jpg" style={{borderRadius: 20,width:"300px"}} />
      </Grid>
+     <Grid  item xs={3}>
+      
      </Grid>
+     </Grid>
+     <Typography
+     margin={10}
+     variant={'h4'}
+     
+     >About</Typography>
   </Container>
   )
 
