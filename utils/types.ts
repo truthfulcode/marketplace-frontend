@@ -1,19 +1,23 @@
 export type TxType = "deposit" | "withdraw" | "payment" | "refund"
 export type Status = "success" | "pending" | "error"
 export type FormInput =
-  | "USERNAME"
-  | "FIRST_NAME"
-  | "LAST_NAME"
-  | "EMAIL"
-  | "PASSWORD"
-  | "PHONE_NUMBER"
-  | "USER_TYPE";
+  | "U" // USERNAME
+  | "F_N" // FIRST_NAME
+  | "L_N" // LAST_NAME
+  | "E" // EMAIL
+  | "P" // PASSWORD
+  | "P_N" // PHONE_NUMBER
+  | "U_T"; // USER_TYPE
 export type transaction = {
     txId: string,
     txType:TxType,
     status:Status,
     amount:number
 }
+export type ValueWithError = {
+    value:String | undefined,
+    error:String | undefined
+  }
 export enum PaymentType {
     Bank, Crypto
 } 
