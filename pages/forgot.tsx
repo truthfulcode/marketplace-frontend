@@ -2,7 +2,7 @@ import React from 'react'
 import {Box, TextField} from "@mui/material";
 import Navbar from '../components/Navbar';
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
-import CustomForm from '../components/CustomForm';
+import FormWrapper from '../components/FormWrapper';
 
 const forgot = () => {
   return (
@@ -11,11 +11,11 @@ const forgot = () => {
       ...styles.shadow,
       height:"100vh",}}>
       <Navbar/>
-      <CustomForm>
+      <FormWrapper>
         <TitleText>Reset Password</TitleText>
         <TextField placeholder='Email | Username'/>
         <SubmitButton>RESET</SubmitButton>
-      </CustomForm>
+      </FormWrapper>
     </Box>
   )
 }

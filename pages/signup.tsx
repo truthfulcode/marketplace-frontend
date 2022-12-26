@@ -6,23 +6,25 @@ import {
   SubmitButton,
   TitleText,
 } from "../components/StyledComponents";
-import CustomForm from "../components/CustomForm";
+import FormWrapper from "../components/FormWrapper";
 import { Account, AccountType } from "@prisma/client";
 import { isString, sha512 } from "../utils/helpers";
 import { login_keys } from "../utils/constants";
 import { FormInput } from "../utils/types";
+import { useRouter } from "next/router";
 
 const signup = () => {
-  const [account, setAccount] = useState(new Map<FormInput, String>());
-  const createUser = async () => {
-    let isFound = false
-    login_keys.map((key)=>{
-        let val = account.get(key);
-        if(!val || val === null || val.length === 0){
-            // throw an error
-            isFound = true;
-        }
-    })
+    const [account, setAccount] = useState(new Map<FormInput, String>());
+    const router = useRouter()
+    const createUser = async () => {
+        let isFound = false
+        login_keys.map((key)=>{
+            let val = account.get(key);
+            if(!val || val === null || val.length === 0){
+                // throw an error
+                isFound = true;
+            }
+        })
 
     if(isFound) return;
     const _account: Account = {
@@ -35,18 +37,26 @@ const signup = () => {
       phoneNumber: account.get("PHONE_NUMBER") as string,
       accountType: account.get("USER_TYPE") as AccountType,
     };
+    try{
+        const response = await fetch("./api/user", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(_account),
+          })
+          const isSuccess = response.ok && response.status == 200
+        if(isSuccess){
+            console.log("SUCCESS")
+            router.push('/signin')
+        }else{
+            const message = await response.json();
+            console.log("response",message)
+        }
+        
+    }catch(err){
 
-    fetch("./api/user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(_account),
-    })
-      .then((res) => {
-        console.log(res, res.ok ? "PASSED" : "ERROR OCCURED");
-      })
-      .catch((err) => console.log(err));
+    }
   };
   const setAccVal = (
     key: FormInput,
@@ -68,45 +78,45 @@ const signup = () => {
       }}
     >
       <Navbar signUp={false} />
-      <CustomForm>
+      <FormWrapper method="POST">
         <TitleText>SIGN UP</TitleText>
         <TextField
           onChange={(e) => setAccVal("USERNAME", e)}
           variant="outlined"
           placeholder="Username"
-        />
+          />
         <TextField
           onChange={(e) => setAccVal("FIRST_NAME", e)}
           variant="outlined"
           placeholder="First Name"
-        />
+          />
         <TextField
           onChange={(e) => setAccVal("LAST_NAME", e)}
           variant="outlined"
           placeholder="Last Name"
-        />
+          />
         <TextField
           onChange={(e) => setAccVal("PASSWORD", e)}
           variant="outlined"
           placeholder="Password"
-        />
+          />
         <TextField
           onChange={(e) => setAccVal("EMAIL", e)}
           variant="outlined"
           placeholder="Email"
-        />
+          />
         <TextField
           onChange={(e) => setAccVal("PHONE_NUMBER", e)}
           variant="outlined"
           placeholder="Phone Nmber"
-        />
+          />
         <TextField
           onChange={(e) => setAccVal("USER_TYPE", e)}
           variant="outlined"
           placeholder="User Type Radio box"
-        />
+          />
         <SubmitButton onClick={createUser}>REGISTER</SubmitButton>
-      </CustomForm>
+      </FormWrapper>
     </Box>
   );
 };
