@@ -15,11 +15,12 @@ const ViewProposal = ()=>{
     <Container>
       <Navbar />
       <Grid container
-      marginTop={5}
           direction="row"
           justifyContent="center"
           alignItems="center"
-          spacing={3}
+          marginTop={5}
+          marginRight={5}
+          spacing={5}
   >
 
       <Grid  item xs={3}>
@@ -31,15 +32,19 @@ const ViewProposal = ()=>{
      <Grid  item xs={3}>
      <img src="/img/luke-peters-B6JINerWMz0-unsplash.jpg" style={{borderRadius: 20,width:"300px"}} />
      </Grid>
-     <Grid  item xs={3}>
-      
      </Grid>
-     </Grid>
+     <Box>
      <Typography
      margin={10}
      variant={'h4'}
-     
-     >About</Typography>
+
+     >About Me</Typography>
+      <Typography>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        Voluptates, perspiciatis laborum harum minima, corporis repudiandae 
+        ipsa perferendis natus quos rerum consequuntur 
+        doloribus dolore! Facere repellat laboriosam dolore quo quis nostrum.</Typography>
+
+      </Box>
   </Container>
   )
 
