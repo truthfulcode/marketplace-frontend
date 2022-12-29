@@ -105,6 +105,9 @@ export const MainButton = styled(Button)({
     color:"black"
 })
 export const SubmitButton = styled(Button)({
+    position:"relative",
+    flexDirection:"column",
+    display:"inline-flex",
     padding:"8px 24px",
     margin:"8px",
     backgroundColor:"#FFFFFF22",

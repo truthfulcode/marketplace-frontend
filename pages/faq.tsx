@@ -2,7 +2,6 @@ import React from 'react'
 import {Box, TextareaAutosize, TextField} from "@mui/material";
 import Navbar from '../components/Navbar';
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
-import CustomForm from '../components/CustomForm';
 import Footer from '../components/Footer';
 
 const faq = () => {

@@ -15,9 +15,7 @@ export default async function createUser(obj:Account) {
     // if(!email.match(mailFormat)) throw Error("invalid email format");
     if (typeof username !== "string") throw Error('invalid username')
     if(password.length != 128) throw Error("invalid password");
-    try{
         if(await isValidUsernameOrEmail(username,email)) throw Error("invalid username or email")
-
         await prisma.customer.create({data:{
             account:{
                 create:{
@@ -31,8 +29,6 @@ export default async function createUser(obj:Account) {
                 }
             },
         }})
-    }catch(err){
-        console.error("Create user err",err)
-    }
+    
     
 }

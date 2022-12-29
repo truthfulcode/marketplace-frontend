@@ -22,7 +22,6 @@ import {
   SubmitButton,
   TitleText,
 } from "../../components/StyledComponents";
-import CustomForm from "../../components/CustomForm";
 import Navbar from "../../components/Navbar";
 import { PaymentPage, transaction } from "../../utils/types";
 import Activity from "../../components/Payment/Activity";

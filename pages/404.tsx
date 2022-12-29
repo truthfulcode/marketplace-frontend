@@ -3,7 +3,6 @@ import {Box, TextField} from "@mui/material";
 import Image from 'next/image'
 import Navbar from '../components/Navbar';
 import {styles, TitleText, MainButton} from '../components/StyledComponents'
-import CustomForm from '../components/CustomForm';
 
 const forgot = () => {
   return (

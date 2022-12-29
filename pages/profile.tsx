@@ -3,7 +3,6 @@ import {Box, Button, TextareaAutosize, TextField, Typography} from "@mui/materia
 import Image from 'next/image'
 import Navbar from '../components/Navbar';
 import {MainButton, styles, SubmitButton, TitleText} from '../components/StyledComponents'
-import CustomForm from '../components/CustomForm';
 
 const profile = () => {
   return (
