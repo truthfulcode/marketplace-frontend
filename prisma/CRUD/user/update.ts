@@ -41,4 +41,9 @@ app.put('/freelancer/:id', async (req: Request, res: Response) => {
       return res.status(400).send({ error: 'Email and password are required' });
     }
 
-    const freelancer = await}
+    // const freelancer = await
+  }catch(err){
+    
+  }
+  
+  })
