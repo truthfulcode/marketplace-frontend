@@ -7,6 +7,7 @@ import {FunctionComponent, PropsWithChildren} from 'react'
 import  { FC } from 'react'
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer';
 
 
 
@@ -35,16 +36,30 @@ const ViewProposal = ()=>{
      </Grid>
      <Box>
      <Typography
-     margin={10}
+     margin={2}
      variant={'h4'}
-
      >About Me</Typography>
-      <Typography>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      <hr className="solid" />
+      <Typography
+      marginBottom={3}
+      >Lorem ipsum dolor sit amet consectetur adipisicing elit.
         Voluptates, perspiciatis laborum harum minima, corporis repudiandae 
         ipsa perferendis natus quos rerum consequuntur 
         doloribus dolore! Facere repellat laboriosam dolore quo quis nostrum.</Typography>
-
+      <Typography 
+       variant={'h4'}
+      >Freelancer Email</Typography>
+      <a href="mailto:">any</a>
+        <Typography 
+       variant={'h4'}
+       marginBottom={1}
+      >Freelancer Cost</Typography>
+        <p>300 $</p>
+       <Button variant="contained">Pay now</Button>
+      
       </Box>
+
+      <Footer />
   </Container>
   )
 
