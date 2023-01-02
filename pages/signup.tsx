@@ -148,7 +148,6 @@ const signup = () => {
       }}
     >
       <Navbar signUp={false} />
-        value {account.U?.error}
       <FormWrapper method="POST">
         <TitleText>SIGN UP</TitleText>
         <TextField
