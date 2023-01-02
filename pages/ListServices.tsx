@@ -1,11 +1,6 @@
-
 import React from 'react';
-import {FormLabel,FormHelperText,Input,InputLabel,FormControl, Container, Typography, Link, makeStyles } from '@mui/material';
-import { Box, Grid, TextField, styled} from '@mui/material'
-import {Card,CardActions,CardContent,CardMedia} from '@mui/material'
-import Button from '@mui/material/Button';
-import {FunctionComponent, PropsWithChildren} from 'react'
-import  { FC } from 'react'
+import { Container} from '@mui/material';
+import { Box, TextField, styled} from '@mui/material'
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer';
@@ -31,7 +26,6 @@ const ListServices = () => {
         <Footer />
     </Container>
 )
-
 }
 export default ListServices;
 

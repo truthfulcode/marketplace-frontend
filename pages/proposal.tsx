@@ -15,22 +15,13 @@ so it should be an overview, view is to view specific proposal in details.
 lastly create is a separate page to create a new page. */
 
 const proposals = () => {
-    return (
-        
-            <Box  sx={{}} >
-                <Navbar />
-                <Slideshow />
-                <Box sx={{padding:"20px 50px",
+   return (
+      <Box  sx={{}} >
+         <Navbar />
+         <Slideshow />
+       <Box sx={{padding:"20px 50px",
               }}>
-                {/* <Box
-      sx={{
-        width:600,
-        maxWidth: '100%',
-      }}
-    >
-     
-    </Box> */}
-    <TextField fullWidth label="Search" id="fullWidth" />
+                <TextField fullWidth label="Search" id="fullWidth" />
                 <Box sx={{display:"flex"}} >
                
                 <Grid  sx={{padding:"10px 0px"}} 

@@ -1,14 +1,12 @@
 import React from 'react';
 import { Container, Typography, Link, makeStyles } from '@mui/material';
 import { Box, Grid, TextField, styled} from '@mui/material'
-import {Card,CardActions,CardContent,CardMedia} from '@mui/material'
 import Button from '@mui/material/Button';
 import {FunctionComponent, PropsWithChildren} from 'react'
 import  { FC } from 'react'
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer';
-
 
 
 const ViewProposal = ()=>{
@@ -22,8 +20,7 @@ const ViewProposal = ()=>{
           marginTop={5}
           marginRight={5}
           spacing={5}
-  >
-
+      >
       <Grid  item xs={3}>
       <Typography sx={{...styles.center}} variant='h2' >UI/UX</Typography></Grid>
       <Grid  item xs={3}>
@@ -46,23 +43,21 @@ const ViewProposal = ()=>{
         Voluptates, perspiciatis laborum harum minima, corporis repudiandae 
         ipsa perferendis natus quos rerum consequuntur 
         doloribus dolore! Facere repellat laboriosam dolore quo quis nostrum.</Typography>
+        <br/>
       <Typography 
        variant={'h4'}
       >Freelancer Email</Typography>
-      <a href="mailto:">any</a>
-        <Typography 
+      <a   href="mailto:">mond1alaa111@gmail.com</a><br/>
+      <br/> 
+      <Typography 
        variant={'h4'}
        marginBottom={1}
       >Freelancer Cost</Typography>
         <p>300 $</p>
        <Button variant="contained">Pay now</Button>
-      
       </Box>
-
       <Footer />
   </Container>
   )
-
-
 }
 export default ViewProposal;
