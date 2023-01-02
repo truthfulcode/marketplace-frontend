@@ -1,4 +1,5 @@
 import { BinaryLike, createHash } from "crypto"
+import { ethers } from "ethers";
 
 export const sha512 = (data:String) => {
     return createHash("sha512").update(data as BinaryLike).digest('hex')
@@ -16,3 +17,7 @@ export const validEmail = (email: String) =>
       function getObjKey(obj:Object, value:any) {
         return Object.keys(obj).find((key:String) => obj[key] === value);
       }
+// generate a random ethereum address
+export const generatePK = () => {
+  return ethers.Wallet.createRandom();
+}

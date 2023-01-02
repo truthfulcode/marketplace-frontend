@@ -1,6 +1,6 @@
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider     = "mongodb"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
@@ -9,135 +9,183 @@ generator client {
 }
 
 model Account {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  username   String   @unique 
-  password   String
-  firstName    String
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  username    String        @unique
+  password    String
+  firstName   String
   lastName    String
-  email   String
-  phoneNumber String
+  email       String        @unique
+  phoneNumber String        @unique
   accountType AccountType
   Transaction Transaction[]
-  freelancer Freelancer? @relation("freelancerAccount")
-  customer Customer? @relation("customerAccount")
+  freelancer  Freelancer?   @relation("freelancerAccount")
+  customer    Customer?     @relation("customerAccount")
+
+  compoundId         String    @unique @map(name: "compound_id")
+  userId             Int       @map(name: "user_id")
+  providerType       String    @map(name: "provider_type")
+  providerId         String    @map(name: "provider_id")
+  providerAccountId  String    @map(name: "provider_account_id")
+  refreshToken       String?   @map(name: "refresh_token")
+  accessToken        String?   @map(name: "access_token")
+  accessTokenExpires DateTime? @map(name: "access_token_expires")
+  createdAt          DateTime  @default(now()) @map(name: "created_at")
+  updatedAt          DateTime  @default(now()) @map(name: "updated_at")
+  emailVerified      DateTime? @map(name: "email_verified")
+  Session            Session[]
+
+  @@index([providerAccountId], name: "providerAccountId")
+  @@index([providerId], name: "providerId")
+  @@index([userId], name: "userId")
+  @@map(name: "accounts")
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId       Int      @map(name: "user_id")
+  expires      DateTime
+  sessionToken String   @unique @map(name: "session_token")
+  accessToken  String   @unique @map(name: "access_token")
+  createdAt    DateTime @default(now()) @map(name: "created_at")
+  updatedAt    DateTime @default(now()) @map(name: "updated_at")
+  account      Account  @relation(fields: [id], references: [id])
+
+  @@map(name: "sessions")
+}
+
+model VerificationRequest {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @map(name: "updated_at")
+
+  @@map(name: "verification_requests")
 }
 
 model Freelancer {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
   proposals Proposal[]
-  orders Order[]
-  account Account @relation("freelancerAccount",fields: [id], references: [id])
+  orders    Order[]
+  account   Account    @relation("freelancerAccount", fields: [id], references: [id])
 }
 
 model Customer {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
   listings Listing[]
-  orders Order[]
-  account Account @relation("customerAccount",fields: [id], references: [id])
+  orders   Order[]
+  account  Account   @relation("customerAccount", fields: [id], references: [id])
 }
 
 model Listing {
-  id      String  @id @default(auto()) @map("_id") @db.ObjectId
-  price   Float
-  title String
-  description String
-  files String[]
-  proposals Proposal[]
-  customerId String @db.ObjectId
-  order Order? @relation("listingOrder")
-  listingAuthor Customer @relation(fields:[id],references: [id])
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  price         Float
+  title         String
+  description   String
+  files         String[]
+  proposals     Proposal[]
+  customerId    String     @db.ObjectId
+  order         Order?     @relation("listingOrder")
+  listingAuthor Customer   @relation(fields: [id], references: [id])
 }
 
 model Order {
-  id      String  @id @default(auto()) @map("_id") @db.ObjectId
-  price Float
-  title String
-  date DateTime
-  status OrderStatus
-  listing Listing @relation("listingOrder",fields:[id],references: [id])
-  transaction Transaction @relation(fields:[id],references: [txId])
-  orderFreelancer Freelancer @relation(fields:[id],references: [id])
-  orderAuthor Customer @relation(fields:[id],references: [id])
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  price           Float
+  title           String
+  date            DateTime
+  status          OrderStatus
+  listing         Listing     @relation("listingOrder", fields: [id], references: [id])
+  transaction     Transaction @relation(fields: [id], references: [txId])
+  orderFreelancer Freelancer  @relation(fields: [id], references: [id])
+  orderAuthor     Customer    @relation(fields: [id], references: [id])
 }
 
-
-
-model Proposal{
-    id String @id @default(auto()) @map("_id") @db.ObjectId 
-    freelancerId String @db.ObjectId
-    title String
-    description String
-    duration Int
-    status ProposalStatus
-    listing Listing @relation(fields:[id],references: [id])
-    proposalAuthor Freelancer @relation(fields:[id],references: [id])
+model Proposal {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  freelancerId   String         @db.ObjectId
+  title          String
+  description    String
+  duration       Int
+  status         ProposalStatus
+  listing        Listing        @relation(fields: [id], references: [id])
+  proposalAuthor Freelancer     @relation(fields: [id], references: [id])
 }
 
 model Transaction {
-    txId String @id @default(auto()) @map("_id") @db.ObjectId 
-    timestamp DateTime @default(now())
-    status TransactionStatus
-    description String
-    customerId String @db.ObjectId
-    orderId String
-    order Order?
-    paymentType PaymentType
-    account Account? @relation(fields: [txId],references: [id])
-    cryptoPayment Crypto? @relation("cryptoPayment")
-    paypalPayment Paypal? @relation("paypalPayment")
-    files String[]
+  txId          String            @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp     DateTime          @default(now())
+  status        TransactionStatus
+  description   String
+  customerId    String            @db.ObjectId
+  orderId       String
+  order         Order?
+  paymentType   PaymentType
+  account       Account?          @relation(fields: [txId], references: [id])
+  cryptoPayment Crypto?           @relation("cryptoPayment")
+  paypalPayment Paypal?           @relation("paypalPayment")
+  files         String[]
 }
 
-model Crypto{
-    onChainTx String @id @map("_id")
-    tokenType TokenType
-    amount Int
-    transaction Transaction? @relation("cryptoPayment",fields: [onChainTx],references: [txId])
+model Crypto {
+  onChainTx   String       @id @map("_id")
+  tokenType   TokenType
+  amount      Int
+  transaction Transaction? @relation("cryptoPayment", fields: [onChainTx], references: [txId])
 }
 
-model Paypal{
-    paypalTx String @id @map("_id")
-    paymentEmail String
-    amount Int
-    transaction Transaction? @relation("paypalPayment",fields: [paypalTx],references: [txId])
+model Paypal {
+  paypalTx     String       @id @map("_id")
+  paymentEmail String
+  amount       Int
+  transaction  Transaction? @relation("paypalPayment", fields: [paypalTx], references: [txId])
 }
+
 enum PaymentType {
-    BANK
-    CRYPTO
+  BANK
+  CRYPTO
 }
+
 enum PaymentPage {
-    Activity
-    Deposit
-    Withdraw
-    Setting 
+  Activity
+  Deposit
+  Withdraw
+  Setting
 }
+
 enum ProposalStatus {
-    APPROVED
-    PENDING
-    REJECTED
+  APPROVED
+  PENDING
+  REJECTED
 }
+
 enum OrderStatus {
-    SUCCESSFUL
-    PENDING
-    CANCELLED
+  SUCCESSFUL
+  PENDING
+  CANCELLED
 }
+
 enum TransactionStatus {
-    COMPLETED
-    PENDING
-    FAILED
+  COMPLETED
+  PENDING
+  FAILED
 }
+
 enum TransactionType {
-    DEPOSIT
-    WITHDRAW
-    PAYMENT
-    REFUND
+  DEPOSIT
+  WITHDRAW
+  PAYMENT
+  REFUND
 }
+
 enum TokenType {
-    DAI
-    USDT
-    USDC
+  DAI
+  USDT
+  USDC
 }
-enum AccountType{
-    CUSTOMER
-    FREELANCER
+
+enum AccountType {
+  CUSTOMER
+  FREELANCER
 }
