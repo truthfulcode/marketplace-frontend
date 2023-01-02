@@ -20,7 +20,12 @@ const ListServices = () => {
         }}>
            <CustomForm>
            <TitleText>Add new listings</TitleText>
-           <TextField></TextField>
+           <TextField placeholder='Service Name'></TextField>
+           <TextField placeholder='Service category'></TextField>
+           <TextField placeholder='pricing' ></TextField>
+           <TextField placeholder="Service Name" ></TextField>
+           <TextField placeholder="Service Description"></TextField>
+           <SubmitButton>submit inquiry</SubmitButton>
            </CustomForm>
         </Box>
         <Footer />
