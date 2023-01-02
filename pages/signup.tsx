@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Box,
@@ -10,6 +10,7 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  keyframes,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
 import {
@@ -21,35 +22,50 @@ import FormWrapper from "../components/FormWrapper";
 import { Account, AccountType } from "@prisma/client";
 import { isString, onlyString, sha512, validEmail } from "../utils/helpers";
 import { login_keys } from "../utils/constants";
-import { FormInput, ValueWithError } from "../utils/types";
+import { AccountRegsiterState, FormInput, ValueWithError } from "../utils/types";
 import { useRouter } from "next/router";
+import { calculateSizeAdjustValues } from "next/dist/server/font-utils";
 
 const signup = () => {
-  const [account, setAccount] = useState(new Map<FormInput, ValueWithError>());
+  const [account, setAccount] = useState<AccountRegsiterState>({E:undefined,F_N:undefined,L_N:undefined,P:undefined,P_N:undefined,U:undefined,U_T:{value:"CUSTOMER", error:undefined}});
   const router = useRouter();
+  useEffect(()=>{
+    console.log("effect")
+  })
+
+  const getValueById = (id:string) =>{
+    return (document.getElementById(id) as HTMLInputElement).value;
+  }
+
   const createUser = async () => {
     let isFound = false;
     console.log("MAP",account)
+
+
     login_keys.map((key) => {
-      let val = account.get(key)?.value;
-      console.log("value",key, val);
-      if (!val || val.length === 0) {
+      var value = getValueById(key); // setValue
+      handleChange(key,value)
+
+      let error = account[key]?.error
+      if (!value || value.length === 0) {
         // throw an error
-        account.set(key,{value:account.get(key)?.value, error: "empty input"})
-        console.log("error",account.get(key)?.error)
+        console.log(value);
+        setAccountValue(key, value, "empty input");
+        isFound = true;
+      } else if(error){
         isFound = true;
       }
     });
     if (isFound) return;
     const _account: Account = {
       id: "",
-      username: account.get("U")?.value as string,
-      firstName: account.get("F_N")?.value as string,
-      lastName: account.get("L_N")?.value as string,
-      email: account.get("E")?.value as string,
-      password: sha512(account.get("P")?.value as string),
-      phoneNumber: account.get("P_N")?.value as string,
-      accountType: account.get("U_T")?.value as AccountType,
+      username: account.U?.value as string,
+      firstName: account.F_N?.value as string,
+      lastName: account.L_N?.value as string,
+      email: account.E?.value as string,
+      password: sha512(account.P?.value as string),
+      phoneNumber: account.P_N?.value as string,
+      accountType: account.U_T?.value as AccountType,
     };
     try {
       const response = await fetch("./api/user", {
@@ -72,20 +88,19 @@ const signup = () => {
   
   const handleChange = (
     key: FormInput,
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    value: string
   ) => {
     let isError = false;
     let errorMessage;
-    let value = event.target.value;
     switch (key) {
       case "U": {
         isError = value.length < 8;
-        errorMessage = "length must be greater or equal to 8";
+        if(isError) errorMessage = "length must be greater or equal to 8";
         break;
       }
       case "E": {
         isError = validEmail(value)
-        errorMessage = "Invalid Email Format";
+        if(isError) errorMessage = "Invalid Email Format";
         break;
       }
       case "F_N": {
@@ -100,26 +115,27 @@ const signup = () => {
       }
       case "P": {
         isError = value.length < 18;
-        errorMessage = "length must be greater or equal to 18";
+        if(isError) errorMessage = "length must be greater or equal to 18";
         break;
       }
       case "P_N": {
         isError = value.length !== 11;
-        errorMessage = "length not equal to 11"
+        if(isError) errorMessage = "length not equal to 11"
         break;
       }
-      // case "U_T": {
-      //   isError = value.length < 18;
-      //   errorMessage = "length must be greater or equal to 18";
-      //   break;
-      // }
+      case "U_T": {
+        isError = !["CUSTOMER","FREELANCER"].includes(value);
+        if(isError) errorMessage = "only Freelancer or Customer User Type"
+        break;
+      }
     }
-    let _account: Map<FormInput, ValueWithError> = account;
-    _account.set(key, { value: value, error: _account.get(key)?.error });
-    setAccount(_account);
+    setAccountValue(key,value, isError ? errorMessage : undefined);
   };
-  const isValid = (key: FormInput) =>
-    typeof account.get(key)?.error === "string";
+  const setAccountValue = (key:FormInput, value:String | undefined, error?:String) => {
+    let _account: AccountRegsiterState = account;
+    _account[key] = { value: value, error: error ? _account[key]?.error : undefined };
+    setAccount((account) => Object.assign({},account,{[key]:{value:value,error:error}}));
+  }
   return (
     <Box
       sx={{
@@ -132,58 +148,61 @@ const signup = () => {
       }}
     >
       <Navbar signUp={false} />
+        value {account.U?.error}
       <FormWrapper method="POST">
         <TitleText>SIGN UP</TitleText>
         <TextField
-          error={isValid("U")}
-          onChange={(e) => handleChange("U", e)}
+          id="U"
+          error={account.U?.error !== undefined}
+          helperText={account.U?.error}
           variant="outlined"
           placeholder="Username"
-          helperText={account.get("U")?.error}
         />
         <TextField
-          error={isValid("F_N")}
-          onChange={(e) => handleChange("F_N", e)}
+          id="F_N"
+          error={account.F_N?.error !== undefined}
+          helperText={account.F_N?.error}
           variant="outlined"
           placeholder="First Name"
-          helperText={account.get("F_N")?.error}
         />
         <TextField
-          error={isValid("L_N")}
-          onChange={(e) => handleChange("L_N", e)}
+          id="L_N"
+          error={account.L_N?.error !== undefined}
           variant="outlined"
           placeholder="Last Name"
-          helperText={account.get("L_N")?.error}
+          helperText={account.L_N?.error}
         />
         <TextField
-          error={isValid("P")}
-          onChange={(e) => handleChange("P", e)}
+          id="P"
+          type={"password"}
+          error={account.P?.error !== undefined}
+          helperText={account.P?.error}
           variant="outlined"
           placeholder="Password"
-          helperText={account.get("P")?.error}
         />
         <TextField
-          error={isValid("E")}
-          onChange={(e) => handleChange("E", e)}
+          id="E"
+          type={"email"}
+          error={account.E?.error !== undefined}
           variant="outlined"
           placeholder="Email"
-          helperText={account.get("E")?.error}
+          helperText={account.E?.error}
         />
         <TextField
-          error={isValid("P_N")}
-          onChange={(e) => handleChange("P_N", e)}
+          id="P_N"
+          error={account.P_N?.error !== undefined}
           variant="outlined"
           placeholder="Phone Nmber"
-          helperText={account.get("P_N")?.error}
+          helperText={account.P_N?.error}
         />
-        <FormControl sx={{ p: "14px" }} error={isValid("U_T")}>
-          <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
+        <FormControl sx={{ p: "14px" }} error={account.U_T?.error !== undefined}>
+          <FormLabel id="demo-row-radio-buttons-group-label">User Type</FormLabel>
           <RadioGroup
             row
             defaultValue="CUSTOMER"
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"
-            onChange={(e) => handleChange("U_T", e)}
+            id="U_T"
             aria-required
           >
             <FormControlLabel

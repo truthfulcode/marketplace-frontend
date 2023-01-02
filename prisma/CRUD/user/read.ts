@@ -9,6 +9,7 @@ export async function isValidUsername(username: string) {
     return result != null;
   
 }
+// returns null when if email is not found
 export async function isValidEmail(email: string) {
   let result = await prisma.account.findFirst({
     where: {
@@ -17,6 +18,7 @@ export async function isValidEmail(email: string) {
   });
   return result != null;
 }
+// returns null when if username or email is not found
 export async function isValidUsernameOrEmail(username:string,email: string) {
     let result = await prisma.account.findFirst({
       where: {
@@ -25,6 +27,7 @@ export async function isValidUsernameOrEmail(username:string,email: string) {
     });
     return result != null;
   }
+// returns null when username is not found
 export async function getUserByUsername(username: string) {
     let result = await prisma.account.findFirst({
       where: {
@@ -34,10 +37,23 @@ export async function getUserByUsername(username: string) {
     return result;
  
 }
+// returns null when email is not found
 export async function getUserByEmail(email: string) {
     let result = await prisma.account.findFirst({
       where: {
         email: email,
+      },
+    });
+    return result;
+}
+// returns null when not found user
+export async function authenticateUser(emailOrUsername : string, password : string){
+    let isEmail = emailOrUsername.includes("@");
+    let result = await prisma.account.findFirst({
+      where: isEmail ? {
+        email: emailOrUsername,
+      } : {
+        username: emailOrUsername,
       },
     });
     return result;
