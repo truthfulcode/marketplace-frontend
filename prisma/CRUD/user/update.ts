@@ -2,8 +2,17 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import express, { Request, Response } from 'express';
 import { MongoClient, Db } from 'mongodb';
 export default function handler(req:NextApiRequest, res:NextApiResponse){
-    
 }
+
+export const connectDatabase = async () => {
+  const client = new MongoClient(URL);
+  await client.connect();
+  const db = client.db('main');
+
+  return {
+    listings: db.collection('test-listings'),
+  };
+};
 
 const app = express();
 const mongoUrl = 'mongodb://localhost:27017';
