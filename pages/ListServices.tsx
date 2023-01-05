@@ -8,12 +8,19 @@ import CustomForm from '../components/CustomForm'
 
 
 const ListServices = () => {
+    
+
+
+
+
+
+
     return(
     <Container>
         <Navbar />
         <Box sx={{...styles.center,...styles.header,
         }}>
-           <CustomForm>
+           <CustomForm >
            <TitleText>Add new listings</TitleText>
            <TextField placeholder='Service Name'></TextField>
            <TextField placeholder='Service category'></TextField>

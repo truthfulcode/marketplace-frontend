@@ -36,7 +36,6 @@ const proposals = () => {
                 </Grid>
                   <Grid item xs={8} md={3} >
                   <Listcard
-                  
                   service='UI/UX'
                 description='we offer the best freelancers for interfce design and development'
                 
