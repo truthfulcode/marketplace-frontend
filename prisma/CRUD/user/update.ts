@@ -5,7 +5,7 @@ export default function handler(req:NextApiRequest, res:NextApiResponse){
 }
 
 export const connectDatabase = async () => {
-  const client = new MongoClient(URL);
+  const client = new MongoClient(mongoUrl);
   await client.connect();
   const db = client.db('main');
 
