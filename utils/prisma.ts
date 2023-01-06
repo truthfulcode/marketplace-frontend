@@ -1,10 +1,15 @@
+import { BinaryLike, createHash } from "crypto"
 
-import { PrismaClient } from "@prisma/client"
+export const sha512 = (data:String) => {
+    return createHash("sha512").update(data as BinaryLike).digest('hex')
+} 
+export const isString = (input:any) => typeof input == "string" 
 
-declare global {
-    var prisma: PrismaClient | undefined
-}
-
-export const prisma = global.prisma || new PrismaClient()
-
-if (process.env.NODE_ENV !== 'production') global.prisma = prisma
+export const onlyString = (input: String) =>
+    input.toLowerCase().match(/^[a-zA-Z]+$/) !== null;
+export const validEmail = (email: String) =>
+    email
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      ) === null;

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from "react";
 import { Box,Typography , Grid, TextField, styled} from '@mui/material'
 import Navbar from '../components/Navbar'
 import Listcard from '../components/Listcard'
@@ -31,7 +31,7 @@ const freelancerList = () => {
                 </Grid>
                 <Grid item xs={8} md={3}>
                     <Listcard  service='UI/UX'
-                description='we offer the best freelancers for interfce design and development'
+                        description='we offer the best freelancers for interfce design and development'
                 />
                 </Grid>
                 <Grid item xs={8} md={3}>
