@@ -22,7 +22,7 @@ model Account {
   customer    Customer?     @relation("customerAccount")
 
   compoundId         String    @unique @map(name: "compound_id")
-  userId             Int       @map(name: "user_id")
+  // userId             Int       @map(name: "user_id")
   providerType       String    @map(name: "provider_type")
   providerId         String    @map(name: "provider_id")
   providerAccountId  String    @map(name: "provider_account_id")
@@ -36,7 +36,6 @@ model Account {
 
   @@index([providerAccountId], name: "providerAccountId")
   @@index([providerId], name: "providerId")
-  @@index([userId], name: "userId")
   @@map(name: "accounts")
 }
 
