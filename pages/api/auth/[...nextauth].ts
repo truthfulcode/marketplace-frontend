@@ -12,6 +12,8 @@ import { TransactionType } from "../../../utils/types";
 
 const options: NextAuthOptions = {
   debug: true,
+const options: NextAuthOptions = {
+  debug: true,
   providers: [
     // EmailProvider({
     //   server: {

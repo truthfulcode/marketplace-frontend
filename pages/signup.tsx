@@ -28,8 +28,12 @@ import { calculateSizeAdjustValues } from "next/dist/server/font-utils";
 
 const signup = () => {
   const [account, setAccount] = useState<AccountRegsiterState>({E:undefined,F_N:undefined,L_N:undefined,P:undefined,P_N:undefined,U:undefined,U_T:{value:undefined, error:undefined}});
+  const [account, setAccount] = useState<AccountRegsiterState>({E:undefined,F_N:undefined,L_N:undefined,P:undefined,P_N:undefined,U:undefined,U_T:{value:undefined, error:undefined}});
   const router = useRouter();
   useEffect(()=>{
+    setAccountValue("U_T","CUSTOMER");
+    console.log("user type",account.U_T?.value)
+  },[])
     setAccountValue("U_T","CUSTOMER");
     console.log("user type",account.U_T?.value)
   },[])
@@ -45,11 +49,23 @@ const signup = () => {
         return "FREELANCER"
       }
     }
+    if((document.getElementById(id) as HTMLInputElement)) return (document.getElementById(id) as HTMLInputElement).value;
+    else {
+      console.log("val1",(document.getElementById("U_T_F") as HTMLInputElement).checked)
+      console.log("val1",(document.getElementById("U_T_C") as HTMLInputElement).checked)
+      if((document.getElementById("U_T_F") as HTMLInputElement).value){
+        return "FREELANCER"
+      }else if((document.getElementById("U_T_C") as HTMLInputElement).value){
+        return "FREELANCER"
+      }
+    }
   }
+  const verifyInputs = () => {
   const verifyInputs = () => {
     let isFound = false;
     login_keys.map((key) => {
       var value = getValueById(key); // setValue
+      checkValidity(key,value ? value : "")
       checkValidity(key,value ? value : "")
       let error = account[key]?.error
       if (!value || value.length === 0) {
@@ -64,7 +80,12 @@ const signup = () => {
   }
   const createUser = async () => {
     let isFound = verifyInputs();
+    return isFound;
+  }
+  const createUser = async () => {
+    let isFound = verifyInputs();
     if (isFound) return;
+    const _account: Account = {      
     const _account: Account = {      
       id: "",
       username: account.U?.value as string,
@@ -100,11 +121,13 @@ const signup = () => {
       } else {
         const message = await response.json();
         console.log("ERROR");
+        console.log("ERROR");
         console.log("response", message);
       }
     } catch (err) {}
   };
   
+  const checkValidity = (
   const checkValidity = (
     key: FormInput,
     value: string
@@ -125,9 +148,13 @@ const signup = () => {
       case "F_N": {
         isError = !onlyString(value)
         if(isError) errorMessage = "input should only be characters"
+        isError = !onlyString(value)
+        if(isError) errorMessage = "input should only be characters"
         break;
       }
       case "L_N": {
+        isError = !onlyString(value)
+        if(isError) errorMessage = "input should only be characters"
         isError = !onlyString(value)
         if(isError) errorMessage = "input should only be characters"
         break;
@@ -157,6 +184,10 @@ const signup = () => {
     let _account: AccountRegsiterState = account;
     setAccount((account) => Object.assign({},account,{[key]:{value:value,error:_account[key]?.error}}));
   }
+  const setAccountValueOnly = (key:FormInput, value:String | undefined) => {
+    let _account: AccountRegsiterState = account;
+    setAccount((account) => Object.assign({},account,{[key]:{value:value,error:_account[key]?.error}}));
+  }
   return (
     <Box
       sx={{
@@ -169,6 +200,7 @@ const signup = () => {
       }}
     >
       <Navbar signUp={false} />
+      <FormWrapper method="POST" onSubmit={()=>{}}>
       <FormWrapper method="POST" onSubmit={()=>{}}>
         <TitleText>SIGN UP</TitleText>
         <TextField
@@ -196,6 +228,7 @@ const signup = () => {
           id="P"
           type={"password"}
           onChange={(e)=>{setAccountValueOnly("P",e.target.value)}}
+          onChange={(e)=>{setAccountValueOnly("P",e.target.value)}}
           error={account.P?.error !== undefined}
           helperText={account.P?.error}
           variant="outlined"
@@ -218,6 +251,7 @@ const signup = () => {
         />
         <FormControl sx={{ p: "14px" }} error={account.U_T?.error !== undefined}>
           <FormLabel id="demo-row-radio-buttons-group-label" >User Type</FormLabel>
+          <FormLabel id="demo-row-radio-buttons-group-label" >User Type</FormLabel>
           <RadioGroup
             row
             defaultValue="CUSTOMER"
@@ -226,6 +260,7 @@ const signup = () => {
             aria-required
           >
             <FormControlLabel
+              
               
               value="CUSTOMER"
               control={<Radio id="U_T_C" />}

@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 export const sha512 = (data:String) => {
     return createHash("sha512").update(data as BinaryLike).digest('hex')
 }
+
 export const isString = (input:any) => typeof input == "string" 
 
 export const onlyString = (input: String) =>
