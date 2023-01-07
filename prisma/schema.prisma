@@ -68,6 +68,7 @@ model Proposal{
     title String
     description String
     duration Int
+    price Float
     status ProposalStatus
     listing Listing @relation(fields:[id],references: [id])
     proposalAuthor Freelancer @relation(fields:[id],references: [id])

@@ -7,7 +7,7 @@ const proposalSchema = new Schema({
     title:String,
     description:String,
     duration:Number,
-    pricing:Number,
+    price:Number,
     status:ProposalStatus
 })
 export default mongoose.model("Proposal",proposalSchema);
