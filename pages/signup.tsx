@@ -76,7 +76,7 @@ const signup = () => {
       accountType: account.U_T?.value as AccountType,
       accessToken:"",
       accessTokenExpires:new Date(0),
-      compoundId:"",
+      // compoundId:"",
       createdAt:new Date(0),
       emailVerified:new Date(0),
       providerAccountId:"",
@@ -118,7 +118,7 @@ const signup = () => {
         break;
       }
       case "E": {
-        isError = validEmail(value)
+        isError = !validEmail(value)
         if(isError) errorMessage = "Invalid Email Format";
         break;
       }

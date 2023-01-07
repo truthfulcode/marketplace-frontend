@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../utils/prisma";
-import { validEmail } from "../../../utils/helpers";
+import { sha512, validEmail } from "../../../utils/helpers";
 export async function isValidUsername(username: string) {
   let result = await prisma.account.findFirst({
     where: {
@@ -29,14 +29,22 @@ export async function isValidUsernameOrEmail(username: string, email: string) {
 }
 // returns null when if username or email is not found
 export async function getUser(input: string, password:string) {
-  let result = await prisma.account.findFirst({
-    where: { [validEmail(input) ? "email" : "username"]: input, password:password },
-  });
-  return result;
+  console.log(input,password,validEmail(input))
+  let res
+  if(validEmail(input)){
+    res = await prisma.account.findUnique({
+      where: { email : input},
+    })
+  }else{
+    res = await prisma.account.findUnique({
+      where: { username : input},
+    })
+  }
+  return res && res.password === sha512(password) ? res : null;    
 }
 // returns null when username is not found
 export async function getUserByUsername(username: string) {
-  let result = await prisma.account.findFirst({
+  let result = await prisma.account.findUnique({
     where: {
       username: username,
     },
@@ -45,7 +53,7 @@ export async function getUserByUsername(username: string) {
 }
 // returns null when email is not found
 export async function getUserByEmail(email: string) {
-  let result = await prisma.account.findFirst({
+  let result = await prisma.account.findUnique({
     where: {
       email: email,
     },

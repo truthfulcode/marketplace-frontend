@@ -24,21 +24,27 @@ const signIn = () => {
     formState: { errors, isSubmitting },
   } = useForm();
   const { data: session, status } = useSession();
-  let defaultBody = {
-    // grant_type: "",
-    username: "asdf@gmail.com",
-    password: "asdf",
-    // scope: "",
-    // client_id: "",
-    // client_secret: "",
-  };
   const onSubmit = async (values:Object) => {
+    let _u = username?.value 
+    let _p = password?.value
+    let defaultBody = {
+      // grant_type: "",
+      username: _u ? _u : "asdf@gmail.com",
+      password: _p ? _p : "asdf",
+      // scope: "",
+      // client_id: "",
+      // client_secret: "",
+    };
     try{
-      const body = { ...defaultBody, ...values };
+      const body = { ...defaultBody };
       console.log(`POSTing ${JSON.stringify(body, null, 2)}`);
+      console.log("object submitted",{
+        ...body,
+        callbackUrl: router.query.callbackUrl,
+      })
       let res = await signIN("credentials", {
         ...body,
-        callbackUrl: router.query.callbackUrl?.at(0),
+        callbackUrl: router.query.callbackUrl as string,
       });
       console.log(`signing:onsubmit:res`, res);
     }catch(err){
@@ -56,45 +62,31 @@ const signIn = () => {
     isUser:boolean,
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    console.log("session",session)
     let isError = false;
     let errorMessage;
     let value = event.target.value;
-    if(typeof username === "string"){
-      if(validEmail(username)){
-        isError = validEmail(value)
-        if(isError) errorMessage = "Invalid Email Format";
+    if(isUser){
+      // email
+      if(validEmail(value)){
+        // isError = !validEmail(value)
+        // if(isError) errorMessage = "Invalid Email Format";
       }else{
         isError = value.length < 8
         if(isError) errorMessage = "length must be greater or equal to 8"
       }
       setUsername({value:value, error: errorMessage ? errorMessage : undefined});
-    } else if(typeof password === "string"){
+    } else{
       setPassword({value:value, error: errorMessage ? errorMessage : undefined});
     }
   };
-
-  // const signIn = () => {
-  //   const [username, setUsername] = useState<ValueWithError>();
-  //   const [password, setPassword] = useState<ValueWithError>();
-  //   const handleUsernameChange = (
-  //     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  //   ) => {
-  //     let isError = false;
-  //     let errorMessage;
-  //     let value = event.target.value;
-  //     if(typeof username === "string"){
-  //       if(validEmail(username)){
-  //         isError = validEmail(value)
-  //         if(isError) errorMessage = "Invalid Email Format";
-  //       }else{
-  //         isError = value.length < 8
-  //         if(isError) errorMessage = "length must be greater or equal to 8"
-  //       }
-  //     }
-  //     setUsername({value:value, error: errorMessage ? errorMessage : undefined});
-  //   };
+  // if (status === "authenticated") {
+  //   router.push("/", {
+  //     query: {
+  //       callbackUrl: router.query.callbackUrl,
+  //     },
+  //   });
   // }
-  const signOut = () =>{}
   return (
     <Box
       sx={{
@@ -105,6 +97,7 @@ const signIn = () => {
     >
       <Navbar signIn={false} />
       <FormWrapper method="POST" onSubmit={handleSubmit(onSubmit)}>
+        {session +  " " +status}
         <TitleText>SIGN IN</TitleText>
         <TextField
           error={isString(username)}
@@ -121,7 +114,12 @@ const signIn = () => {
           type="password"
           placeholder="Password"
         />
-        <SubmitButton>SIGN IN</SubmitButton>
+        <SubmitButton onClick={handleSubmit(onSubmit)}>SIGN IN</SubmitButton>
+        <SubmitButton onClick={async()=>{
+          await signOUT({
+            callbackUrl: router.query.callbackUrl as string,
+          });
+        }}>SIGN OUT</SubmitButton>
       </FormWrapper>
     </Box>
   );

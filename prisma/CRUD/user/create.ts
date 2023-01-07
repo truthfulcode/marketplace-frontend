@@ -16,19 +16,18 @@ export default async function createUser(obj:Account) {
     if (typeof username !== "string") throw Error('invalid username')
     if(password.length != 128) throw Error("invalid password");
         if(await isValidUsernameOrEmail(username,email)) throw Error("invalid username or email")
-        await prisma.customer.create({data:{
-            account:{
-                create:{
-                    username:username,
+        await prisma.account.create({data:{
+            username:username,
                     password:password,
                     phoneNumber:phoneNumber,
                     firstName:firstName,
                     lastName:lastName,
                     email:email,
                     accountType: accountType,
-                    compoundId:"", providerType:"", providerId:"", providerAccountId:""
-                }
-            },
+                    providerType:"", 
+                    providerId:"", 
+                    providerAccountId:""
+                    // compoundId:"", 
         }})
     
     

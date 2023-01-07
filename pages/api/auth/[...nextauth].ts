@@ -2,12 +2,13 @@ import { NextApiHandler } from "next";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import Providers from "next-auth/providers";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import {prisma} from "../../../utils/prisma";
+import { prisma } from "../../../utils/prisma";
 // import { logger } from "../../../lib/logger";
 import GitHubProvider from "next-auth/providers/github";
 import EmailProvider from "next-auth/providers/email";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { getUser } from "../../../prisma/CRUD/user/read";
+import { TransactionType } from "../../../utils/types";
 
 const options: NextAuthOptions = {
   debug: true,
@@ -42,17 +43,18 @@ const options: NextAuthOptions = {
       // },
       credentials: {
         username: { label: "Username", type: "text", placeholder: "jsmith" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       authorize: async (credentials, req) => {
-          const user = await getUser(credentials?.username ? credentials.username : "", credentials?.password ? credentials.password : "")
-          .catch((err) => {
-            return null;
-          });
-
-        if (user) {
-          return user;
-        } else {
+        try {
+          let user = await getUser(
+            credentials?.username ? credentials.username : "",
+            credentials?.password ? credentials.password : ""
+          )
+          console.log(user);
+          return user ? user : null;
+        } catch (err) {
+          console.log("err", err);
           return null;
         }
       },
@@ -60,24 +62,24 @@ const options: NextAuthOptions = {
   ],
   // pages
   pages: {
-    signIn: "/auth/signin",
-    signOut: "/auth/signout",
+    signIn: "/signin",
+    // signOut: "/signout",
   },
   adapter: PrismaAdapter(prisma),
   secret: process.env.SECRET,
   logger: {
     error: (code, metadata) => {
-      console.error(code, metadata)
+      console.error(code, metadata);
       // logger.error();
     },
     warn: (code) => {
-      console.error(code)
+      console.error(code);
     },
     debug: (code, metadata) => {
-      console.error(code, metadata)
+      console.error(code, metadata);
     },
   },
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60, // 30 days },
   // // callbacks
   // callbacks: {
   //   signIn: async ({
@@ -87,50 +89,53 @@ const options: NextAuthOptions = {
   //     email,
   //     credentials,
   //   }) => {
-  //     logger.debug(`signIn:user`, user, "\n\n");
-  //     logger.debug(`signIn:account`, account, "\n\n");
-  //     logger.debug(`signIn:profile`, profile, "\n\n");
+  //     console.debug(`signIn:user`, user, "\n\n");
+  //     console.debug(`signIn:account`, account, "\n\n");
+  //     console.debug(`signIn:profile`, profile, "\n\n");
   //     return true;
   //   },
   // redirect: async ({ url, baseUrl }): Promise<any> => {
-  //   logger.debug(`url, baseUrl`, url, baseUrl);
+  //   console.debug(`url, baseUrl`, url, baseUrl);
   //   const params = new URLSearchParams(new URL(url).search);
   //   const callbackUrl = params.get("callbackUrl");
   //   if (url.startsWith(baseUrl)) {
   //     if (callbackUrl?.startsWith("/")) {
-  //       logger.debug("redirecting to", baseUrl + callbackUrl);
+  //       console.debug("redirecting to", baseUrl + callbackUrl);
   //       return baseUrl + callbackUrl;
   //     } else if (callbackUrl?.startsWith(baseUrl)) {
-  //       logger.debug("redirecting to", callbackUrl);
+  //       console.debug("redirecting to", callbackUrl);
   //       return callbackUrl;
   //     }
   //   } else {
-  //     logger.debug("redirecting to", baseUrl);
+  //     console.debug("redirecting to", baseUrl);
   //     return Promise.resolve(baseUrl);
   //   }
   //   // return Promise.resolve(url.startsWith(baseUrl) ? url : baseUrl);
   // },
   //   // Getting the JWT token from API response
   //   jwt: async ({ token, user, account, profile, isNewUser }) => {
-  //     logger.debug(`jwt:token`, token, "\n\n");
-  //     logger.debug(`jwt:user`, user, "\n\n");
-  //     logger.debug(`jwt:account`, account, "\n\n");
+  //     console.debug(`jwt:token`, token, "\n\n");
+  //     console.debug(`jwt:user`, user, "\n\n");
+  //     console.debug(`jwt:account`, account, "\n\n");
   //     const isSigningIn = user ? true : false;
   //     if (isSigningIn) {
+  //     //@ts-ignore
   //       token.jwt = user.access_token;
   //       token.user = user;
   //     } else {
-  //       logger.debug(`jwt:isSignIn: user is not logged in`, "\n\n");
+  //       console.debug(`jwt:isSignIn: user is not logged in`, "\n\n");
   //     }
-  //     logger.debug(`resolving token`, token, "\n\n");
+  //     console.debug(`resolving token`, token, "\n\n");
   //     return Promise.resolve(token);
   //   },
   //   session: async ({ session, token }) => {
-  //     logger.debug(`session:session`, session, "\n\n");
-  //     logger.debug(`session:token`, token, "\n\n");
+  //     console.debug(`session:session`, session, "\n\n");
+  //     console.debug(`session:token`, token, "\n\n");
+  //     //@ts-ignore
   //     session.jwt = token.jwt;
+  //     //@ts-ignore
   //     session.user = token.user;
-  //     logger.debug(`resolving session`, session, "\n\n");
+  //     console.debug(`resolving session`, session, "\n\n");
   //     return Promise.resolve(session);
   //   },
   // },
@@ -151,9 +156,7 @@ const options: NextAuthOptions = {
   //   // Use it to limit write operations. Set to 0 to always update the database.
   //   // Note: This option is ignored if using JSON Web Tokens
   //   updateAge: 24 * 60 * 60, // 24 hours
-  // },
-};
-
-const authHandler: NextApiHandler = (req, res) =>
-  NextAuth(req, res, options);
+}
+}
+const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
 export default authHandler;

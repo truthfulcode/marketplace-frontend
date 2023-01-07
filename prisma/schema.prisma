@@ -21,7 +21,7 @@ model Account {
   freelancer  Freelancer?   @relation("freelancerAccount")
   customer    Customer?     @relation("customerAccount")
 
-  compoundId         String    @unique @map(name: "compound_id")
+  // compoundId         String    @unique @map(name: "compound_id")
   // userId             Int       @map(name: "user_id")
   providerType       String    @map(name: "provider_type")
   providerId         String    @map(name: "provider_id")
@@ -37,7 +37,7 @@ model Account {
   @@index([providerAccountId], name: "providerAccountId")
   @@index([providerId], name: "providerId")
   // @@index([userId], name: "userId")
-  @@map(name: "accounts")
+  @@map(name: "account")
 }
 
 model Session {
@@ -50,7 +50,7 @@ model Session {
   updatedAt    DateTime @default(now()) @map(name: "updated_at")
   account      Account  @relation(fields: [id], references: [id])
 
-  @@map(name: "sessions")
+  @@map(name: "session")
 }
 
 model VerificationRequest {
