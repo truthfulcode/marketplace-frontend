@@ -25,7 +25,8 @@ export default async function createUser(obj:Account) {
                     firstName:firstName,
                     lastName:lastName,
                     email:email,
-                    accountType: accountType
+                    accountType: accountType,
+                    compoundId:"", providerType:"", providerId:"", providerAccountId:""
                 }
             },
         }})

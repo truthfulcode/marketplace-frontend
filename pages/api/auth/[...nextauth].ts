@@ -1,109 +1,159 @@
-import NextAuth, { Theme } from "next-auth"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import EmailProvider, { SendVerificationRequestParams } from "next-auth/providers/email";
-import {prisma} from "../../../utils/prisma"
-import { createTransport } from "nodemailer"
-export const authOptions = {
-  // Configure one or more authentication providers
+import { NextApiHandler } from "next";
+import NextAuth, { NextAuthOptions } from "next-auth";
+import Providers from "next-auth/providers";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import {prisma} from "../../../utils/prisma";
+// import { logger } from "../../../lib/logger";
+import GitHubProvider from "next-auth/providers/github";
+import EmailProvider from "next-auth/providers/email";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { getUser } from "../../../prisma/CRUD/user/read";
 
-  adapter:PrismaAdapter(prisma),
-  secret: process.env.SECRET,
+const options: NextAuthOptions = {
+  debug: true,
   providers: [
-    EmailProvider({
-        server: {
-          host: process.env.EMAIL_SERVER_HOST,
-          port: (process.env.EMAIL_SERVER_PORT as unknown) as number,
-          auth: {
-            user: process.env.EMAIL_SERVER_USER,
-            pass: process.env.EMAIL_SERVER_PASSWORD
-          }
-        },
-        from: process.env.EMAIL_FROM,
+    // EmailProvider({
+    //   server: {
+    //     host: process.env.SMTP_HOST,
+    //     port: Number(process.env.SMTP_PORT),
+    //     auth: {
+    //       user: process.env.SMTP_USER,
+    //       pass: process.env.SMTP_PASSWORD,
+    //     },
+    //   },
+    //   from: process.env.EMAIL_FROM,
+    // }),
+    CredentialsProvider({
+      // The name to display on the sign in form (e.g. 'Sign in with...')
+      id: "credentials",
+      name: "credentials",
+      // The credentials is used to generate a suitable form on the sign in page.
+      // You can specify whatever fields you are expecting to be submitted.
+      // e.g. domain, username, password, 2FA token, etc.
+      // You can pass any HTML attribute to the <input> tag through the object.
 
-        sendVerificationRequest(params) {
-            sendVerificationRequest(params)
-        },
-      }),
-    // ...add more providers here
+      // credentials: {
+      //   username: {
+      //     label: "Username",
+      //     type: "text",
+      //     placeholder: "jsmith",
+      //   },
+      //   password: { label: "Password", type: "password" },
+      // },
+      credentials: {
+        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        password: { label: "Password", type: "password" }
+      },
+      authorize: async (credentials, req) => {
+          const user = await getUser(credentials?.username ? credentials.username : "", credentials?.password ? credentials.password : "")
+          .catch((err) => {
+            return null;
+          });
+
+        if (user) {
+          return user;
+        } else {
+          return null;
+        }
+      },
+    }),
   ],
-}
-export default NextAuth(authOptions)
+  // pages
+  pages: {
+    signIn: "/auth/signin",
+    signOut: "/auth/signout",
+  },
+  adapter: PrismaAdapter(prisma),
+  secret: process.env.SECRET,
+  logger: {
+    error: (code, metadata) => {
+      console.error(code, metadata)
+      // logger.error();
+    },
+    warn: (code) => {
+      console.error(code)
+    },
+    debug: (code, metadata) => {
+      console.error(code, metadata)
+    },
+  },
+  session: { strategy: "jwt" },
+  // // callbacks
+  // callbacks: {
+  //   signIn: async ({
+  //     user,
+  //     account,
+  //     profile,
+  //     email,
+  //     credentials,
+  //   }) => {
+  //     logger.debug(`signIn:user`, user, "\n\n");
+  //     logger.debug(`signIn:account`, account, "\n\n");
+  //     logger.debug(`signIn:profile`, profile, "\n\n");
+  //     return true;
+  //   },
+  // redirect: async ({ url, baseUrl }): Promise<any> => {
+  //   logger.debug(`url, baseUrl`, url, baseUrl);
+  //   const params = new URLSearchParams(new URL(url).search);
+  //   const callbackUrl = params.get("callbackUrl");
+  //   if (url.startsWith(baseUrl)) {
+  //     if (callbackUrl?.startsWith("/")) {
+  //       logger.debug("redirecting to", baseUrl + callbackUrl);
+  //       return baseUrl + callbackUrl;
+  //     } else if (callbackUrl?.startsWith(baseUrl)) {
+  //       logger.debug("redirecting to", callbackUrl);
+  //       return callbackUrl;
+  //     }
+  //   } else {
+  //     logger.debug("redirecting to", baseUrl);
+  //     return Promise.resolve(baseUrl);
+  //   }
+  //   // return Promise.resolve(url.startsWith(baseUrl) ? url : baseUrl);
+  // },
+  //   // Getting the JWT token from API response
+  //   jwt: async ({ token, user, account, profile, isNewUser }) => {
+  //     logger.debug(`jwt:token`, token, "\n\n");
+  //     logger.debug(`jwt:user`, user, "\n\n");
+  //     logger.debug(`jwt:account`, account, "\n\n");
+  //     const isSigningIn = user ? true : false;
+  //     if (isSigningIn) {
+  //       token.jwt = user.access_token;
+  //       token.user = user;
+  //     } else {
+  //       logger.debug(`jwt:isSignIn: user is not logged in`, "\n\n");
+  //     }
+  //     logger.debug(`resolving token`, token, "\n\n");
+  //     return Promise.resolve(token);
+  //   },
+  //   session: async ({ session, token }) => {
+  //     logger.debug(`session:session`, session, "\n\n");
+  //     logger.debug(`session:token`, token, "\n\n");
+  //     session.jwt = token.jwt;
+  //     session.user = token.user;
+  //     logger.debug(`resolving session`, session, "\n\n");
+  //     return Promise.resolve(session);
+  //   },
+  // },
+  // // session
+  // session: {
+  //   // Choose how you want to save the user session.
+  //   // The default is `"jwt"`, an encrypted JWT (JWE) in the session cookie.
+  //   // If you use an `adapter` however, we default it to `"database"` instead.
+  //   // You can still force a JWT session by explicitly defining `"jwt"`.
+  //   // When using `"database"`, the session cookie will only contain a `sessionToken` value,
+  //   // which is used to look up the session in the database.
+  //   strategy: "jwt",
 
-async function sendVerificationRequest(params:SendVerificationRequestParams) {
-  const { identifier, url, provider, theme } = params
-  const { host } = new URL(url)
-  // NOTE: You are not required to use `nodemailer`, use whatever you want.
-  const transport = createTransport(provider.server)
-  const result = await transport.sendMail({
-    to: identifier,
-    from: provider.from,
-    subject: `Sign in to ${host}`,
-    text: text({ url, host }),
-    html: html({ url, host, theme }),
-  })
-  const failed = result.rejected.concat(result.pending).filter(Boolean)
-  if (failed.length) {
-    throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`)
-  }
-}
+  //   // Seconds - How long until an idle session expires and is no longer valid.
+  //   maxAge: 30 * 24 * 60 * 60, // 30 days
 
-/**
- * Email HTML body
- * Insert invisible space into domains from being turned into a hyperlink by email
- * clients like Outlook and Apple mail, as this is confusing because it seems
- * like they are supposed to click on it to sign in.
- *
- * @note We don't add the email address to avoid needing to escape it, if you do, remember to sanitize it!
- */
-function html(params: { url: string; host: string; theme: Theme }) {
-  const { url, host, theme } = params
+  //   // Seconds - Throttle how frequently to write to database to extend a session.
+  //   // Use it to limit write operations. Set to 0 to always update the database.
+  //   // Note: This option is ignored if using JSON Web Tokens
+  //   updateAge: 24 * 60 * 60, // 24 hours
+  // },
+};
 
-  const escapedHost = host.replace(/\./g, "&#8203;.")
-
-  const brandColor = theme.brandColor || "#346df1"
-  const color = {
-    background: "#f9f9f9",
-    text: "#444",
-    mainBackground: "#fff",
-    buttonBackground: brandColor,
-    buttonBorder: brandColor,
-    buttonText: theme.buttonText || "#fff",
-  }
-
-  return `
-<body style="background: ${color.background};">
-  <table width="100%" border="0" cellspacing="20" cellpadding="0"
-    style="background: ${color.mainBackground}; max-width: 600px; margin: auto; border-radius: 10px;">
-    <tr>
-      <td align="center"
-        style="padding: 10px 0px; font-size: 22px; font-family: Helvetica, Arial, sans-serif; color: ${color.text};">
-        Sign in to <strong>${escapedHost}</strong>
-      </td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 20px 0;">
-        <table border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td align="center" style="border-radius: 5px;" bgcolor="${color.buttonBackground}"><a href="${url}"
-                target="_blank"
-                style="font-size: 18px; font-family: Helvetica, Arial, sans-serif; color: ${color.buttonText}; text-decoration: none; border-radius: 5px; padding: 10px 20px; border: 1px solid ${color.buttonBorder}; display: inline-block; font-weight: bold;">Sign
-                in</a></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td align="center"
-        style="padding: 0px 0px 10px 0px; font-size: 16px; line-height: 22px; font-family: Helvetica, Arial, sans-serif; color: ${color.text};">
-        If you did not request this email you can safely ignore it.
-      </td>
-    </tr>
-  </table>
-</body>
-`
-}
-
-/** Email Text body (fallback for email clients that don't render HTML, e.g. feature phones) */
-function text({ url, host }: { url: string; host: string }) {
-  return `Sign in to ${host}\n${url}\n\n`
-}
+const authHandler: NextApiHandler = (req, res) =>
+  NextAuth(req, res, options);
+export default authHandler;

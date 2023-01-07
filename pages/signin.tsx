@@ -10,14 +10,48 @@ import FormWrapper from "../components/FormWrapper";
 import { ValueWithError } from "../utils/types";
 import { isString, validEmail } from "../utils/helpers";
 import { useSession, signIn as signIN , signOut as signOUT } from "next-auth/react";
+import Router, { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
 
 const signIn = () => {
-  const session = useSession();
-  useEffect(()=>{
-    console.log("session",session)
-  })
   const [username, setUsername] = useState<ValueWithError>();
   const [password, setPassword] = useState<ValueWithError>();
+  let router = useRouter();
+  const {
+    handleSubmit,
+    register,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm();
+  const { data: session, status } = useSession();
+  let defaultBody = {
+    // grant_type: "",
+    username: "asdf@gmail.com",
+    password: "asdf",
+    // scope: "",
+    // client_id: "",
+    // client_secret: "",
+  };
+  const onSubmit = async (values:Object) => {
+    try{
+      const body = { ...defaultBody, ...values };
+      console.log(`POSTing ${JSON.stringify(body, null, 2)}`);
+      let res = await signIN("credentials", {
+        ...body,
+        callbackUrl: router.query.callbackUrl?.at(0),
+      });
+      console.log(`signing:onsubmit:res`, res);
+    }catch(err){
+      console.error(err);
+    }
+    if (status === "authenticated") {
+      router.push("/", {
+        query: {
+          callbackUrl: router.query.callbackUrl,
+        },
+      });
+  }}
+
   const handleChange = (
     isUser:boolean,
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -70,19 +104,7 @@ const signIn = () => {
       }}
     >
       <Navbar signIn={false} />
-      
-        <div>
-              Hello, {session.data?.user?.email ?? session.data?.user?.name} <br />
-              <button onClick={() => {signOUT()}}>Sign out</button>
-            </div>
-      
-            <div>
-              You are not logged in! <br />
-              <button onClick={() => signIN()}>Sign in</button>
-            </div>
-          
-      
-      <FormWrapper method="POST">
+      <FormWrapper method="POST" onSubmit={handleSubmit(onSubmit)}>
         <TitleText>SIGN IN</TitleText>
         <TextField
           error={isString(username)}
@@ -96,6 +118,7 @@ const signIn = () => {
           onChange={(e) => handleChange(false, e)}
           helperText={password?.error}
           variant="outlined"
+          type="password"
           placeholder="Password"
         />
         <SubmitButton>SIGN IN</SubmitButton>
