@@ -20,14 +20,23 @@ export default async function handler (req:NextApiRequest, res:NextApiResponse) 
                 const {username, firstName, lastName, email, password, phoneNumber, accountType} = req.body;
                 console.log("pass",password)
                 const account : Account = {
-                    id:"", // unused
-                    username:username,
-                    email:email,
-                    firstName:firstName,
-                    lastName:lastName,
-                    password:password,
-                    phoneNumber:phoneNumber,
-                    accountType:accountType,
+                    id: "",
+                    username: username,
+                    email: email,
+                    firstName: firstName,
+                    lastName: lastName,
+                    password: password,
+                    phoneNumber: phoneNumber,
+                    accountType: accountType,
+                    providerType: "",
+                    providerId: "",
+                    providerAccountId: "",
+                    refreshToken: null,
+                    accessToken: null,
+                    accessTokenExpires: null,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    emailVerified: null
                 }
                 const user = await createUser(account);
                 return res.json(user)

@@ -30,3 +30,7 @@ export enum TransactionStatus {COMPLETED,PENDING,FAILED}
 export enum TransactionType {DEPOSIT,WITHDRAW,PAYMENT,REFUND}
 export enum TokenType {DAI,USDT,USDC}
 export enum AccountType{ CUSTOMER, FREELANCER }
+
+export type AccountRegsiterState = {
+  [key in FormInput] : ValueWithError | undefined
+}
