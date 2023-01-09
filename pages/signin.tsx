@@ -12,8 +12,6 @@ import { isString, validEmail } from "../utils/helpers";
 import { useSession, signIn as signIN , signOut as signOUT } from "next-auth/react";
 import Router, { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import Router, { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
 
 const signIn = () => {
   const [username, setUsername] = useState<ValueWithError>();
@@ -113,7 +111,6 @@ const signIn = () => {
           onChange={(e) => handleChange(false, e)}
           helperText={password?.error}
           variant="outlined"
-          type="password"
           type="password"
           placeholder="Password"
         />
