@@ -56,7 +56,6 @@ const signup = () => {
     login_keys.map((key) => {
       var value = getValueById(key); // setValue
       checkValidity(key,value ? value : "")
-      checkValidity(key,value ? value : "")
       let error = account[key]?.error
       if (!value || value.length === 0) {
         // throw an error
