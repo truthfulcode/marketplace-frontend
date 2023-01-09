@@ -10,8 +10,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { getUser } from "../../../prisma/CRUD/user/read";
 import { TransactionType } from "../../../utils/types";
 
-const options: NextAuthOptions = {
-  debug: true,
+
 const options: NextAuthOptions = {
   debug: true,
   providers: [
