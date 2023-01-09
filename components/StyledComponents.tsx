@@ -93,8 +93,14 @@ export const styles = {
         font: "inherit",
         textAlign:"left",
         paddingBottom:16,
+    },
+    listingBox:{
+        height:"360px",
+        width:"285px",
+        marginBottom:"50px",
+        border: "1px solid #bfbfbf",
+        backgroundColor: "#e6e8e6"
     }
-
 }
 // custom components styling
 export const MainButton = styled(Button)({
