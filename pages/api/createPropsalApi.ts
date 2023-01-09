@@ -14,6 +14,7 @@ export default  async function handler(req: NextApiRequest,res: NextApiResponse)
                description,
                duration,
                status,
+               freelancerId:""
             },
         })
         res.status(200).json({message: 'notecreated'});
