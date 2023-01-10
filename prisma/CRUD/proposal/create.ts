@@ -18,5 +18,7 @@ export default async function createProposal(obj: Proposal) {
         freelancerId: "",
       },
     });
-  } catch (err) {}
+  } catch (err) {
+    console.log("faluire");
+  }
 }
