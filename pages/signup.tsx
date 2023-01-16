@@ -20,13 +20,18 @@ import {
 } from "../components/StyledComponents";
 import FormWrapper from "../components/FormWrapper";
 import { Account, AccountType } from "@prisma/client";
-import { isString, onlyString, sha512, validEmail } from "../utils/helpers";
+import { decrypt, encrypt, isString, onlyString, sha512, validEmail } from "../utils/helpers";
 import { login_keys } from "../utils/constants";
 import { AccountRegsiterState, FormInput, ValueWithError } from "../utils/types";
 import { useRouter } from "next/router";
 import { calculateSizeAdjustValues } from "next/dist/server/font-utils";
 
 const signup = () => {
+  useEffect(()=>{
+    let res = encrypt("HEX");
+    console.log("encrypted",res);
+    console.log("decrypted",decrypt(res));
+  },[])
   const [account, setAccount] = useState<AccountRegsiterState>({E:undefined,F_N:undefined,L_N:undefined,P:undefined,P_N:undefined,U:undefined,U_T:{value:undefined, error:undefined}});
   const router = useRouter();
   const getValueById = (id:string) =>{
@@ -37,7 +42,7 @@ const signup = () => {
       if((document.getElementById("U_T_F") as HTMLInputElement).value){
         return "FREELANCER"
       }else if((document.getElementById("U_T_C") as HTMLInputElement).value){
-        return "FREELANCER"
+        return "CUSTOMER"
       }
     }
     if((document.getElementById(id) as HTMLInputElement)) return (document.getElementById(id) as HTMLInputElement).value;
