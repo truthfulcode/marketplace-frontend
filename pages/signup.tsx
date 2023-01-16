@@ -37,7 +37,7 @@ const signup = () => {
       if((document.getElementById("U_T_F") as HTMLInputElement).value){
         return "FREELANCER"
       }else if((document.getElementById("U_T_C") as HTMLInputElement).value){
-        return "FREELANCER"
+        return "CUSTOMER"
       }
     }
     if((document.getElementById(id) as HTMLInputElement)) return (document.getElementById(id) as HTMLInputElement).value;
