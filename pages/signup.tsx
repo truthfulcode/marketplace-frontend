@@ -27,11 +27,6 @@ import { useRouter } from "next/router";
 import { calculateSizeAdjustValues } from "next/dist/server/font-utils";
 
 const signup = () => {
-  useEffect(()=>{
-    let res = encrypt("HEX");
-    console.log("encrypted",res);
-    console.log("decrypted",decrypt(res));
-  },[])
   const [account, setAccount] = useState<AccountRegsiterState>({E:undefined,F_N:undefined,L_N:undefined,P:undefined,P_N:undefined,U:undefined,U_T:{value:undefined, error:undefined}});
   const router = useRouter();
   const getValueById = (id:string) =>{

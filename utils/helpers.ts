@@ -1,6 +1,7 @@
 import { BinaryLike, createHash, randomBytes, createCipheriv, createDecipheriv } from "crypto";
 import { BigNumber, ethers } from "ethers";
 import abi from "./abi.json";
+import { EthereumAccount } from "./types";
 // Nodejs encryption with CTR
 const algorithm = 'aes-256-cbc';
 const key = randomBytes(32);
@@ -25,6 +26,11 @@ export const validEmail = (email: String) =>
 export const generatePK = () => {
   return ethers.Wallet.createRandom();
 };
+export const generateAndHashPK = () : EthereumAccount => {
+  const pk = generatePK();
+  const encryptedData = encrypt(pk.privateKey)
+  return {address:pk.address, encryptedData:encryptedData.encryptedData, iv:encryptedData.iv, balance:0}
+}
 interface Hash {
   iv:String;
   encryptedData:String
@@ -48,7 +54,7 @@ export const decrypt = (hash: Hash) => {
 };
 
 // for crypto library
-const provider = () => {
+export const provider = () => {
   return new ethers.providers.AlchemyProvider("goerli",process.env.GOERLI_TESTNET);
 }
 

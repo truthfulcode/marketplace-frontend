@@ -9,6 +9,7 @@ import {
   Input,
   List,
   ListItem,
+  ListItemText,
   Radio,
   RadioGroup,
   TextField,
@@ -25,37 +26,27 @@ const CryptoWithdrawal = () => {
   );
   return (
     <Box>
-      <Typography variant="h5">Balance : DAI: 0 | USDT: 0 | USDC: 0</Typography>
+      <Typography variant="h5">USDC Balance : 0</Typography>
       <Typography>
         Supported Crypto
         <List sx={{ ...styles.center }}>
-          {["DAI", "USDT", "USDC"].map((value, index) => (
-            <ListItem sx={{ ...styles.center }}>
+
+            <ListItem sx={{ ...styles.center, flexDirection:"column" }}>
               <Image
-                src={"/img/" + value + ".png"}
+                src={"/img/USDC.png"}
                 width={48}
                 height={48}
-                alt={value}
+                alt="USDC"
               />
+              <ListItemText>USDC</ListItemText>
             </ListItem>
-          ))}
+
         </List>
       </Typography>
       <Typography>Make sure to provide the right address, since transactions cannot be reverted!</Typography>
+      <br/>
       <Box sx={{ ...styles.center }}>
         <FormControl>
-          <RadioGroup
-            row
-            aria-labelledby="demo-row-radio-buttons-group-label"
-            name="row-radio-buttons-group"
-            sx={{
-                m:1
-            }}
-          >
-            <FormControlLabel defaultChecked value="DAI" control={<Radio />} label="DAI" />
-            <FormControlLabel value="USDT" control={<Radio />} label="USDT" />
-            <FormControlLabel value="USDC" control={<Radio />} label="USDC" />
-          </RadioGroup>
           <TextField label="ADDRESS" />
           <TextField label="AMOUNT" />
           <Button sx={{ ...styles.button }}>WITHDRAW</Button>

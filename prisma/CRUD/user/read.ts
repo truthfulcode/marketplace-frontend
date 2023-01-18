@@ -78,3 +78,34 @@ export async function authenticateUser(
   return result;
 }
 
+export async function isValidAddress(address: string) {
+  try {
+    let result = await prisma.ethereumAccount.findFirst({
+      where: {
+        address:address,
+      },
+    });
+    return result != null;
+  }catch(err){
+    console.log(err);
+    return false;
+  }
+}
+export async function isValidAddresses(addresses: string[]) {
+  try {
+    let result = await prisma.ethereumAccount.findMany({
+      where: {
+        address:{in:addresses},
+      },
+      select:{address:true}
+    })
+    let validAddresses: string[] = [];
+    result.map((val)=>{
+      validAddresses.push(val.address);
+    })
+    return validAddresses;
+  }catch(err){
+    console.log(err);
+    return false;
+  }
+}
