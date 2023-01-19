@@ -20,7 +20,7 @@ import {
 } from "../components/StyledComponents";
 import FormWrapper from "../components/FormWrapper";
 import { Account, AccountType } from "@prisma/client";
-import { decrypt, defaultAccount, encrypt, isString, onlyString, sha512, validEmail } from "../utils/helpers";
+import { defaultAccount, encrypt, isString, onlyString, sha512, validEmail } from "../utils/helpers";
 import { login_keys } from "../utils/constants";
 import { AccountRegsiterState, FormInput, ValueWithError } from "../utils/types";
 import { useRouter } from "next/router";

@@ -16,21 +16,17 @@ function formatRequestAddresses(addresses:string[]){
     return formatted;
 }
 
-async function processAddresses(addresses:string[], amounts:[]){
+async function addressDeposit(address:string, amount:string){
     //api/user?address=0x...
-    if(addresses.length !== amounts.length) throw Error("mismatch of addresses and amount size");
     // change later on, the base url
-    let arrStr = encodeURIComponent(JSON.stringify(formatRequestAddresses(addresses)))
-    await axios.get(`http://localhost:3000/api/user?addresses=${arrStr}`).then(async(res)=>{
+    await axios.put(`http://localhost:3000/api/user?address=${address}&amount=${amount}`,undefined,{headers:{key:process.env.DEPOSITS_KEY}}).then(async(res)=>{
         let state = res.data.state;
-        if(Array.isArray(state) && state.length > 0){
-            // call prisma to update the balance
-            await axios.put(`http://localhost:3000/api/user`,{addresses:[],amount:[]})
-        }
+        if(state) console.log(`credited ${address} ${amount} USDC`)
     }).catch((err)=>{
-        console.log(err)
+        console.log("error accured while crediting", err)
     })
 }
+
 function main() {
     const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_TESTNET);
     const contract = new ethers.Contract(process.env.TOKEN_ADDRESS as string, abi, provider);
@@ -41,13 +37,9 @@ function main() {
             value: value,
             eventData: event,
         }
-        // if(Number(value) >= 1e6 ) {
-
-        // }
-        // check for minimum of 1 USDC
-        // check `to` that it is among the receiver addresses
-        // await 
-        // credit 
+        if(Number(value) >= 1e6 ) {
+            await addressDeposit(to, value);
+        }
         console.log(JSON.stringify(transferEvent, null, 4))
     })
 }

@@ -2,7 +2,7 @@ import { prisma } from "../../../utils/prisma";
 import { getAddressId } from "./read";
 // check address existence then increment
 export async function incrementBalance(address: string, amount:number) {
-    await getAddressId(address).then(async(res)=>{
+    return await getAddressId(address).then(async(res)=>{
       let result = null;
       if(res){
         result = await prisma.ethereumAccount.update({

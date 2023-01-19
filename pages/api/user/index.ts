@@ -3,6 +3,8 @@ import { getUserByEmail, getUserByUsername, isValidAddress, isValidAddresses } f
 import { Account, Prisma } from '@prisma/client'
 import createUser from "../../../prisma/CRUD/user/create";
 import { incrementBalance } from "../../../prisma/CRUD/user/update";
+import { encrypt } from "../../../utils/helpers";
+import { RSC_MODULE_TYPES } from "next/dist/shared/lib/constants";
 export default async function handler (req:NextApiRequest, res:NextApiResponse) {
     try{
         switch(req.method){
@@ -52,26 +54,30 @@ export default async function handler (req:NextApiRequest, res:NextApiResponse) 
                 return res.json(user)
             }
             case 'PUT':{
+              if(req.headers.key === process.env.DEPOSITS_KEY){
                 if(req.query.addresses && req.query.amounts){
                     let addrstr : string = JSON.parse(req.query.addresses as string);
                     let amtstr : string = JSON.parse(req.query.amounts as string);
                     const addresses = (addrstr).split(",")
                     const amounts = (amtstr).split(",")
                     // ensure matching length
-                    let commands : Promise<void>[] = [];
+                    let commands : Promise<boolean>[] = [];
                     addresses.map((addr,index)=>commands.push(incrementBalance(addr,Number(amounts[index]))))
                     let result = await Promise.all(commands);
                     return res.status(200).json({state:result})
                   } else if(req.query.address && req.query.amount){
                     let addrstr : string = req.query.address as string;
                     let amtstr : Number = Number(req.query.amount);
-                    // ensure matching length
-                    let commands : Promise<boolean>[] = [];
+                    console.log("deposit", addrstr, amtstr)
                     await isValidAddress(addrstr).then(async(isValid)=>{
-                      let result = incrementBalance(addrstr, amtstr as number)
+                      let result = false;
+                      if(isValid) result = await incrementBalance(addrstr, amtstr as number)
                       return res.status(200).json({state:result})
                     })
                   }
+              }else{
+                return res.status(401).json({error:"unauthorized access"});
+              }
             }
             case 'DELETE':{
 
