@@ -30,7 +30,12 @@ export enum TransactionStatus {COMPLETED,PENDING,FAILED}
 export enum TransactionType {DEPOSIT,WITHDRAW,PAYMENT,REFUND}
 export enum TokenType {DAI,USDT,USDC}
 export enum AccountType{ CUSTOMER, FREELANCER }
-
+export type EthereumAccount = {
+  address:string,
+  iv:string,
+  encryptedData:string
+  balance : number // deposited amount
+}
 export type AccountRegsiterState = {
   [key in FormInput] : ValueWithError | undefined
 }
