@@ -58,10 +58,19 @@ export default async function handler (req:NextApiRequest, res:NextApiResponse) 
                     const addresses = (addrstr).split(",")
                     const amounts = (amtstr).split(",")
                     // ensure matching length
-                    let commands : Promise<boolean>[] = [];
+                    let commands : Promise<void>[] = [];
                     addresses.map((addr,index)=>commands.push(incrementBalance(addr,Number(amounts[index]))))
                     let result = await Promise.all(commands);
                     return res.status(200).json({state:result})
+                  } else if(req.query.address && req.query.amount){
+                    let addrstr : string = req.query.address as string;
+                    let amtstr : Number = Number(req.query.amount);
+                    // ensure matching length
+                    let commands : Promise<boolean>[] = [];
+                    await isValidAddress(addrstr).then(async(isValid)=>{
+                      let result = incrementBalance(addrstr, amtstr as number)
+                      return res.status(200).json({state:result})
+                    })
                   }
             }
             case 'DELETE':{

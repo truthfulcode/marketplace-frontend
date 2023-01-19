@@ -1,6 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../utils/prisma";
 import { sha512, validEmail } from "../../../utils/helpers";
+export async function getAddressId(address: string){
+  let result = await prisma.ethereumAccount.findFirst({
+    where: {
+      address:address
+    },
+    select: {
+      id : true
+    }
+  });
+  return result ? result : null;
+}
 export async function isValidUsername(username: string) {
   let result = await prisma.account.findFirst({
     where: {
