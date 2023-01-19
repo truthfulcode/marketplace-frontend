@@ -1,6 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../utils/prisma";
 import { sha512, validEmail } from "../../../utils/helpers";
+export async function getAddressId(address: string){
+  let result = await prisma.ethereumAccount.findFirst({
+    where: {
+      address:address
+    },
+    select: {
+      id : true
+    }
+  });
+  return result ? result : null;
+}
 export async function isValidUsername(username: string) {
   let result = await prisma.account.findFirst({
     where: {
@@ -78,3 +89,34 @@ export async function authenticateUser(
   return result;
 }
 
+export async function isValidAddress(address: string) {
+  try {
+    let result = await prisma.ethereumAccount.findFirst({
+      where: {
+        address:address,
+      },
+    });
+    return result != null;
+  }catch(err){
+    console.log(err);
+    return false;
+  }
+}
+export async function isValidAddresses(addresses: string[]) {
+  try {
+    let result = await prisma.ethereumAccount.findMany({
+      where: {
+        address:{in:addresses},
+      },
+      select:{address:true}
+    })
+    let validAddresses: string[] = [];
+    result.map((val)=>{
+      validAddresses.push(val.address);
+    })
+    return validAddresses;
+  }catch(err){
+    console.log(err);
+    return false;
+  }
+}

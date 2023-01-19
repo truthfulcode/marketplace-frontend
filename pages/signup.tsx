@@ -20,30 +20,26 @@ import {
 } from "../components/StyledComponents";
 import FormWrapper from "../components/FormWrapper";
 import { Account, AccountType } from "@prisma/client";
-import { isString, onlyString, sha512, validEmail } from "../utils/helpers";
+import { decrypt, defaultAccount, encrypt, isString, onlyString, sha512, validEmail } from "../utils/helpers";
 import { login_keys } from "../utils/constants";
 import { AccountRegsiterState, FormInput, ValueWithError } from "../utils/types";
 import { useRouter } from "next/router";
 import { calculateSizeAdjustValues } from "next/dist/server/font-utils";
 
 const signup = () => {
-  const [account, setAccount] = useState<AccountRegsiterState>({E:undefined,F_N:undefined,L_N:undefined,P:undefined,P_N:undefined,U:undefined,U_T:{value:undefined, error:undefined}});
+  const [account, setAccount] = useState<AccountRegsiterState>(defaultAccount);
   const router = useRouter();
   const getValueById = (id:string) =>{
     if((document.getElementById(id) as HTMLInputElement)) return (document.getElementById(id) as HTMLInputElement).value;
     else {
-      console.log("val1",(document.getElementById("U_T_F") as HTMLInputElement).checked)
-      console.log("val1",(document.getElementById("U_T_C") as HTMLInputElement).checked)
       if((document.getElementById("U_T_F") as HTMLInputElement).value){
         return "FREELANCER"
       }else if((document.getElementById("U_T_C") as HTMLInputElement).value){
-        return "FREELANCER"
+        return "CUSTOMER"
       }
     }
     if((document.getElementById(id) as HTMLInputElement)) return (document.getElementById(id) as HTMLInputElement).value;
     else {
-      console.log("val1",(document.getElementById("U_T_F") as HTMLInputElement).checked)
-      console.log("val1",(document.getElementById("U_T_C") as HTMLInputElement).checked)
       if((document.getElementById("U_T_F") as HTMLInputElement).value){
         return "FREELANCER"
       }else if((document.getElementById("U_T_C") as HTMLInputElement).value){
@@ -65,11 +61,6 @@ const signup = () => {
         isFound = true;
       }
     });
-    return isFound;
-  }
-  const createUser = async () => {
-    let isFound = verifyInputs();
-    if (isFound) return;
     const _account: Account = {      
       id: "",
       username: account.U?.value as string,
@@ -90,6 +81,11 @@ const signup = () => {
       refreshToken:"",
       updatedAt:new Date(0),
     };
+    return [isFound, _account];
+  }
+  const createUser = async () => {
+    let [isFound, _account] = verifyInputs();
+    if (isFound) return;
     try {
       const response = await fetch("./api/user", {
         method: "POST",
@@ -104,7 +100,6 @@ const signup = () => {
         router.push("/signin");
       } else {
         const message = await response.json();
-        console.log("ERROR");
         console.log("ERROR");
         console.log("response", message);
       }
@@ -161,11 +156,12 @@ const signup = () => {
     setAccountValue(key,value, isError ? errorMessage : undefined);
   };
   const setAccountValue = (key:FormInput, value:String | undefined, error?:String) => {
+    console.log("pre",key,account[key]?.value)
     setAccount((account) => Object.assign({},account,{[key]:{value:value,error:error}}));
+    console.log("post",key,account[key]?.value)
   }
   useEffect(()=>{
     setAccountValue("U_T","CUSTOMER");
-    console.log("user type",account.U_T?.value)
   },[])
   const setAccountValueOnly = (key:FormInput, value:String | undefined) => {
     let _account: AccountRegsiterState = account;
@@ -187,6 +183,7 @@ const signup = () => {
         <TitleText>SIGN UP</TitleText>
         <TextField
           id="U"
+          onChange={(e)=>{setAccountValueOnly("U",e.target.value)}}
           error={account.U?.error !== undefined}
           helperText={account.U?.error}
           variant="outlined"
@@ -194,6 +191,7 @@ const signup = () => {
         />
         <TextField
           id="F_N"
+          onChange={(e)=>{setAccountValueOnly("F_N",e.target.value)}}
           error={account.F_N?.error !== undefined}
           helperText={account.F_N?.error}
           variant="outlined"
@@ -201,6 +199,7 @@ const signup = () => {
         />
         <TextField
           id="L_N"
+          onChange={(e)=>{setAccountValueOnly("L_N",e.target.value)}}
           error={account.L_N?.error !== undefined}
           variant="outlined"
           placeholder="Last Name"
@@ -217,6 +216,7 @@ const signup = () => {
         />
         <TextField
           id="E"
+          onChange={(e)=>{setAccountValueOnly("E",e.target.value)}}
           type={"email"}
           error={account.E?.error !== undefined}
           variant="outlined"
@@ -225,14 +225,17 @@ const signup = () => {
         />
         <TextField
           id="P_N"
+          onChange={(e)=>{setAccountValueOnly("P_N",e.target.value)}}
           error={account.P_N?.error !== undefined}
           variant="outlined"
           placeholder="Phone Nmber"
           helperText={account.P_N?.error}
         />
-        <FormControl sx={{ p: "14px" }} error={account.U_T?.error !== undefined}>
+        <FormControl sx={{ p: "14px" }} 
+        error={account.U_T?.error !== undefined}>
           <FormLabel id="demo-row-radio-buttons-group-label" >User Type</FormLabel>
           <RadioGroup
+            onChange={(e)=>{setAccountValueOnly("U_T",e.target.value)}}
             row
             defaultValue="CUSTOMER"
             aria-labelledby="demo-row-radio-buttons-group-label"
@@ -240,8 +243,6 @@ const signup = () => {
             aria-required
           >
             <FormControlLabel
-              
-              
               value="CUSTOMER"
               control={<Radio id="U_T_C" />}
               label="Customer"

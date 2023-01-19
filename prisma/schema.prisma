@@ -20,7 +20,7 @@ model Account {
   Transaction Transaction[]
   freelancer  Freelancer?   @relation("freelancerAccount")
   customer    Customer?     @relation("customerAccount")
-
+  ethereumAccount  EthereumAccount   @relation("ethereumAccount", fields: [id], references: [id])
   // compoundId         String    @unique @map(name: "compound_id")
   // userId             Int       @map(name: "user_id")
   providerType       String    @map(name: "provider_type")
@@ -33,7 +33,6 @@ model Account {
   updatedAt          DateTime  @default(now()) @map(name: "updated_at")
   emailVerified      DateTime? @map(name: "email_verified")
   Session            Session[]
-
   @@index([providerAccountId], name: "providerAccountId")
   @@index([providerId], name: "providerId")
   // @@index([userId], name: "userId")
@@ -76,6 +75,15 @@ model Customer {
   listings Listing[]
   orders   Order[]
   account  Account   @relation("customerAccount", fields: [id], references: [id])
+}
+
+model EthereumAccount {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  address       String @map("_address")
+  iv            String 
+  encryptedData String
+  balance       Int
+  account    Account?     @relation("ethereumAccount")
 }
 
 model Listing {
