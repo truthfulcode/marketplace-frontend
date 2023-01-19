@@ -41,9 +41,9 @@ function main() {
             value: value,
             eventData: event,
         }
-        if(Number(value) >= 1e6 ) {
+        // if(Number(value) >= 1e6 ) {
 
-        }
+        // }
         // check for minimum of 1 USDC
         // check `to` that it is among the receiver addresses
         // await 

@@ -12,6 +12,7 @@ export default async function createUser(obj:Account) {
     if(!["CUSTOMER","FREELANCER"].includes(accountType)) throw Error("incorrect userType")
     const mailFormat = /^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,3})+$/;
     // if(!email.match(mailFormat)) throw Error("invalid email format");
+    console.log("req object",obj)
     if (typeof username !== "string") throw Error('invalid username')
     if(password.length != 128) throw Error("invalid password");
         if(await isValidUsernameOrEmail(username,email)) throw Error("invalid username or email")

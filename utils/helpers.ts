@@ -13,7 +13,7 @@ export const sha512 = (data: String) => {
 };
 
 export const isString = (input: any) => typeof input == "string";
-
+export const defaultAccount = {E:{value:undefined, error:undefined},F_N:{value:undefined, error:undefined},L_N:{value:undefined, error:undefined},P:{value:undefined, error:undefined},P_N:{value:undefined, error:undefined},U:{value:undefined, error:undefined},U_T:{value:undefined, error:undefined}}
 export const onlyString = (input: String) =>
   input.toLowerCase().match(/^[a-zA-Z]+$/) !== null;
 export const validEmail = (email: String) =>

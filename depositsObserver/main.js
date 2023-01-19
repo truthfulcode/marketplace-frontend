@@ -42,8 +42,6 @@ var abi_1 = require("./abi");
 var axios_1 = require("axios");
 dotenv.config();
 // make sure the address is checksum
-// in essence, use this "0x17fBA9Eb71F040d57d19B48A28002FfE32380DF8"
-// not this "0x17fba9eb71f040d57d19b48a28002ffe32380df8"
 function formatRequestAddresses(addresses) {
     var formatted = "";
     addresses.map(function (value, index) {
@@ -56,27 +54,39 @@ function formatRequestAddresses(addresses) {
     });
     return formatted;
 }
-function checkAddress(address) {
+function processAddresses(addresses, amounts) {
     return __awaiter(this, void 0, void 0, function () {
-        var addr, arrStr, res, err_1;
+        var arrStr;
+        var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    addr = "0x17fBA9Eb71F040d57d19B48A28002FfE32380DF8";
-                    _a.label = 1;
+                    //api/user?address=0x...
+                    if (addresses.length !== amounts.length)
+                        throw Error("mismatch of addresses and amount size");
+                    arrStr = encodeURIComponent(JSON.stringify(formatRequestAddresses(addresses)));
+                    return [4 /*yield*/, axios_1["default"].get("http://localhost:3000/api/user?addresses=".concat(arrStr)).then(function (res) { return __awaiter(_this, void 0, void 0, function () {
+                            var state;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        state = res.data.state;
+                                        if (!(Array.isArray(state) && state.length > 0)) return [3 /*break*/, 2];
+                                        // call prisma to update the balance
+                                        return [4 /*yield*/, axios_1["default"].put("http://localhost:3000/api/user", { addresses: [], amount: [] })];
+                                    case 1:
+                                        // call prisma to update the balance
+                                        _a.sent();
+                                        _a.label = 2;
+                                    case 2: return [2 /*return*/];
+                                }
+                            });
+                        }); })["catch"](function (err) {
+                            console.log(err);
+                        })];
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    arrStr = encodeURIComponent(JSON.stringify(formatRequestAddresses([addr, "0x27fBA9Eb71F040d57d19B48A28002FfE32380DF8"])));
-                    return [4 /*yield*/, axios_1["default"].get("http://localhost:3000/api/transaction?addresses=".concat(arrStr))];
-                case 2:
-                    res = _a.sent();
-                    console.log(res.data);
-                    return [3 /*break*/, 4];
-                case 3:
-                    err_1 = _a.sent();
-                    console.log(err_1);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    _a.sent();
+                    return [2 /*return*/];
             }
         });
     });
@@ -94,6 +104,8 @@ function main() {
                 value: value,
                 eventData: event
             };
+            // if(Number(value) >= 1e6 ) {
+            // }
             // check for minimum of 1 USDC
             // check `to` that it is among the receiver addresses
             // await 
@@ -103,5 +115,4 @@ function main() {
         });
     }); });
 }
-// main();
-checkAddress("");
+main();
