@@ -17,7 +17,6 @@ model Account {
   email       String        @unique
   phoneNumber String        @unique
   accountType AccountType
-  Transaction Transaction[]
   freelancer  Freelancer?   @relation("freelancerAccount")
   customer    Customer?     @relation("customerAccount")
   ethereumAccount  EthereumAccount   @relation("ethereumAccount", fields: [id], references: [id])
@@ -83,7 +82,22 @@ model EthereumAccount {
   iv            String 
   encryptedData String
   balance       Int
+  Transaction Transaction[]
   account    Account?     @relation("ethereumAccount")
+}
+
+model Transaction {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  txHash        String          @unique
+  timestamp     DateTime        @default(now())
+  status        TransactionStatus
+  txType        TransactionType
+  description   String?
+  customerId    String?
+  orderId       String?
+  order         Order?
+  accountId     String          @db.ObjectId
+  account       EthereumAccount    @relation(fields: [accountId], references: [id])
 }
 
 model Listing {
@@ -95,7 +109,7 @@ model Listing {
   proposals     Proposal[]
   customerId    String     @db.ObjectId
   order         Order?     @relation("listingOrder")
-  listingAuthor Customer   @relation(fields: [id], references: [id])
+  listingAuthor Customer   @relation(fields: [customerId], references: [id])
 }
 
 model Order {
@@ -104,10 +118,11 @@ model Order {
   title           String
   date            DateTime
   status          OrderStatus
+  customerId    String     @db.ObjectId
   listing         Listing     @relation("listingOrder", fields: [id], references: [id])
-  transaction     Transaction @relation(fields: [id], references: [txId])
+  transaction     Transaction @relation(fields: [id], references: [id])
   orderFreelancer Freelancer  @relation(fields: [id], references: [id])
-  orderAuthor     Customer    @relation(fields: [id], references: [id])
+  orderAuthor     Customer    @relation(fields: [customerId], references: [id])
 }
 
 model Proposal {
@@ -121,39 +136,7 @@ model Proposal {
   proposalAuthor Freelancer     @relation(fields: [id], references: [id])
 }
 
-model Transaction {
-  txId          String            @id @default(auto()) @map("_id") @db.ObjectId
-  timestamp     DateTime          @default(now())
-  status        TransactionStatus
-  description   String
-  customerId    String            @db.ObjectId
-  orderId       String
-  order         Order?
-  paymentType   PaymentType
-  account       Account?          @relation(fields: [txId], references: [id])
-  cryptoPayment Crypto?           @relation("cryptoPayment")
-  paypalPayment Paypal?           @relation("paypalPayment")
-  files         String[]
-}
 
-model Crypto {
-  onChainTx   String       @id @map("_id")
-  tokenType   TokenType
-  amount      Int
-  transaction Transaction? @relation("cryptoPayment", fields: [onChainTx], references: [txId])
-}
-
-model Paypal {
-  paypalTx     String       @id @map("_id")
-  paymentEmail String
-  amount       Int
-  transaction  Transaction? @relation("paypalPayment", fields: [paypalTx], references: [txId])
-}
-
-enum PaymentType {
-  BANK
-  CRYPTO
-}
 
 enum PaymentPage {
   Activity

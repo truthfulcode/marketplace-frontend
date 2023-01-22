@@ -88,7 +88,14 @@ export async function authenticateUser(
   });
   return result;
 }
-
+export async function getEthAccountByAddress(address: string) {
+    let result = await prisma.ethereumAccount.findFirst({
+      where: {
+        address:address,
+      },
+    });
+    return result;
+}
 export async function isValidAddress(address: string) {
   try {
     let result = await prisma.ethereumAccount.findFirst({

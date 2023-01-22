@@ -1,4 +1,4 @@
-import { Prisma, Account } from '@prisma/client';
+import { Prisma, Account, EthereumAccount } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { generateAndHashPK, isString, sha512 } from '../../../utils/helpers';
 import {prisma} from "../../../utils/prisma"
@@ -17,6 +17,7 @@ export default async function createUser(obj:Account) {
     if(password.length != 128) throw Error("invalid password");
         if(await isValidUsernameOrEmail(username,email)) throw Error("invalid username or email")
         const acc = generateAndHashPK();
+        let txs : EthereumAccount[] = []
         await prisma.ethereumAccount.create({data:{address:acc.address,balance:0,encryptedData:acc.encryptedData,iv:acc.iv}}).then(async (res)=>{
             console.log("creating tx",res)
             await prisma.account.create({data:{
