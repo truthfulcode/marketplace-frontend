@@ -71,13 +71,13 @@ export const decrypt = (hash: Hash) => {
 
 // for crypto library
 export const provider = () => {
-  return new ethers.providers.AlchemyProvider("goerli",process.env.GOERLI_TESTNET);
+  return new ethers.providers.AlchemyProvider("goerli",process.env.LOCAL_TESTNET);
 }
 
 // reads the token balance, it doesn't need a signer
 export const balanceOf = async (address: string) => {
 
-  const contract = new ethers.Contract(process.env.TOKEN_ADDRESS as string, abi);
+  const contract = new ethers.Contract(process.env.LOCAL_TOKEN_ADDRESS as string, abi);
 
   return await contract.balanceOf(address);
 }
@@ -87,7 +87,7 @@ export const transfer = async (pk: string, amount:BigNumber, destinationAddress:
   
   const signer = new ethers.Wallet(pk, provider());
 
-  const contract = new ethers.Contract(process.env.TOKEN_ADDRESS as string, abi,signer);
+  const contract = new ethers.Contract(process.env.LOCAL_TOKEN_ADDRESS as string, abi,signer);
 
   return await contract.transfer(destinationAddress, amount);
 }

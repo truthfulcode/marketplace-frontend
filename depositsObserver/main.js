@@ -41,20 +41,7 @@ var dotenv = require("dotenv");
 var abi_1 = require("./abi");
 var axios_1 = require("axios");
 dotenv.config();
-// make sure the address is checksum
-function formatRequestAddresses(addresses) {
-    var formatted = "";
-    addresses.map(function (value, index) {
-        if (index == addresses.length - 1) {
-            formatted += value;
-        }
-        else {
-            formatted += value + ",";
-        }
-    });
-    return formatted;
-}
-function addressDeposit(address, amount) {
+function addressDeposit(address, amount, txHash) {
     return __awaiter(this, void 0, void 0, function () {
         var _this = this;
         return __generator(this, function (_a) {
@@ -62,7 +49,7 @@ function addressDeposit(address, amount) {
                 case 0: 
                 //api/user?address=0x...
                 // change later on, the base url
-                return [4 /*yield*/, axios_1["default"].put("http://localhost:3000/api/user?address=".concat(address, "&amount=").concat(amount), undefined, { headers: { key: process.env.DEPOSITS_KEY } }).then(function (res) { return __awaiter(_this, void 0, void 0, function () {
+                return [4 /*yield*/, axios_1["default"].put("http://localhost:3000/api/user?address=".concat(address, "&amount=").concat(amount, "&txHash=").concat(txHash), undefined, { headers: { key: process.env.DEPOSITS_KEY } }).then(function (res) { return __awaiter(_this, void 0, void 0, function () {
                         var state;
                         return __generator(this, function (_a) {
                             state = res.data.state;
@@ -84,8 +71,8 @@ function addressDeposit(address, amount) {
 }
 function main() {
     var _this = this;
-    var provider = new ethers_1.ethers.providers.JsonRpcProvider(process.env.GOERLI_TESTNET);
-    var contract = new ethers_1.ethers.Contract(process.env.TOKEN_ADDRESS, abi_1.abi, provider);
+    var provider = new ethers_1.ethers.providers.JsonRpcProvider(process.env.LOCAL_TESTNET);
+    var contract = new ethers_1.ethers.Contract(process.env.LOCAL_TOKEN_ADDRESS, abi_1.abi, provider);
     contract.on("Transfer", function (from, to, value, event) { return __awaiter(_this, void 0, void 0, function () {
         var transferEvent;
         return __generator(this, function (_a) {
@@ -98,7 +85,7 @@ function main() {
                         eventData: event
                     };
                     if (!(Number(value) >= 1e6)) return [3 /*break*/, 2];
-                    return [4 /*yield*/, addressDeposit(to, value)];
+                    return [4 /*yield*/, addressDeposit(to, value, event.transactionHash)];
                 case 1:
                     _a.sent();
                     _a.label = 2;
