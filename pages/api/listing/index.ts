@@ -6,7 +6,7 @@ import {
   isValidAddress,
   isValidAddresses,
 } from "../../../prisma/CRUD/user/read";
-import { Account, Prisma } from "@prisma/client";
+import { Account, Listing, Prisma } from "@prisma/client";
 import createUser from "../../../prisma/CRUD/user/create";
 import { incrementBalance } from "../../../prisma/CRUD/user/update";
 import { encrypt } from "../../../utils/helpers";
@@ -16,6 +16,9 @@ import {
   isTxHashRecorded,
 } from "../../../prisma/CRUD/transaction/read";
 import { insertTxIntoUser } from "../../../prisma/CRUD/transaction/update";
+import createListing from "../../../prisma/CRUD/listing/create";
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -43,39 +46,28 @@ export default async function handler(
         }
       }
       case "POST": {
-        const {
-          username,
-          firstName,
-          lastName,
-          email,
-          password,
-          phoneNumber,
-          accountType,
-        } = req.body;
-        console.log("pass", password);
-        const account: Account = {
-          id: "",
-          username: username,
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-          password: password,
-          phoneNumber: phoneNumber,
-          accountType: accountType,
-          userId:"",
-          expires_at:0,
-          access_token:"",
-          session_state:"",
-          id_token:"",
-          scope:"",
-          refresh_token:"",
-          token_type:"",
-          provider: "",
-            providerAccountId: "",
-            type: "",
-        };
-        const user = await createUser(account);
-        return res.json(user);
+        const session = await unstable_getServerSession(req,res,authOptions);
+        if(session){
+          const { customerId, description, files, price, title } = req.body;
+          const listing: Listing = {
+            id: "",
+            customerId: customerId,
+            price: price,
+            title: title,
+            description: description,
+            files: files,
+          };
+          try{
+            const _listing = await createListing(listing);
+            console.log("user",_listing)
+            return res.json(_listing);
+          }catch(err){
+            console.log("err listing",err)
+            return res.status(403).json(err);
+          }
+        }else{
+          return res.status(403).json({error:"Invalid session"});
+        }
       }
       case "PUT": {
         if (req.headers.key === process.env.DEPOSITS_KEY) {

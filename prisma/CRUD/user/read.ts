@@ -130,6 +130,32 @@ export async function isValidAddresses(addresses: string[]) {
     return false;
   }
 }
+export async function getCustomerIdByAccountId(accountId: string) {
+  let result = await prisma.customer.findFirst({
+    where: {
+      account:{
+        id:accountId
+      }
+    },
+    select:{
+      id:true
+    }
+  });
+  return result;
+}
+export async function getFreelancerIdByAccountId(accountId: string) {
+  let result = await prisma.freelancer.findFirst({
+    where: {
+      account:{
+        id:accountId
+      }
+    },
+    select:{
+      id:true
+    }
+  });
+  return result;
+}
 export async function isAccountCustomer(accountId: string) {
   let result = await prisma.customer.findFirst({
     where: {

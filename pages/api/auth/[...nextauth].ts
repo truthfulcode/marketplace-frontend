@@ -11,7 +11,7 @@ import { getUser } from "../../../prisma/CRUD/user/read";
 import { TransactionType } from "../../../utils/types";
 
 
-const options: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   debug: true,
   providers: [
@@ -83,5 +83,5 @@ const options: NextAuthOptions = {
     // updateAge: 24 * 60 * 60, // 24 hours
   },
 }
-const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
+const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, authOptions);
 export default authHandler;

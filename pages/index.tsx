@@ -4,12 +4,16 @@ import Navbar from '../components/Navbar'
 import {styles, TitleText} from '../components/StyledComponents'
 import {Typography, Box, Grid, TextField, styled} from '@mui/material'
 import { useSession } from 'next-auth/react'
+import { useEffect } from 'react'
 
 export default function Home() {
   const {data,status} = useSession();
   const CategoryText = styled(Typography)({
     color:"black"
   })
+  useEffect(()=>{
+    console.log(data)
+  },[])
   return (
     <div >
       <Head>

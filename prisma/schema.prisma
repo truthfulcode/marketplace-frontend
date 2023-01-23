@@ -111,6 +111,7 @@ model Listing {
   description   String
   files         String[]
   proposals     Proposal[]
+  category      ListingCategory
   customerId    String     @db.ObjectId
   order         Order?     @relation("listingOrder")
   listingAuthor Customer   @relation(fields: [customerId], references: [id])
@@ -183,4 +184,16 @@ enum TokenType {
 enum AccountType {
   CUSTOMER
   FREELANCER
+}
+enum ListingCategory {
+  Design
+  Music
+  Programming
+  Marketing
+  Business
+  Writing
+  Data
+  Lifestyle
+  Video
+  Other
 }
