@@ -178,7 +178,7 @@ const signup = () => {
         backgroundSize: "cover",
       }}
     >
-      <Navbar signUp={false} />
+      <Navbar signin={true} />
       <FormWrapper method="POST" onSubmit={()=>{}}>
         <TitleText>SIGN UP</TitleText>
         <TextField
