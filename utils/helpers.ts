@@ -38,7 +38,6 @@ const convertHexToArrayBytes = (hex : String) => {
   for(let i = 0; i < hex.length; i += 2){
     res.push(parseInt(hex.substring(i,i+2),16))
   }
-  console.log(res)
   return res;
 }
 const fromBufferToString = (buffer : Buffer) : string => {

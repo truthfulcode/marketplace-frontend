@@ -40,17 +40,20 @@ export async function isValidUsernameOrEmail(username: string, email: string) {
 }
 // returns null when if username or email is not found
 export async function getUser(input: string, password:string) {
-  console.log(input,password,validEmail(input))
-  let res
+  console.log("get user",input,password,validEmail(input))
+  let res;
   if(validEmail(input)){
     res = await prisma.account.findUnique({
       where: { email : input},
     })
+    console.log("check email")
   }else{
     res = await prisma.account.findUnique({
       where: { username : input},
     })
+    console.log("check username")
   }
+  console.log("get user values", res, sha512(password))
   return res && res.password === sha512(password) ? res : null;    
 }
 // returns null when username is not found
@@ -126,4 +129,50 @@ export async function isValidAddresses(addresses: string[]) {
     console.log(err);
     return false;
   }
+}
+export async function getCustomerIdByAccountId(accountId: string) {
+  let result = await prisma.customer.findFirst({
+    where: {
+      account:{
+        id:accountId
+      }
+    },
+    select:{
+      id:true
+    }
+  });
+  return result;
+}
+export async function getFreelancerIdByAccountId(accountId: string) {
+  let result = await prisma.freelancer.findFirst({
+    where: {
+      account:{
+        id:accountId
+      }
+    },
+    select:{
+      id:true
+    }
+  });
+  return result;
+}
+export async function isAccountCustomer(accountId: string) {
+  let result = await prisma.customer.findFirst({
+    where: {
+      account:{
+        id:accountId
+      }
+    },
+  });
+  return result != null;
+}
+export async function isAccountFreelancer(accountId: string) {
+  let result = await prisma.freelancer.findFirst({
+    where: {
+      account:{
+        id:accountId
+      }
+    },
+  });
+  return result != null;
 }
