@@ -6,19 +6,16 @@ import {
   isValidAddress,
   isValidAddresses,
 } from "../../../prisma/CRUD/user/read";
-import { Account, Listing, Prisma } from "@prisma/client";
-import createUser from "../../../prisma/CRUD/user/create";
+import { Proposal } from "@prisma/client";
 import { incrementBalance } from "../../../prisma/CRUD/user/update";
-import { encrypt } from "../../../utils/helpers";
-import { RSC_MODULE_TYPES } from "next/dist/shared/lib/constants";
 import {
   getTransactionsOfEthereumAccountUsingAddress,
   isTxHashRecorded,
 } from "../../../prisma/CRUD/transaction/read";
 import { insertTxIntoUser } from "../../../prisma/CRUD/transaction/update";
-import createListing from "../../../prisma/CRUD/listing/create";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
+import createProposal from "../../../prisma/CRUD/proposal/create";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -48,19 +45,19 @@ export default async function handler(
       case "POST": {
         const session = await unstable_getServerSession(req,res,authOptions);
         if(session){
-          const { customerId, description, files, price, title } = req.body;
-          const listing: Listing = {
-            id: "",
-            customerId: customerId,
-            price: price,
-            title: title,
-            description: description,
-            files: files,
+          const { id: listingId, status, description, duration, freelancerId, title } = req.body;
+          const proposal: Proposal = {
+            id: listingId,
+            description:description,
+            duration:duration,
+            status:status,
+            title:title,
+            freelancerId:freelancerId
           };
           try{
-            const _listing = await createListing(listing);
-            console.log("user",_listing)
-            return res.json(_listing);
+            const _proposal = await createProposal(proposal);
+            console.log("user",_proposal)
+            return res.json(_proposal);
           }catch(err){
             console.log("err listing",err)
             return res.status(403).json(err);

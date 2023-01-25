@@ -111,6 +111,7 @@ model Listing {
   description   String
   files         String[]
   proposals     Proposal[]
+  status        ListingStatus
   category      ListingCategory
   customerId    String     @db.ObjectId
   order         Order?     @relation("listingOrder")
@@ -123,11 +124,19 @@ model Order {
   title           String
   date            DateTime
   status          OrderStatus
-  customerId    String     @db.ObjectId
+  customerId      String     @db.ObjectId
+  submission      Submission  @relation("orderSubmission", fields: [id], references: [id])
   listing         Listing     @relation("listingOrder", fields: [id], references: [id])
   transaction     Transaction @relation(fields: [id], references: [id])
   orderFreelancer Freelancer  @relation(fields: [id], references: [id])
   orderAuthor     Customer    @relation(fields: [customerId], references: [id])
+}
+
+model Submission {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  description     String
+  files           String[]
+  order           Order?       @relation("orderSubmission")
 }
 
 model Proposal {
@@ -141,8 +150,6 @@ model Proposal {
   proposalAuthor Freelancer     @relation(fields: [id], references: [id])
 }
 
-
-
 enum PaymentPage {
   Activity
   Deposit
@@ -154,6 +161,12 @@ enum ProposalStatus {
   APPROVED
   PENDING
   REJECTED
+}
+
+enum ListingStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
 }
 
 enum OrderStatus {

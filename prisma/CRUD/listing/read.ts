@@ -3,7 +3,17 @@ import { prisma } from "../../../utils/prisma";
 import { sha512, validEmail } from "../../../utils/helpers";
 
 
-// export async function getAddressId(address: string){
+// returns null when if email is not found
+export async function isValidListing(listingId: string) {
+    let result = await prisma.listing.findFirst({
+        where: {
+            id:listingId
+        },
+    });
+    return result != null;
+}
+
+// export async function getListing(listingId: string){
 //   let result = await prisma.ethereumAccount.findFirst({
 //     where: {
 //       address:address
@@ -13,16 +23,6 @@ import { sha512, validEmail } from "../../../utils/helpers";
 //     }
 //   });
 //   return result ? result : null;
-// }
-
-// // returns null when if email is not found
-// export async function isValidEmail(email: string) {
-//   let result = await prisma.account.findFirst({
-//     where: {
-//       email: email,
-//     },
-//   });
-//   return result != null;
 // }
 // // returns null when if username or email is not found
 // export async function isValidUsernameOrEmail(username: string, email: string) {
