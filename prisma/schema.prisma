@@ -125,7 +125,7 @@ model Order {
   date            DateTime
   status          OrderStatus
   customerId      String     @db.ObjectId
-  submission      Submission  @relation("orderSubmission", fields: [id], references: [id])
+  submission      Submission?  @relation("orderSubmission", fields: [id], references: [id])
   listing         Listing     @relation("listingOrder", fields: [id], references: [id])
   transaction     Transaction @relation(fields: [id], references: [id])
   orderFreelancer Freelancer  @relation(fields: [id], references: [id])
