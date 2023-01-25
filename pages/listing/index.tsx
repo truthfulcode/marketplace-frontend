@@ -1,19 +1,19 @@
 import React, { useEffect } from "react";
 import { Box, TextareaAutosize, TextField, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import {
   styles,
   SubmitButton,
   TitleText,
-} from "../components/StyledComponents";
-import FormWrapper from "../components/FormWrapper";
+} from "../../components/StyledComponents";
+import FormWrapper from "../../components/FormWrapper";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Account, Listing } from "@prisma/client";
-import { getCustomerIdByAccountId } from "../prisma/CRUD/user/read";
+import { getCustomerIdByAccountId } from "../../prisma/CRUD/user/read";
 import { GetServerSideProps, GetStaticProps } from "next";
 import { unstable_getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 const createListing = (props:any) => {
     const {accountId, accountType} = props;
@@ -32,7 +32,6 @@ const createListing = (props:any) => {
     }
   },[status])
   const createNewListing = async () => {
-    let id = (data?.user as Account).id;
     if(!accountId) return;
     const listing: Listing = {
       id: "",
