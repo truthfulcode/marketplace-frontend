@@ -90,3 +90,8 @@ export const transfer = async (pk: string, amount:BigNumber, destinationAddress:
 
   return await contract.transfer(destinationAddress, amount);
 }
+
+export const increaseTime = (seconds : number) =>{
+  let date = new Date();
+  return new Date(date.getTime() + seconds * 1000)
+}

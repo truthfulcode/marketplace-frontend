@@ -20,7 +20,6 @@ export default async function createUser(obj: Account) {
   // check userType is valid
   if (!["CUSTOMER", "FREELANCER"].includes(accountType))
     throw Error("incorrect userType");
-  const mailFormat = /^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,3})+$/;
   // if(!email.match(mailFormat)) throw Error("invalid email format");
   console.log("req object", obj);
   if (typeof username !== "string") throw Error("invalid username");
@@ -28,17 +27,18 @@ export default async function createUser(obj: Account) {
   if (await isValidUsernameOrEmail(username, email))
     throw Error("invalid username or email");
   const acc = generateAndHashPK();
-  await prisma.ethereumAccount
-    .create({
-      data: {
-        address: acc.address,
-        balance: 0,
-        encryptedData: acc.encryptedData,
-        iv: acc.iv,
-      },
-    })
-    .then(async (res) => {
-      if (isCustomer) {
+  // create an ethereum account for only customer
+  if (isCustomer) {
+    await prisma.ethereumAccount
+      .create({
+        data: {
+          address: acc.address,
+          balance: 0,
+          encryptedData: acc.encryptedData,
+          iv: acc.iv,
+        },
+      })
+      .then(async (res) => {
         await prisma.account.create({
           data: {
             username: username,
@@ -62,30 +62,25 @@ export default async function createUser(obj: Account) {
             },
           },
         });
-      } else {
-        await prisma.account.create({
-          data: {
-            username: username,
-            password: password,
-            phoneNumber: phoneNumber,
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            accountType: accountType,
-            ethereumAccount: {
-              connect: {
-                id: res.id,
-              },
-            },
-            provider: "",
-            providerAccountId: "",
-            type: "",
-            user: { create: {} },
-            freelancer: {
-              create: {},
-            },
-          },
-        });
-      }
+      });
+  } else {
+    await prisma.account.create({
+      data: {
+        username: username,
+        password: password,
+        phoneNumber: phoneNumber,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        accountType: accountType,
+        provider: "",
+        providerAccountId: "",
+        type: "",
+        user: { create: {} },
+        freelancer: {
+          create: {},
+        },
+      },
     });
+  }
 }

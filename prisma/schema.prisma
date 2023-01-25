@@ -19,7 +19,7 @@ model Account {
   accountType AccountType
   freelancer  Freelancer?   @relation("freelancerAccount")
   customer    Customer?     @relation("customerAccount")
-  ethereumAccount  EthereumAccount   @relation("ethereumAccount", fields: [id], references: [id])
+  ethereumAccount  EthereumAccount?   @relation("ethereumAccount", fields: [id], references: [id])
 
   userId             String  @map("user_id") @db.ObjectId
   type               String
@@ -69,7 +69,7 @@ model User {
 model Freelancer {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   proposals Proposal[]
-  orders    Order[]
+  orders   Order[]
   account   Account    @relation("freelancerAccount", fields: [id], references: [id])
 }
 
@@ -121,15 +121,16 @@ model Listing {
 model Order {
   id              String      @id @default(auto()) @map("_id") @db.ObjectId
   price           Float
-  title           String
-  date            DateTime
+  createdAt       DateTime
+  endsAt          DateTime
   status          OrderStatus
+  freelancerId    String     @db.ObjectId
   customerId      String     @db.ObjectId
   submission      Submission?  @relation("orderSubmission", fields: [id], references: [id])
   listing         Listing     @relation("listingOrder", fields: [id], references: [id])
   transaction     Transaction @relation(fields: [id], references: [id])
-  orderFreelancer Freelancer  @relation(fields: [id], references: [id])
-  orderAuthor     Customer    @relation(fields: [customerId], references: [id])
+  orderFreelancer Freelancer  @relation(fields: [freelancerId], references: [id])
+  orderCustomer   Customer  @relation(fields: [customerId], references: [id])
 }
 
 model Submission {
@@ -186,12 +187,6 @@ enum TransactionType {
   WITHDRAW
   PAYMENT
   REFUND
-}
-
-enum TokenType {
-  DAI
-  USDT
-  USDC
 }
 
 enum AccountType {
