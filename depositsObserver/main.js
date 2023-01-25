@@ -41,50 +41,28 @@ var dotenv = require("dotenv");
 var abi_1 = require("./abi");
 var axios_1 = require("axios");
 dotenv.config();
-// make sure the address is checksum
-function formatRequestAddresses(addresses) {
-    var formatted = "";
-    addresses.map(function (value, index) {
-        if (index == addresses.length - 1) {
-            formatted += value;
-        }
-        else {
-            formatted += value + ",";
-        }
-    });
-    return formatted;
-}
-function processAddresses(addresses, amounts) {
+function addressDeposit(address, amount, txHash) {
     return __awaiter(this, void 0, void 0, function () {
-        var arrStr;
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    //api/user?address=0x...
-                    if (addresses.length !== amounts.length)
-                        throw Error("mismatch of addresses and amount size");
-                    arrStr = encodeURIComponent(JSON.stringify(formatRequestAddresses(addresses)));
-                    return [4 /*yield*/, axios_1["default"].get("http://localhost:3000/api/user?addresses=".concat(arrStr)).then(function (res) { return __awaiter(_this, void 0, void 0, function () {
-                            var state;
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0:
-                                        state = res.data.state;
-                                        if (!(Array.isArray(state) && state.length > 0)) return [3 /*break*/, 2];
-                                        // call prisma to update the balance
-                                        return [4 /*yield*/, axios_1["default"].put("http://localhost:3000/api/user", { addresses: [], amount: [] })];
-                                    case 1:
-                                        // call prisma to update the balance
-                                        _a.sent();
-                                        _a.label = 2;
-                                    case 2: return [2 /*return*/];
-                                }
-                            });
-                        }); })["catch"](function (err) {
-                            console.log(err);
-                        })];
+                case 0: 
+                //api/user?address=0x...
+                // change later on, the base url
+                return [4 /*yield*/, axios_1["default"].put("http://localhost:3000/api/user?address=".concat(address, "&amount=").concat(amount, "&txHash=").concat(txHash), undefined, { headers: { key: process.env.DEPOSITS_KEY } }).then(function (res) { return __awaiter(_this, void 0, void 0, function () {
+                        var state;
+                        return __generator(this, function (_a) {
+                            state = res.data.state;
+                            if (state)
+                                console.log("credited ".concat(address, " ").concat(amount, " USDC"));
+                            return [2 /*return*/];
+                        });
+                    }); })["catch"](function (err) {
+                        console.log("error accured while crediting", err);
+                    })];
                 case 1:
+                    //api/user?address=0x...
+                    // change later on, the base url
                     _a.sent();
                     return [2 /*return*/];
             }
@@ -93,25 +71,28 @@ function processAddresses(addresses, amounts) {
 }
 function main() {
     var _this = this;
-    var provider = new ethers_1.ethers.providers.JsonRpcProvider(process.env.GOERLI_TESTNET);
-    var contract = new ethers_1.ethers.Contract(process.env.TOKEN_ADDRESS, abi_1.abi, provider);
+    var provider = new ethers_1.ethers.providers.JsonRpcProvider(process.env.LOCAL_TESTNET);
+    var contract = new ethers_1.ethers.Contract(process.env.LOCAL_TOKEN_ADDRESS, abi_1.abi, provider);
     contract.on("Transfer", function (from, to, value, event) { return __awaiter(_this, void 0, void 0, function () {
         var transferEvent;
         return __generator(this, function (_a) {
-            transferEvent = {
-                from: from,
-                to: to,
-                value: value,
-                eventData: event
-            };
-            // if(Number(value) >= 1e6 ) {
-            // }
-            // check for minimum of 1 USDC
-            // check `to` that it is among the receiver addresses
-            // await 
-            // credit 
-            console.log(JSON.stringify(transferEvent, null, 4));
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0:
+                    transferEvent = {
+                        from: from,
+                        to: to,
+                        value: value,
+                        eventData: event
+                    };
+                    if (!(Number(value) >= 1e6)) return [3 /*break*/, 2];
+                    return [4 /*yield*/, addressDeposit(to, value, event.transactionHash)];
+                case 1:
+                    _a.sent();
+                    _a.label = 2;
+                case 2:
+                    console.log(JSON.stringify(transferEvent, null, 4));
+                    return [2 /*return*/];
+            }
         });
     }); });
 }

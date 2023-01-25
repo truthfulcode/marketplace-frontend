@@ -3,11 +3,17 @@ import Image from 'next/image'
 import Navbar from '../components/Navbar'
 import {styles, TitleText} from '../components/StyledComponents'
 import {Typography, Box, Grid, TextField, styled} from '@mui/material'
+import { useSession } from 'next-auth/react'
+import { useEffect } from 'react'
 
 export default function Home() {
+  const {data,status} = useSession();
   const CategoryText = styled(Typography)({
     color:"black"
   })
+  useEffect(()=>{
+    console.log(data)
+  },[])
   return (
     <div >
       <Head>
@@ -21,7 +27,7 @@ export default function Home() {
       backgroundPosition: "80% 100%",
       backgroundSize: "auto",
       }}>
-        <Navbar/>
+        <Navbar signout={!!data} signin={!data} signup={!data}/>
           <Box sx={styles.headerContent}>
             <Typography fontSize={32}>Looking for a freelancer? <br/> Weve got your back.</Typography>
             <TextField inputProps={{

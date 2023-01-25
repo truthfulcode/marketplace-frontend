@@ -3,37 +3,21 @@ import * as dotenv from "dotenv";
 import {abi} from "./abi";
 import axios from "axios";
 dotenv.config();
-// make sure the address is checksum
-function formatRequestAddresses(addresses:string[]){
-    let formatted = "";
-    addresses.map((value,index)=>{
-        if(index == addresses.length-1){
-            formatted+=value;
-        }else{
-            formatted+=value+",";
-        }
+
+async function addressDeposit(address:string, amount:string, txHash:string){
+    //api/user?address=0x...
+    // change later on, the base url
+    await axios.put(`http://localhost:3000/api/user?address=${address}&amount=${amount}&txHash=${txHash}`,undefined,{headers:{key:process.env.DEPOSITS_KEY}}).then(async(res)=>{
+        let state = res.data.state;
+        if(state) console.log(`credited ${address} ${amount} USDC`)
+    }).catch((err)=>{
+        console.log("error accured while crediting", err)
     })
-    return formatted;
 }
 
-async function processAddresses(addresses:string[], amounts:[]){
-    //api/user?address=0x...
-    if(addresses.length !== amounts.length) throw Error("mismatch of addresses and amount size");
-    // change later on, the base url
-    let arrStr = encodeURIComponent(JSON.stringify(formatRequestAddresses(addresses)))
-    await axios.get(`http://localhost:3000/api/user?addresses=${arrStr}`).then(async(res)=>{
-        let state = res.data.state;
-        if(Array.isArray(state) && state.length > 0){
-            // call prisma to update the balance
-            await axios.put(`http://localhost:3000/api/user`,{addresses:[],amount:[]})
-        }
-    }).catch((err)=>{
-        console.log(err)
-    })
-}
 function main() {
-    const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_TESTNET);
-    const contract = new ethers.Contract(process.env.TOKEN_ADDRESS as string, abi, provider);
+    const provider = new ethers.providers.JsonRpcProvider(process.env.LOCAL_TESTNET);
+    const contract = new ethers.Contract(process.env.LOCAL_TOKEN_ADDRESS as string, abi, provider);
     contract.on("Transfer",async (from, to, value, event)=>{
         let transferEvent ={
             from: from,
@@ -41,13 +25,9 @@ function main() {
             value: value,
             eventData: event,
         }
-        // if(Number(value) >= 1e6 ) {
-
-        // }
-        // check for minimum of 1 USDC
-        // check `to` that it is among the receiver addresses
-        // await 
-        // credit 
+        if(Number(value) >= 1e6 ) {
+            await addressDeposit(to, value, event.transactionHash);
+        }
         console.log(JSON.stringify(transferEvent, null, 4))
     })
 }

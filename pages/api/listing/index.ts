@@ -6,16 +6,16 @@ import {
   isValidAddress,
   isValidAddresses,
 } from "../../../prisma/CRUD/user/read";
-import { Account, Prisma } from "@prisma/client";
-import createUser from "../../../prisma/CRUD/user/create";
+import { Proposal } from "@prisma/client";
 import { incrementBalance } from "../../../prisma/CRUD/user/update";
-import { encrypt } from "../../../utils/helpers";
-import { RSC_MODULE_TYPES } from "next/dist/shared/lib/constants";
 import {
   getTransactionsOfEthereumAccountUsingAddress,
   isTxHashRecorded,
 } from "../../../prisma/CRUD/transaction/read";
 import { insertTxIntoUser } from "../../../prisma/CRUD/transaction/update";
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]";
+import createProposal from "../../../prisma/CRUD/proposal/create";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -43,39 +43,28 @@ export default async function handler(
         }
       }
       case "POST": {
-        const {
-          username,
-          firstName,
-          lastName,
-          email,
-          password,
-          phoneNumber,
-          accountType,
-        } = req.body;
-        console.log("pass", password);
-        const account: Account = {
-          id: "",
-          username: username,
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-          password: password,
-          phoneNumber: phoneNumber,
-          accountType: accountType,
-          userId:"",
-          expires_at:0,
-          access_token:"",
-          session_state:"",
-          id_token:"",
-          scope:"",
-          refresh_token:"",
-          token_type:"",
-          provider: "",
-            providerAccountId: "",
-            type: "",
-        };
-        const user = await createUser(account);
-        return res.json(user);
+        const session = await unstable_getServerSession(req,res,authOptions);
+        if(session){
+          const { id: listingId, status, description, duration, freelancerId, title } = req.body;
+          const proposal: Proposal = {
+            id: listingId,
+            description:description,
+            duration:duration,
+            status:status,
+            title:title,
+            freelancerId:freelancerId
+          };
+          try{
+            const _proposal = await createProposal(proposal);
+            console.log("user",_proposal)
+            return res.json(_proposal);
+          }catch(err){
+            console.log("err listing",err)
+            return res.status(403).json(err);
+          }
+        }else{
+          return res.status(403).json({error:"Invalid session"});
+        }
       }
       case "PUT": {
         if (req.headers.key === process.env.DEPOSITS_KEY) {

@@ -9,7 +9,11 @@ import {
 import FormWrapper from "../components/FormWrapper";
 import { ValueWithError } from "../utils/types";
 import { isString, validEmail } from "../utils/helpers";
-import { useSession, signIn as signIN , signOut as signOUT } from "next-auth/react";
+import {
+  useSession,
+  signIn as signIN,
+  signOut as signOUT,
+} from "next-auth/react";
 import Router, { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 
@@ -24,9 +28,9 @@ const signIn = () => {
     formState: { errors, isSubmitting },
   } = useForm();
   const { data: session, status } = useSession();
-  const onSubmit = async (values:Object) => {
-    let _u = username?.value 
-    let _p = password?.value
+  const onSubmit = async (values: Object) => {
+    let _u = username?.value;
+    let _p = password?.value;
     let defaultBody = {
       // grant_type: "",
       username: _u ? _u : "asdf@gmail.com",
@@ -35,58 +39,57 @@ const signIn = () => {
       // client_id: "",
       // client_secret: "",
     };
-    try{
+    try {
       const body = { ...defaultBody };
-      console.log(`POSTing ${JSON.stringify(body, null, 2)}`);
-      console.log("object submitted",{
-        ...body,
-        callbackUrl: router.query.callbackUrl,
-      })
+      // console.log(`POSTing ${JSON.stringify(body, null, 2)}`);
+      // console.log("object submitted", {
+      //   ...body,
+      //   callbackUrl: router.query.callbackUrl,
+      // });
       let res = await signIN("credentials", {
         ...body,
-        callbackUrl: router.query.callbackUrl as string,
+        // callbackUrl: router.query.callbackUrl as string,
       });
-      console.log(`signing:onsubmit:res`, res);
-    }catch(err){
+      // console.log(`signing:onsubmit:res`, res);
+    } catch (err) {
       console.error(err);
     }
+    
+  };
+  useEffect(()=>{
     if (status === "authenticated") {
       router.push("/", {
         query: {
-          callbackUrl: router.query.callbackUrl,
+          // callbackUrl: router.query.callbackUrl,
         },
       });
-  }}
-
+    }
+  },[status])
   const handleChange = (
-    isUser:boolean,
+    isUser: boolean,
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    console.log("session",session)
+    console.log("session", session);
     let isError = false;
     let errorMessage;
     let value = event.target.value;
-    if(isUser){
+    if (isUser) {
       // email
-      if(validEmail(value)){
-        // isError = !validEmail(value)
-        // if(isError) errorMessage = "Invalid Email Format";
-      }else{
-        isError = value.length < 8
-        if(isError) errorMessage = "length must be greater or equal to 8"
+      if (!validEmail(value)) {
+        isError = value.length < 8;
+        if (isError) errorMessage = "length must be greater or equal to 8";
       }
-      setUsername({value:value, error: errorMessage ? errorMessage : undefined});
-    } else{
-      setPassword({value:value, error: errorMessage ? errorMessage : undefined});
+      setUsername({
+        value: value,
+        error: errorMessage ? errorMessage : undefined,
+      });
+    } else {
+      setPassword({
+        value: value,
+        error: errorMessage ? errorMessage : undefined,
+      });
     }
   };
-  // if (status === "authenticated") {
-  //   router.push("/", {
-  //     query: {
-  //       callbackUrl: router.query.callbackUrl,
-  //     },
-  //   });
-  // }
   return (
     <Box
       sx={{
@@ -95,9 +98,8 @@ const signIn = () => {
         height: "100vh",
       }}
     >
-      <Navbar signIn={false} />
+      <Navbar signup={true} />
       <FormWrapper method="POST" onSubmit={handleSubmit(onSubmit)}>
-        {session +  " " +status}
         <TitleText>SIGN IN</TitleText>
         <TextField
           error={isString(username)}
@@ -114,12 +116,19 @@ const signIn = () => {
           type="password"
           placeholder="Password"
         />
-        <SubmitButton onClick={handleSubmit(onSubmit)}>SIGN IN</SubmitButton>
-        <SubmitButton onClick={async()=>{
-          await signOUT({
-            callbackUrl: router.query.callbackUrl as string,
-          });
-        }}>SIGN OUT</SubmitButton>
+        {session ? (
+          <SubmitButton
+            onClick={async () => {
+              await signOUT({
+                callbackUrl: router.query.callbackUrl as string,
+              });
+            }}
+          >
+            SIGN OUT
+          </SubmitButton>
+        ) : (
+          <SubmitButton onClick={handleSubmit(onSubmit)}>SIGN IN</SubmitButton>
+        )}
       </FormWrapper>
     </Box>
   );

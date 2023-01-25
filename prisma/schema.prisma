@@ -17,50 +17,53 @@ model Account {
   email       String        @unique
   phoneNumber String        @unique
   accountType AccountType
-  Transaction Transaction[]
   freelancer  Freelancer?   @relation("freelancerAccount")
   customer    Customer?     @relation("customerAccount")
   ethereumAccount  EthereumAccount   @relation("ethereumAccount", fields: [id], references: [id])
-  // compoundId         String    @unique @map(name: "compound_id")
-  // userId             Int       @map(name: "user_id")
-  providerType       String    @map(name: "provider_type")
-  providerId         String    @map(name: "provider_id")
-  providerAccountId  String    @map(name: "provider_account_id")
-  refreshToken       String?   @map(name: "refresh_token")
-  accessToken        String?   @map(name: "access_token")
-  accessTokenExpires DateTime? @map(name: "access_token_expires")
-  createdAt          DateTime  @default(now()) @map(name: "created_at")
-  updatedAt          DateTime  @default(now()) @map(name: "updated_at")
-  emailVerified      DateTime? @map(name: "email_verified")
-  Session            Session[]
-  @@index([providerAccountId], name: "providerAccountId")
-  @@index([providerId], name: "providerId")
-  // @@index([userId], name: "userId")
-  @@map(name: "account")
+
+  userId             String  @map("user_id") @db.ObjectId
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.String
+  access_token       String? @db.String
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.String
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+  @@map(name: "accounts")
 }
 
 model Session {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId       Int      @map(name: "user_id")
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
   expires      DateTime
-  sessionToken String   @unique @map(name: "session_token")
-  accessToken  String   @unique @map(name: "access_token")
-  createdAt    DateTime @default(now()) @map(name: "created_at")
-  updatedAt    DateTime @default(now()) @map(name: "updated_at")
-  account      Account  @relation(fields: [id], references: [id])
-
-  @@map(name: "session")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model VerificationRequest {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+model VerificationToken {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
   identifier String
   token      String   @unique
   expires    DateTime
-  createdAt  DateTime @default(now()) @map(name: "created_at")
-  updatedAt  DateTime @default(now()) @map(name: "updated_at")
 
-  @@map(name: "verification_requests")
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
 }
 
 model Freelancer {
@@ -83,7 +86,22 @@ model EthereumAccount {
   iv            String 
   encryptedData String
   balance       Int
+  Transaction Transaction[]
   account    Account?     @relation("ethereumAccount")
+}
+
+model Transaction {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  txHash        String          @unique
+  timestamp     DateTime        @default(now())
+  status        TransactionStatus
+  txType        TransactionType
+  description   String?
+  customerId    String?
+  orderId       String?
+  order         Order?
+  accountId     String          @db.ObjectId
+  account       EthereumAccount    @relation(fields: [accountId], references: [id])
 }
 
 model Listing {
@@ -93,9 +111,11 @@ model Listing {
   description   String
   files         String[]
   proposals     Proposal[]
+  status        ListingStatus
+  category      ListingCategory
   customerId    String     @db.ObjectId
   order         Order?     @relation("listingOrder")
-  listingAuthor Customer   @relation(fields: [id], references: [id])
+  listingAuthor Customer   @relation(fields: [customerId], references: [id])
 }
 
 model Order {
@@ -104,10 +124,19 @@ model Order {
   title           String
   date            DateTime
   status          OrderStatus
+  customerId      String     @db.ObjectId
+  submission      Submission  @relation("orderSubmission", fields: [id], references: [id])
   listing         Listing     @relation("listingOrder", fields: [id], references: [id])
-  transaction     Transaction @relation(fields: [id], references: [txId])
+  transaction     Transaction @relation(fields: [id], references: [id])
   orderFreelancer Freelancer  @relation(fields: [id], references: [id])
-  orderAuthor     Customer    @relation(fields: [id], references: [id])
+  orderAuthor     Customer    @relation(fields: [customerId], references: [id])
+}
+
+model Submission {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  description     String
+  files           String[]
+  order           Order?       @relation("orderSubmission")
 }
 
 model Proposal {
@@ -121,40 +150,6 @@ model Proposal {
   proposalAuthor Freelancer     @relation(fields: [id], references: [id])
 }
 
-model Transaction {
-  txId          String            @id @default(auto()) @map("_id") @db.ObjectId
-  timestamp     DateTime          @default(now())
-  status        TransactionStatus
-  description   String
-  customerId    String            @db.ObjectId
-  orderId       String
-  order         Order?
-  paymentType   PaymentType
-  account       Account?          @relation(fields: [txId], references: [id])
-  cryptoPayment Crypto?           @relation("cryptoPayment")
-  paypalPayment Paypal?           @relation("paypalPayment")
-  files         String[]
-}
-
-model Crypto {
-  onChainTx   String       @id @map("_id")
-  tokenType   TokenType
-  amount      Int
-  transaction Transaction? @relation("cryptoPayment", fields: [onChainTx], references: [txId])
-}
-
-model Paypal {
-  paypalTx     String       @id @map("_id")
-  paymentEmail String
-  amount       Int
-  transaction  Transaction? @relation("paypalPayment", fields: [paypalTx], references: [txId])
-}
-
-enum PaymentType {
-  BANK
-  CRYPTO
-}
-
 enum PaymentPage {
   Activity
   Deposit
@@ -166,6 +161,12 @@ enum ProposalStatus {
   APPROVED
   PENDING
   REJECTED
+}
+
+enum ListingStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
 }
 
 enum OrderStatus {
@@ -196,4 +197,16 @@ enum TokenType {
 enum AccountType {
   CUSTOMER
   FREELANCER
+}
+enum ListingCategory {
+  Design
+  Music
+  Programming
+  Marketing
+  Business
+  Writing
+  Data
+  Lifestyle
+  Video
+  Other
 }

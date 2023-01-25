@@ -1,29 +1,13 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import express, { Request, Response } from 'express';
-import { MongoClient, Db } from 'mongodb';
-export default function handler(req:NextApiRequest, res:NextApiResponse){
-    
-}
-
-const app = express();
-const mongoUrl = 'mongodb://localhost:27017';
-const dbName = 'mydatabase';
-
-let db: Db;
-
-MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
-  if (error) {
-    console.error(error);
-    process.exit(1);
-  }
-// check address existence then decrement
-  export async function decrementBalance(address: string, amount:number) {
+import { prisma } from "../../../utils/prisma";
+import { getAddressId } from "./read";
+// check address existence then increment
+export async function incrementBalance(address: string, amount:number) {
     await getAddressId(address).then(async(res)=>{
       let result = null;
       if(res){
         result = await prisma.ethereumAccount.update({
           where:{id:res.id},
-          data:{balance:{decrement:amount}}
+          data:{balance:{increment:amount}}
         }).then(()=>{
           console.log("updated record")
         })
@@ -31,3 +15,54 @@ MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true 
       return result != null;
     })
   }
+// check address existence then decrement
+export async function decrementBalance(address: string, amount: number) {
+  await getAddressId(address).then(async (res) => {
+    let result = null;
+    if (res) {
+      result = await prisma.ethereumAccount
+        .update({
+          where: { id: res.id },
+          data: { balance: { decrement: amount } },
+        })
+        .then(() => {
+          console.log("updated record");
+        });
+    }
+    return result != null;
+  });
+}
+// debits balance `fromEthAccId` with `amount0`
+// credit balance `toEthAccId` with `amount1`
+export async function adjustBalances(
+  fromEthAccId: string,
+  amount0: number,
+  toEthAccId: string,
+  amount1: number
+) {
+  if (amount0 < amount1)
+    throw Error("sender balance cannot be higher than receiver!");
+  await prisma.ethereumAccount
+    .update({
+      data: {
+        balance: {
+          decrement: amount0,
+        },
+      },
+      where: {
+        id: fromEthAccId,
+      },
+    })
+    .then(async () => {
+      await prisma.ethereumAccount.update({
+        data: {
+          balance: {
+            increment:amount1
+          },
+        },
+        where: {
+          id: toEthAccId,
+        },
+      });
+    });
+}
