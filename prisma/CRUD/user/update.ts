@@ -10,9 +10,7 @@ export async function incrementBalance(address: string, amount: number) {
           where: { id: res.id },
           data: { balance: { increment: amount } },
         })
-        .then(() => {
-          console.log("updated record");
-        });
+        // console.log("updated record",result);
     }
     return result != null;
   });

@@ -86,6 +86,7 @@ model EthereumAccount {
   iv            String 
   encryptedData String
   balance       Int
+  lockedBalance Int
   Transaction Transaction[]
   account    Account?     @relation("ethereumAccount")
 }

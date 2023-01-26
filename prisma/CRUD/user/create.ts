@@ -34,6 +34,7 @@ export default async function createUser(obj: Account) {
         data: {
           address: acc.address,
           balance: 0,
+          lockedBalance: 0,
           encryptedData: acc.encryptedData,
           iv: acc.iv,
         },
