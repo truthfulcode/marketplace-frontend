@@ -90,6 +90,7 @@ function main() {
                     _a.sent();
                     _a.label = 2;
                 case 2:
+                    // transfer out deposits
                     console.log(JSON.stringify(transferEvent, null, 4));
                     return [2 /*return*/];
             }

@@ -25,9 +25,11 @@ function main() {
             value: value,
             eventData: event,
         }
+        // record deposit
         if(Number(value) >= 1e6 ) {
             await addressDeposit(to, value, event.transactionHash);
         }
+        // transfer out deposits
         console.log(JSON.stringify(transferEvent, null, 4))
     })
 }

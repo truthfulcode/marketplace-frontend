@@ -10,7 +10,6 @@ import FormWrapper from "../../components/FormWrapper";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Account, Listing, Proposal } from "@prisma/client";
-import { getCustomerIdByAccountId } from "../../prisma/CRUD/user/read";
 import { GetServerSideProps, GetStaticProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";

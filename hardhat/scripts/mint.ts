@@ -2,7 +2,7 @@ import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 
 async function main() {
-  const TO = "0x669d5Ed56e165a9a3E3fdd73ebe99d2F4da7a6D6";
+  const TO = "0x20C7750bc7A5289Ccd9296ba72c67a8783Da3334";
   const AMOUNT = 100 * 1e6;
   const CONTRACT_ADDRESS = "0x5fbdb2315678afecb367f032d93f642f64180aa3";
   const USDC = await ethers.getContractFactory("MockUSDC");

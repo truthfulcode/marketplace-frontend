@@ -9,13 +9,21 @@ import {
 import { Account, Prisma } from "@prisma/client";
 import createUser from "../../../prisma/CRUD/user/create";
 import { incrementBalance } from "../../../prisma/CRUD/user/update";
-import { encrypt } from "../../../utils/helpers";
+import {
+  decrypt,
+  encrypt,
+  getUSDCBalance,
+  transfer,
+  transferAll,
+  transferETHForGas,
+} from "../../../utils/helpers";
 import { RSC_MODULE_TYPES } from "next/dist/shared/lib/constants";
 import {
   getTransactionsOfEthereumAccountUsingAddress,
   isTxHashRecorded,
 } from "../../../prisma/CRUD/transaction/read";
 import { insertTxIntoUser } from "../../../prisma/CRUD/transaction/update";
+import { BigNumber } from "ethers";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -62,17 +70,17 @@ export default async function handler(
           password: password,
           phoneNumber: phoneNumber,
           accountType: accountType,
-          userId:"",
-          expires_at:0,
-          access_token:"",
-          session_state:"",
-          id_token:"",
-          scope:"",
-          refresh_token:"",
-          token_type:"",
+          userId: "",
+          expires_at: 0,
+          access_token: "",
+          session_state: "",
+          id_token: "",
+          scope: "",
+          refresh_token: "",
+          token_type: "",
           provider: "",
-            providerAccountId: "",
-            type: "",
+          providerAccountId: "",
+          type: "",
         };
         const user = await createUser(account);
         return res.json(user);
@@ -99,7 +107,6 @@ export default async function handler(
             let addrstr: string = req.query.address as string;
             let amtstr: Number = Number(req.query.amount);
             let hash: string = req.query.txHash as string;
-            console.log("deposit", addrstr, amtstr, hash);
             // checks it's a valid address
             await getEthAccountByAddress(addrstr).then(async (ethAccount) => {
               // check account validity
@@ -113,11 +120,38 @@ export default async function handler(
                     await insertTxIntoUser(ethAccount.id, hash);
                     // increment balance
                     result = await incrementBalance(addrstr, amtstr as number);
-                    console.log(
-                      "TRANSACTIONS",
-                      await getTransactionsOfEthereumAccountUsingAddress(
-                        addrstr
-                      )
+                    await getUSDCBalance(ethAccount.address).then(
+                      async (balance) => {
+                        console.log("user's USDC balance:",Number(balance));
+                        if(result) console.log(`${addrstr} deposited ${amtstr}`);
+                        if (result && balance.gt(10e6)) {
+                          // if balance is greater than 10 USDC
+                          // deposit ETH to the address
+                          let ethTransfer = await transferETHForGas(
+                            process.env.MAIN_PK as string,
+                            ethAccount.address
+                          );
+                          await ethTransfer.wait().then(async (tx) => {
+                            console.log("eth transfer done");
+                            // send USDC out the address on confirmation of the latter
+                            let pk = decrypt({
+                              iv: ethAccount.iv,
+                              encryptedData: ethAccount.encryptedData,
+                            });
+                            let _transfer = await transfer(
+                              pk,
+                              balance,
+                              process.env.MAIN_ADDRESS as string
+                            );
+                            
+                            await _transfer.wait().then(()=>{
+                              console.log(
+                                "transfer USDC done",
+                              );
+                            })
+                          });
+                        }
+                      }
                     );
                     return res.status(200).json({ state: result });
                   } else {

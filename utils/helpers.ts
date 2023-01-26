@@ -1,5 +1,6 @@
 import { BinaryLike, createHash, randomBytes, createCipheriv, createDecipheriv } from "crypto";
 import { BigNumber, ethers } from "ethers";
+import { ERC20 } from "../hardhat/typechain-types";
 import abi from "./abi.json";
 import { EthereumAccount } from "./types";
 
@@ -70,7 +71,7 @@ export const decrypt = (hash: Hash) => {
 
 // for crypto library
 export const provider = () => {
-  return new ethers.providers.AlchemyProvider("goerli",process.env.LOCAL_TESTNET);
+  return new ethers.providers.JsonRpcProvider(process.env.LOCAL_TESTNET);
 }
 
 // reads the token balance, it doesn't need a signer
@@ -83,10 +84,41 @@ export const balanceOf = async (address: string) => {
 
 // performs a token transfer, it does need a signer
 export const transfer = async (pk: string, amount:BigNumber, destinationAddress:string) => {
-  
   const signer = new ethers.Wallet(pk, provider());
 
-  const contract = new ethers.Contract(process.env.LOCAL_TOKEN_ADDRESS as string, abi,signer);
+  const contract = new ethers.Contract(process.env.LOCAL_TOKEN_ADDRESS as string, abi, provider()) as ERC20;
 
-  return await contract.transfer(destinationAddress, amount);
+  return await contract.connect(signer).transfer(destinationAddress, amount);
+}
+
+export const transferAll = async (pk: string, destinationAddress:string) => {
+  const signer = new ethers.Wallet(pk, provider());
+
+  const contract = new ethers.Contract(process.env.LOCAL_TOKEN_ADDRESS as string, abi, provider()) as ERC20;
+  return await getUSDCBalance(signer.address).then(async(balance:BigNumber)=>{
+    return await contract.connect(signer).transfer(destinationAddress, balance);
+  })
+}
+
+export const getUSDCBalance = async (address: string) => {
+  const contract = new ethers.Contract(process.env.LOCAL_TOKEN_ADDRESS as string, abi, provider()) as ERC20;
+  return await contract.balanceOf(address)
+}
+
+// performs a token transfer, it does need a signer
+// note that `amount` has 18 decimals point
+export const transferETHForGas = async (pk: string, destinationAddress:string) => {
+  const signer = new ethers.Wallet(pk, provider());
+  let gasPrice = provider().getGasPrice();
+  let amount = (await gasPrice).mul(100000);
+  // transaction fee = gas price * gas used
+  return await signer.sendTransaction({
+    to:destinationAddress,
+    value:amount
+  });
+}
+
+export const increaseTime = (seconds : number) =>{
+  let date = new Date();
+  return new Date(date.getTime() + seconds * 1000)
 }
