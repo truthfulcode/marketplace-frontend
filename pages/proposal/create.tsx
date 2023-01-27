@@ -14,7 +14,7 @@ import { GetServerSideProps, GetStaticProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 
-const createProposal = (props:any) => {
+const createproposal = (props:any) => {
     const {accountId, accountType} = props;
     const [duration, setDuation] = React.useState(0);
     const [title, setTitle] = React.useState('');
@@ -107,4 +107,4 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   }}
 }
 
-export default createProposal;
+export default createproposal;
