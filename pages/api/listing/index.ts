@@ -47,7 +47,7 @@ export default async function handler(
         if(session){
           const { id: listingId, status, description, duration, freelancerId, title } = req.body;
           const proposal: Proposal = {
-            id: listingId,
+            id: "",
             description:description,
             duration:duration,
             status:status,
@@ -55,7 +55,7 @@ export default async function handler(
             freelancerId:freelancerId
           };
           try{
-            const _proposal = await createProposal(proposal);
+            const _proposal = await createProposal(proposal,listingId);
             console.log("user",_proposal)
             return res.json(_proposal);
           }catch(err){

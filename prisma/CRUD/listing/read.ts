@@ -1,5 +1,5 @@
 import { prisma } from "../../../utils/prisma";
-import { Listing } from "@prisma/client";
+import { Listing, ListingStatus } from "@prisma/client";
 
 
 // returns null when if email is not found
@@ -24,6 +24,17 @@ export async function getCustomerListings(customerId: string) : Promise<Listing[
   return result ? result.listings : [];
 }
 
+export async function getListingStatus(listingId: string) : Promise<ListingStatus | null>{
+  let result = await prisma.listing.findUnique({
+    where:{
+      id:listingId
+    },
+    select:{
+      status:true
+    }
+  })
+  return result ? result.status : null;
+}
 export async function getListing(listingId: string) : Promise<Listing | null> {
     let result = await prisma.listing.findUnique({
       where: {

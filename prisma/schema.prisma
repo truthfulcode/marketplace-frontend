@@ -173,7 +173,7 @@ enum ListingStatus {
 
 enum OrderStatus {
   SUCCESSFUL
-  PENDING
+  ACTIVE
   CANCELLED
 }
 

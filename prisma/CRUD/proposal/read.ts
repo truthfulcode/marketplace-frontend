@@ -1,5 +1,5 @@
 import { prisma } from "../../../utils/prisma";
-import { Proposal } from "@prisma/client";
+import { Proposal, ProposalStatus } from "@prisma/client";
 
 
 // returns null when if email is not found
@@ -36,6 +36,18 @@ export async function getProposalsByFreelancerId(accountId: string) : Promise<Pr
   return result ? result.proposals : [];
 }
 
+export async function getProposalStatus(proposalId: string) : Promise<ProposalStatus | null> {
+  let result = await prisma.proposal.findUnique({
+    where: {
+      id:proposalId,
+    },
+    select:{
+      status:true
+    }
+  });
+  return result ? result.status : null ;
+}
+
 export async function getProposal(proposalId: string) : Promise<Proposal | null> {
     let result = await prisma.proposal.findUnique({
       where: {
@@ -44,4 +56,5 @@ export async function getProposal(proposalId: string) : Promise<Proposal | null>
     });
     return result ? result : null ;
   }
+
 

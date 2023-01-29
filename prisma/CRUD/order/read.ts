@@ -1,5 +1,5 @@
 import { prisma } from "../../../utils/prisma";
-import { Order, Submission } from "@prisma/client";
+import { Order, OrderStatus, Submission } from "@prisma/client";
 
 
 // returns null when if email is not found
@@ -12,8 +12,20 @@ export async function isValidOrder(orderId: string) {
     return result != null;
 }
 
-export async function getOrdersByAccountId(accountId: string) : Promise<Order[]>{
-  let result = await prisma.account.findUnique({
+export async function getOrdersByFreelancerId(accountId: string) : Promise<Order[]>{
+  let result = await prisma.freelancer.findUnique({
+    where: {
+      id:accountId,
+    },
+    select: {
+      orders:true
+    }
+  });
+  return result ? result.orders : [];
+}
+
+export async function getOrdersByCustomerId(accountId: string) : Promise<Order[]>{
+  let result = await prisma.customer.findUnique({
     where: {
       id:accountId,
     },
@@ -55,6 +67,18 @@ export async function getOrderBySubmissionId(submissionId: string) : Promise<Sub
     },
   });
   return result ? result : null ;
+}
+
+export async function getOrderStatus(orderId: string) : Promise<OrderStatus | null> {
+  let result = await prisma.order.findUnique({
+    where: {
+      id:orderId,
+    },
+    select:{
+      status:true
+    }
+  });
+  return result ? result.status : null ;
 }
 
 export async function getOrder(orderId: string) : Promise<Order | null> {

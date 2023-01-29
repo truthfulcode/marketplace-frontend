@@ -32,6 +32,38 @@ export async function decrementBalance(address: string, amount: number) {
     return result != null;
   });
 }
+// check address existence then increment
+export async function incrementLockedBalance(address: string, amount: number) {
+  return await getAddressId(address).then(async (res) => {
+    let result = null;
+    if (res) {
+      result = await prisma.ethereumAccount
+        .update({
+          where: { id: res.id },
+          data: { lockedBalance: { increment: amount } },
+        })
+        // console.log("updated record",result);
+    }
+    return result != null;
+  });
+}
+// check address existence then decrement
+export async function decrementLockedBalance(address: string, amount: number) {
+  await getAddressId(address).then(async (res) => {
+    let result = null;
+    if (res) {
+      result = await prisma.ethereumAccount
+        .update({
+          where: { id: res.id },
+          data: { lockedBalance: { decrement: amount } },
+        })
+        .then(() => {
+          console.log("updated record");
+        });
+    }
+    return result != null;
+  });
+}
 // debits balance `fromEthAccId` with `amount0`
 // credit balance `toEthAccId` with `amount1`
 export async function adjustBalances(
@@ -65,4 +97,15 @@ export async function adjustBalances(
         },
       });
     });
+}
+
+export async function lockBalance(customerId: string, amount:number) {
+  let result = await prisma.ethereumAccount.update({
+    where:{id:customerId},
+    data:{
+      balance:{decrement:amount},
+      lockedBalance:{increment:amount},
+    }
+  })
+  return result !== null;
 }
