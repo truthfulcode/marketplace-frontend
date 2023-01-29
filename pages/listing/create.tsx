@@ -9,22 +9,32 @@ import {
 import FormWrapper from "../../components/FormWrapper";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { Account, Listing } from "@prisma/client";
+import { Account, Listing, ListingCategory } from "@prisma/client";
 import { getCustomerIdByAccountId } from "../../prisma/CRUD/user/read";
 import { GetServerSideProps, GetStaticProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
+import ExtendableLinkFields from "../../components/ExtendableLinkFields";
+import FormLabel from "@mui/material/FormLabel";
 
 const createListing = (props:any) => {
     const {accountId, accountType} = props;
-
     const [category, setCategory] = React.useState('');
+    const [isActive, setIsActive] = React.useState(false);
     const [price, setPrice] = React.useState(0);
+    const [links, setLinks] = React.useState<Array<string>>([""]);
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
     let router = useRouter();
     var {data, status} = useSession();
+    const pushLink = (newLink:string) => {
+      console.log("push link")
+      setLinks(oldLinks => [...oldLinks, newLink])
+    }
 
+    const rmoveLink = (index:number) => {
+      setLinks(oldLinks => oldLinks.filter((link,i)=>i !== index))
+    }
   useEffect(()=>{
     if(status !== 'authenticated' && accountType !== "CUSTOMER"){
       // transfer to 404
@@ -35,6 +45,8 @@ const createListing = (props:any) => {
     if(!accountId) return;
     const listing: Listing = {
       id: "",
+      status:isActive ? "ACTIVE" : "DRAFT",
+      category:category as ListingCategory,
       customerId: accountId,
       price: price,
       title: title,
@@ -105,9 +117,7 @@ const createListing = (props:any) => {
           </Select>
         </FormControl>
         <br></br>
-        <label style={{ fontWeight: "bold" }}>Images:</label>
-        <br></br>
-        <input type="file" id="files" name="files" multiple></input>
+        <ExtendableLinkFields links={links} pushLink={pushLink} removeLink={rmoveLink}/>
         <br></br>
         <TextareaAutosize
           onChange={(event)=>{setDescription(event.target.value as string)}}
@@ -115,7 +125,14 @@ const createListing = (props:any) => {
           placeholder="Description"
         />
         <br></br>
-        <SubmitButton onClick={createNewListing}>CREATE</SubmitButton>
+        <SubmitButton onClick={async()=>{
+          setIsActive(true)
+          await createNewListing()
+        }}>CREATE</SubmitButton>
+        <SubmitButton onClick={async()=>{
+          setIsActive(false)
+          await createNewListing()
+        }}>SAVE</SubmitButton>
       </FormWrapper>
     </Box>
   );
