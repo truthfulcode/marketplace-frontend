@@ -3,17 +3,16 @@ import Image from 'next/image'
 import Navbar from '../components/Navbar'
 import {styles, TitleText} from '../components/StyledComponents'
 import {Typography, Box, Grid, TextField, styled} from '@mui/material'
-import { useSession } from 'next-auth/react'
-import { useEffect } from 'react'
+import { GetServerSideProps } from 'next'
+import { unstable_getServerSession } from 'next-auth'
+import { authOptions } from './api/auth/[...nextauth]'
+import { Account } from '@prisma/client'
 
-export default function Home() {
-  const {data,status} = useSession();
+export default function Home(props) {
+  const {accountType} = props;
   const CategoryText = styled(Typography)({
     color:"black"
   })
-  useEffect(()=>{
-    console.log(data)
-  },[])
   return (
     <div >
       <Head>
@@ -27,7 +26,7 @@ export default function Home() {
       backgroundPosition: "80% 100%",
       backgroundSize: "auto",
       }}>
-        <Navbar signout={!!data} signin={!data} signup={!data}/>
+        <Navbar accountType={accountType}/>
           <Box sx={styles.headerContent}>
             <Typography fontSize={32}>Looking for a freelancer? <br/> Weve got your back.</Typography>
             <TextField inputProps={{
@@ -66,4 +65,13 @@ export default function Home() {
       </footer>
     </div>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async (c) => {
+  const session = await unstable_getServerSession(c.req,c.res,authOptions);
+  const id = (session?.user as Account).id;
+  const accountType = (session?.user as Account).accountType;
+  return {props:{
+    accountType:accountType
+  }}
 }

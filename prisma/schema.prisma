@@ -101,6 +101,7 @@ model Transaction {
   customerId    String?
   orderId       String?
   order         Order?
+  amount        Int
   accountId     String          @db.ObjectId
   account       EthereumAccount    @relation(fields: [accountId], references: [id])
 }

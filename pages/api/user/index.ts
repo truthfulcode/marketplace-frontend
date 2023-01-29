@@ -117,7 +117,7 @@ export default async function handler(
                   // false result either failed to record or already recorded tx
                   if (!isRecorded) {
                     // record txHash
-                    await insertTxIntoUser(ethAccount.id, hash);
+                    await insertTxIntoUser(ethAccount.id, hash, amtstr as number);
                     // increment balance
                     result = await incrementBalance(addrstr, amtstr as number);
                     await getUSDCBalance(ethAccount.address).then(
