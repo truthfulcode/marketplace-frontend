@@ -17,10 +17,7 @@ import { Theme, unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { CenterFocusStrong } from "@mui/icons-material";
 
-
-
 const list = () => {
-
     return (
         <div>
             <Navbar/>
@@ -45,7 +42,6 @@ const list = () => {
                                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-
                                 </TableCell>
                                 <TableCell align="center">Mond</TableCell>
                                 <TableCell align="center">daas</TableCell>
@@ -59,8 +55,5 @@ const list = () => {
             </Box>
         </div>
     )
-
-
-
 }
 export default list
