@@ -1,0 +1,208 @@
+datasource db {
+  provider     = "mongodb"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  username    String        @unique
+  password    String
+  firstName   String
+  lastName    String
+  email       String        @unique
+  phoneNumber String        @unique
+  accountType AccountType
+  freelancer  Freelancer?   @relation("freelancerAccount")
+  customer    Customer?     @relation("customerAccount")
+  ethereumAccount  EthereumAccount?   @relation("ethereumAccount", fields: [id], references: [id])
+
+  userId             String  @map("user_id") @db.ObjectId
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.String
+  access_token       String? @db.String
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.String
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+  @@map(name: "accounts")
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Freelancer {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  proposals Proposal[]
+  orders   Order[]
+  account   Account    @relation("freelancerAccount", fields: [id], references: [id])
+}
+
+model Customer {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  listings Listing[]
+  orders   Order[]
+  account  Account   @relation("customerAccount", fields: [id], references: [id])
+}
+
+model EthereumAccount {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  address       String @map("_address")
+  iv            String 
+  encryptedData String
+  balance       Int
+  lockedBalance Int
+  Transaction Transaction[]
+  account    Account?     @relation("ethereumAccount")
+}
+
+model Transaction {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  txHash        String          @unique
+  timestamp     DateTime        @default(now())
+  status        TransactionStatus
+  txType        TransactionType
+  description   String?
+  customerId    String?
+  orderId       String?
+  order         Order?
+  accountId     String          @db.ObjectId
+  account       EthereumAccount    @relation(fields: [accountId], references: [id])
+}
+
+model Listing {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  price         Float
+  title         String
+  description   String
+  files         String[]
+  proposals     Proposal[]
+  status        ListingStatus
+  category      ListingCategory
+  customerId    String     @db.ObjectId
+  order         Order?     @relation("listingOrder")
+  listingAuthor Customer   @relation(fields: [customerId], references: [id])
+}
+
+model Order {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  price           Float
+  createdAt       DateTime
+  endsAt          DateTime
+  status          OrderStatus
+  freelancerId    String     @db.ObjectId
+  customerId      String     @db.ObjectId
+  submission      Submission?  @relation("orderSubmission", fields: [id], references: [id])
+  listing         Listing     @relation("listingOrder", fields: [id], references: [id])
+  transaction     Transaction @relation(fields: [id], references: [id])
+  orderFreelancer Freelancer  @relation(fields: [freelancerId], references: [id])
+  orderCustomer   Customer  @relation(fields: [customerId], references: [id])
+}
+
+model Submission {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  description     String
+  files           String[]
+  order           Order?       @relation("orderSubmission")
+}
+
+model Proposal {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  freelancerId   String         @db.ObjectId
+  title          String
+  description    String
+  duration       Int
+  status         ProposalStatus
+  listing        Listing        @relation(fields: [id], references: [id])
+  proposalAuthor Freelancer     @relation(fields: [id], references: [id])
+}
+
+enum PaymentPage {
+  Activity
+  Deposit
+  Withdraw
+  Setting
+}
+
+enum ProposalStatus {
+  APPROVED
+  PENDING
+  REJECTED
+}
+
+enum ListingStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+}
+
+enum OrderStatus {
+  SUCCESSFUL
+  PENDING
+  CANCELLED
+}
+
+enum TransactionStatus {
+  COMPLETED
+  PENDING
+  FAILED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAW
+  PAYMENT
+  REFUND
+}
+
+enum AccountType {
+  CUSTOMER
+  FREELANCER
+}
+enum ListingCategory {
+  Design
+  Music
+  Programming
+  Marketing
+  Business
+  Writing
+  Data
+  Lifestyle
+  Video
+  Other
+}

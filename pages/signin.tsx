@@ -1,24 +1,137 @@
-import React from 'react'
-import {Typography, Box, Grid, TextField, styled} from '@mui/material'
-import Navbar from '../components/Navbar'
-import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
-import CustomForm from '../components/customForm'
+import React, { useEffect, useState } from "react";
+import { Typography, Box, Grid, TextField, styled } from "@mui/material";
+import Navbar from "../components/Navbar";
+import {
+  styles,
+  SubmitButton,
+  TitleText,
+} from "../components/StyledComponents";
+import FormWrapper from "../components/FormWrapper";
+import { ValueWithError } from "../utils/types";
+import { isString, validEmail } from "../utils/helpers";
+import {
+  useSession,
+  signIn as signIN,
+  signOut as signOUT,
+} from "next-auth/react";
+import Router, { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
 
 const signIn = () => {
+  const [username, setUsername] = useState<ValueWithError>();
+  const [password, setPassword] = useState<ValueWithError>();
+  let router = useRouter();
+  const {
+    handleSubmit,
+    register,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm();
+  const { data: session, status } = useSession();
+  const onSubmit = async (values: Object) => {
+    let _u = username?.value;
+    let _p = password?.value;
+    let defaultBody = {
+      // grant_type: "",
+      username: _u ? _u : "asdf@gmail.com",
+      password: _p ? _p : "asdf",
+      // scope: "",
+      // client_id: "",
+      // client_secret: "",
+    };
+    try {
+      const body = { ...defaultBody };
+      // console.log(`POSTing ${JSON.stringify(body, null, 2)}`);
+      // console.log("object submitted", {
+      //   ...body,
+      //   callbackUrl: router.query.callbackUrl,
+      // });
+      let res = await signIN("credentials", {
+        ...body,
+        // callbackUrl: router.query.callbackUrl as string,
+      });
+      // console.log(`signing:onsubmit:res`, res);
+    } catch (err) {
+      console.error(err);
+    }
+    
+  };
+  useEffect(()=>{
+    if (status === "authenticated") {
+      router.push("/", {
+        query: {
+          // callbackUrl: router.query.callbackUrl,
+        },
+      });
+    }
+  },[status])
+  const handleChange = (
+    isUser: boolean,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    console.log("session", session);
+    let isError = false;
+    let errorMessage;
+    let value = event.target.value;
+    if (isUser) {
+      // email
+      if (!validEmail(value)) {
+        isError = value.length < 8;
+        if (isError) errorMessage = "length must be greater or equal to 8";
+      }
+      setUsername({
+        value: value,
+        error: errorMessage ? errorMessage : undefined,
+      });
+    } else {
+      setPassword({
+        value: value,
+        error: errorMessage ? errorMessage : undefined,
+      });
+    }
+  };
   return (
-    <Box sx={{
-            ...styles.header, 
-            ...styles.shadow,
-            height:"100vh",}}>
-        <Navbar signIn={false}/>
-            <CustomForm>
-                <TitleText>SIGN IN</TitleText>
-                <TextField variant="outlined" placeholder='Email | Username'/>
-                <TextField variant="outlined" placeholder='Password'/>
-                <SubmitButton>SIGN IN</SubmitButton>
-            </CustomForm>
+    <Box
+      sx={{
+        ...styles.header,
+        ...styles.shadow,
+        height: "100vh",
+      }}
+    >
+      <Navbar signup={true} />
+      <FormWrapper method="POST" onSubmit={handleSubmit(onSubmit)}>
+        <TitleText>SIGN IN</TitleText>
+        <TextField
+          error={isString(username)}
+          onChange={(e) => handleChange(true, e)}
+          helperText={username?.error}
+          variant="outlined"
+          placeholder="Email | Username"
+        />
+        <TextField
+          error={isString(password)}
+          onChange={(e) => handleChange(false, e)}
+          helperText={password?.error}
+          variant="outlined"
+          type="password"
+          placeholder="Password"
+        />
+        {session ? (
+          <SubmitButton
+            onClick={async () => {
+              await signOUT({
+                callbackUrl: router.query.callbackUrl as string,
+              });
+            }}
+          >
+            SIGN OUT
+          </SubmitButton>
+        ) : (
+          <SubmitButton onClick={handleSubmit(onSubmit)}>SIGN IN</SubmitButton>
+        )}
+      </FormWrapper>
     </Box>
-  )
-}
+  );
+};
 
-export default signIn
+export default signIn;

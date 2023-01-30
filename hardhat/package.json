@@ -1,0 +1,13 @@
+{
+  "name": "hardhat-project",
+  "scripts": {
+    "node": "npx hardhat node",
+    "deploy": "npx hardhat run ./scripts/deploy.ts --network localhost",
+    "mint": "npx hardhat run ./scripts/mint.ts --network localhost"
+  },
+  "dependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "@openzeppelin/contracts": "^4.8.1",
+    "hardhat": "^2.12.6"
+  }
+}
