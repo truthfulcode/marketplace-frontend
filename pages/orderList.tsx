@@ -3,7 +3,7 @@ import {Box, Button, TextareaAutosize, TextField, Grid, Typography} from "@mui/m
 import Navbar from '../components/Navbar';
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
 
-const OrderListCustomer = () => {
+const OrderList = () => {
   return (
     <Box sx={{ 
       ...styles.header, 
@@ -26,4 +26,4 @@ const OrderListCustomer = () => {
   )
 }
 
-export default OrderListCustomer
+export default OrderList
