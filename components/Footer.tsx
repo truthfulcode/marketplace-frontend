@@ -5,7 +5,7 @@ import {Typography, Box, Grid, TextField, styled} from '@mui/material'
 
 const Footer = ({signIn = true, signUp = true}) => {
   return (
-    <footer style={{...styles.footer, ...styles.center, ...styles.shadow}}>
+    <footer style={{...styles.footer, ...styles.center}}>
         <a>
             <span style={{
             height: "1em",

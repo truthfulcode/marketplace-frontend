@@ -36,7 +36,7 @@ const view = () => {
                     position: "relative",
                     minHeight: "450px",
                     padding: "16px",
-                    background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                    background: 'linear-gradient(to right, #0052D4, #65C7F7, #9CECFB)',
                     boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
                     color: "white"
                 }}

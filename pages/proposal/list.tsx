@@ -4,7 +4,7 @@ import {
     Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Grid
 } from "@mui/material";
 import Navbar from "../../components/Navbar";
-import ListCard from '../../components/ListCard'
+import ListCard from '../../components/Listcard'
 import {
     styles,
     SubmitButton,

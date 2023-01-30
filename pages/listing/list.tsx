@@ -31,6 +31,17 @@ const list = () => {
     return(
         <div>
             <Navbar />
+            <Typography variant="h2"
+                sx={{
+                    ...styles.center, position: "relative",
+                    minHeight: "440px",
+                    padding: "16px",
+                    fontWeight: 'bold',
+                    background: 'linear-gradient(to right, #0052D4, #65C7F7, #9CECFB)',
+                    color: 'white',
+                    animation: 'gradient 15s ease infinite'
+                }}
+            >Listings</Typography>
 
 
 
@@ -40,8 +51,7 @@ const list = () => {
 
 
 
-
-
+        <Footer/>
         </div>
 
     )
