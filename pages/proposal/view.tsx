@@ -32,9 +32,8 @@ const view = () => {
     <>
       <Navbar />
       <Paper
-      elevation={6}
-      sx={{padding:"10",marginX:"20px",marginTop:"90px",justifyContent:"center",
-    
+      elevation={24}
+      sx={{padding:"10px",marginX:"20px",marginTop:"90px",justifyContent:"center"
     }}>
       <Typography variant="h5" component="h3" align="center">
         Proposal Details
