@@ -99,7 +99,7 @@ const view = () => {
                 marginTop:"10px",
                 padding:'20px',
             }}
-            ><strong>Description :</strong> Our team will design a new website for ABC Company that is modern, responsive and user-friendly.</Typography>
+            ><strong>Description :</strong> Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem rem deserunt, aspernatur rerum nostrum suscipit. Cumque id voluptatum, sunt temporibus quaerat quis molestiae repudiandae nihil odio necessitatibus dicta fuga reprehenderit.</Typography>
 
 
 
