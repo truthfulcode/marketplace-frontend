@@ -6,7 +6,7 @@ import {Typography, Box, Grid, TextField, styled} from '@mui/material'
 import { GetServerSideProps } from 'next'
 import { unstable_getServerSession } from 'next-auth'
 import { authOptions } from './api/auth/[...nextauth]'
-import { Account } from '@prisma/client'
+import { Account, AccountType } from '@prisma/client'
 
 export default function Home(props) {
   const {accountType} = props;
@@ -69,8 +69,11 @@ export default function Home(props) {
 
 export const getServerSideProps: GetServerSideProps = async (c) => {
   const session = await unstable_getServerSession(c.req,c.res,authOptions);
-  const id = (session?.user as Account).id;
-  const accountType = (session?.user as Account).accountType;
+  let accountType : AccountType | null = null;
+  console.log("session server",session)
+  if(session){
+    accountType = (session?.user as Account).accountType;
+  }
   return {props:{
     accountType:accountType
   }}

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Paper,
@@ -15,7 +15,12 @@ import { styles } from "../StyledComponents";
 import { Transaction } from "@prisma/client";
 import Link from "next/link";
 const Activity = ({ txs }) => {
-  let transactions: Transaction[] = JSON.parse(txs);
+  const [transactions, setTransactions] = useState<Array<Transaction>>([])
+  useEffect(()=>{
+    if(txs){
+      setTransactions(JSON.parse(txs))
+    }
+  },[])
   return (
     <div>
       <Box sx={{ flexDirection: "column", ...styles.center }}>
@@ -27,6 +32,7 @@ const Activity = ({ txs }) => {
                 <TableCell align="center">Transaction Type</TableCell>
                 <TableCell align="center">status</TableCell>
                 <TableCell align="center">amount</TableCell>
+                <TableCell align="center">Date</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -36,7 +42,7 @@ const Activity = ({ txs }) => {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    <Typography>
+                    <Typography component={'span'}>
                       <Link
                         href={"https://goerli.etherscan.io/tx/" + tx.txHash}
                         target="_blank"
@@ -52,10 +58,12 @@ const Activity = ({ txs }) => {
                   <TableCell align="center">{tx.txType}</TableCell>
                   <TableCell align="center">{tx.status}</TableCell>
                   <TableCell align="center">{tx.amount}</TableCell>
+                  <TableCell align="center">{(tx.timestamp as Date)?.toString().substring(0,10)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+            {transactions.length === 0 && <Typography component={'span'} variant="body1" sx={{...styles.center,width:"100%",mt:4}}>No Records</Typography>}
         </TableContainer>
       </Box>
     </div>

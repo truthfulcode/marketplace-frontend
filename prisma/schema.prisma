@@ -22,9 +22,9 @@ model Account {
   ethereumAccount  EthereumAccount?   @relation("ethereumAccount", fields: [id], references: [id])
 
   userId             String  @map("user_id") @db.ObjectId
-  type               String
-  provider           String
-  providerAccountId  String  @map("provider_account_id")
+  type               String?
+  provider           String?
+  providerAccountId  String?  @map("provider_account_id")
   refresh_token      String? @db.String
   access_token       String? @db.String
   expires_at         Int?
@@ -34,7 +34,6 @@ model Account {
   session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  @@unique([provider, providerAccountId])
   @@map(name: "accounts")
 }
 

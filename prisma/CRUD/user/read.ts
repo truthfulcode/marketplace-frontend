@@ -13,6 +13,18 @@ export async function getAddressId(address: string){
   return result ? result : null;
 }
 
+export async function getBalance(accountId: string){
+  let result = await prisma.ethereumAccount.findUnique({
+    where: {
+      id:accountId
+    },
+    select: {
+      balance : true
+    }
+  });
+  return result ? result.balance : null;
+}
+
 export async function getAddressByCustomerId(customerId: string){
   let result = await prisma.ethereumAccount.findUnique({
     where: {

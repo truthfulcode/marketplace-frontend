@@ -99,8 +99,12 @@ const createProposal = (props:any) => {
 
 export const getServerSideProps: GetServerSideProps = async (c) => {
   const session = await unstable_getServerSession(c.req,c.res,authOptions);
-  const id = (session?.user as Account).id;
-  const accountType = (session?.user as Account).accountType;
+  let id :string | null = null;
+  let accountType :string | null = null;
+  if(session){
+    id = (session?.user as Account).id;
+    accountType = (session?.user as Account).accountType;    
+  }
   return {props:{
     accountId:id,
     accountType:accountType

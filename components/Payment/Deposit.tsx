@@ -1,14 +1,18 @@
 import { Box, Button, ButtonGroup, FormControl, Icon, IconButton, Input, List, ListItem, ListItemText, TextField, Typography } from '@mui/material'
-import React , {useState} from 'react'
+import React , {useEffect, useState} from 'react'
 import Image from 'next/image';
 import { styles } from '../StyledComponents'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-const Deposit = ({address}) => {
+const Deposit = ({address,balance=0}) => {
+  const [_balance,_setBalance] = useState(0)
+  useEffect(()=>{
+    _setBalance(balance/1e6)
+  },[balance])
   return (
     <Box sx={{ flexDirection:"column"}}>
         <Box sx={{...styles.center, mt:4}}>
         <Box>
-        <Typography variant='h5'>USDC Balance: 0</Typography>
+        <Typography variant='h5'>USDC Balance: ${_balance}</Typography>
         <Typography>
             Supported Crypto
             <List sx={{...styles.center}}>

@@ -6,10 +6,11 @@ import { Box, IconButton } from "@mui/material";
 import { styles } from "./StyledComponents";
 // last Link with add icon and the remaining with remove icon
 const ExtendableLinkFields = ({ links, pushLink, removeLink }) => {
+  let styling = { ...styles.center };
   return (
     <>
       {links.map((value, index) => (
-        <div style={{ ...styles.center }}>
+        <div style={styling}>
           <TextField
             sx={{ flex: 1 }}
             defaultValue={value}

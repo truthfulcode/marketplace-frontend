@@ -1,5 +1,14 @@
 import React, { useEffect } from "react";
-import { Box, TextareaAutosize, TextField, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import {
+  Box,
+  TextareaAutosize,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+} from "@mui/material";
 import Navbar from "../../components/Navbar";
 import {
   styles,
@@ -17,43 +26,43 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import ExtendableLinkFields from "../../components/ExtendableLinkFields";
 import FormLabel from "@mui/material/FormLabel";
 
-const createListing = (props:any) => {
-    const {accountId, accountType} = props;
-    const [category, setCategory] = React.useState('');
-    const [isActive, setIsActive] = React.useState(false);
-    const [price, setPrice] = React.useState(0);
-    const [links, setLinks] = React.useState<Array<string>>([""]);
-    const [title, setTitle] = React.useState('');
-    const [description, setDescription] = React.useState('');
-    let router = useRouter();
-    var {data, status} = useSession();
-    const pushLink = (newLink:string) => {
-      console.log("push link")
-      setLinks(oldLinks => [...oldLinks, newLink])
-    }
+const createListing = (props: any) => {
+  const { accountId, accountType } = props;
+  const [category, setCategory] = React.useState("");
+  const [isActive, setIsActive] = React.useState(false);
+  const [price, setPrice] = React.useState(0);
+  const [links, setLinks] = React.useState<Array<string>>([""]);
+  const [title, setTitle] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  let router = useRouter();
+  var { data, status } = useSession();
+  const pushLink = (newLink: string) => {
+    console.log("push link");
+    setLinks((oldLinks) => [...oldLinks, newLink]);
+  };
 
-    const rmoveLink = (index:number) => {
-      setLinks(oldLinks => oldLinks.filter((link,i)=>i !== index))
-    }
-  useEffect(()=>{
-    if(status !== 'authenticated' && accountType !== "CUSTOMER"){
+  const rmoveLink = (index: number) => {
+    setLinks((oldLinks) => oldLinks.filter((link, i) => i !== index));
+  };
+  useEffect(() => {
+    if (status !== "authenticated" && accountType !== "CUSTOMER") {
       // transfer to 404
-      router.push('/');
+      router.push("/");
     }
-  },[status])
+  }, [status]);
   const createNewListing = async () => {
-    if(!accountId) return;
+    if (!accountId) return;
     const listing: Listing = {
       id: "",
-      status:isActive ? "ACTIVE" : "DRAFT",
-      category:category as ListingCategory,
+      status: isActive ? "ACTIVE" : "DRAFT",
+      category: category as ListingCategory,
       customerId: accountId,
       price: price,
       title: title,
       description: description,
       files: [],
     };
-    console.log("listing",listing)
+    console.log("listing", listing);
     try {
       const response = await fetch("./api/listing", {
         method: "POST",
@@ -62,7 +71,7 @@ const createListing = (props:any) => {
         },
         body: JSON.stringify(listing),
       });
-      console.log("client-side",response)
+      console.log("client-side", response);
       const isSuccess = response.ok && response.status == 200;
       if (isSuccess) {
         console.log("SUCCESS");
@@ -72,9 +81,7 @@ const createListing = (props:any) => {
         console.log("ERROR");
         console.log("create listing response", message);
       }
-    } catch (err) {
-
-    }
+    } catch (err) {}
   };
   return (
     <Box
@@ -89,12 +96,19 @@ const createListing = (props:any) => {
       <FormWrapper method="POST" onSubmit={() => {}}>
         {/* Contact Form */}
         <TitleText>Create A Listing</TitleText>
-        <TextField 
-        onChange={(event)=>{setTitle(event.target.value as string)}}
-        placeholder="Title" />
-        <TextField 
-        onChange={(event)=>{setPrice(Number(event.target.value))}}
-        placeholder="Price" type="number" />
+        <TextField
+          onChange={(event) => {
+            setTitle(event.target.value as string);
+          }}
+          placeholder="Title"
+        />
+        <TextField
+          onChange={(event) => {
+            setPrice(Number(event.target.value));
+          }}
+          placeholder="Price"
+          type="number"
+        />
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Category</InputLabel>
           <Select
@@ -102,7 +116,9 @@ const createListing = (props:any) => {
             id="demo-simple-select"
             value={category}
             label="Category"
-            onChange={(event)=>{setCategory(event.target.value as string)}}
+            onChange={(event) => {
+              setCategory(event.target.value as string);
+            }}
           >
             <MenuItem value="Design">Graphics & Design</MenuItem>
             <MenuItem value="Music">Music & Audio</MenuItem>
@@ -117,35 +133,65 @@ const createListing = (props:any) => {
           </Select>
         </FormControl>
         <br></br>
-        <ExtendableLinkFields links={links} pushLink={pushLink} removeLink={rmoveLink}/>
+        <ExtendableLinkFields
+          links={links}
+          pushLink={pushLink}
+          removeLink={rmoveLink}
+        />
         <br></br>
         <TextareaAutosize
-          onChange={(event)=>{setDescription(event.target.value as string)}}
+          onChange={(event) => {
+            setDescription(event.target.value as string);
+          }}
           style={styles.formMessage}
           placeholder="Description"
         />
         <br></br>
-        <SubmitButton onClick={async()=>{
-          setIsActive(true)
-          await createNewListing()
-        }}>CREATE</SubmitButton>
-        <SubmitButton onClick={async()=>{
-          setIsActive(false)
-          await createNewListing()
-        }}>SAVE</SubmitButton>
+        <SubmitButton
+          onClick={async () => {
+            setIsActive(true);
+            await createNewListing();
+          }}
+        >
+          CREATE
+        </SubmitButton>
+        <SubmitButton
+          onClick={async () => {
+            setIsActive(false);
+            await createNewListing();
+          }}
+        >
+          SAVE
+        </SubmitButton>
       </FormWrapper>
     </Box>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async (c) => {
-  const session = await unstable_getServerSession(c.req,c.res,authOptions);
-  const id = (session?.user as Account).id;
-  const accountType = (session?.user as Account).accountType;
-  return {props:{
-    accountId:id,
-    accountType:accountType
-  }}
-}
+  const session = await unstable_getServerSession(c.req, c.res, authOptions);
+  let id: string | null = null;
+  let accountType: string | null = null;
+  if (session) {
+    id = (session?.user as Account).id;
+    accountType = (session?.user as Account).accountType;
+  }
+  if (accountType === "CUSTOMER") {
+    return {
+      props: {
+        accountId: id,
+        accountType: accountType,
+      },
+    };
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  }
+};
 
 export default createListing;

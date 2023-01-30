@@ -4,7 +4,7 @@ import { Box, Button, ButtonGroup,
 import React , {useState} from 'react'
 import { styles } from '../StyledComponents'
 import Image from "next/image";
-const Withdraw = () => {
+const Withdraw = ({balance = 0}) => {
   const [address, setAddress] = useState(
     "0x0000000000000000000000000000000000000000"
   );
@@ -15,7 +15,7 @@ const Withdraw = () => {
     <Box sx={{ flexDirection:"column"}}>
         <Box sx={{...styles.center, mt:4}}>
         <Box>
-      <Typography variant="h5">USDC Balance : 0</Typography>
+      <Typography variant="h5">USDC Balance : ${balance/1e6}</Typography>
       <Typography>
         Supported Crypto
         <List sx={{ ...styles.center }}>

@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {
+  getBalance,
   getEthAccountByAddress,
   getUserByEmail,
   getUserByUsername,
@@ -8,7 +9,10 @@ import {
 } from "../../../prisma/CRUD/user/read";
 import { Account, Prisma } from "@prisma/client";
 import createUser from "../../../prisma/CRUD/user/create";
-import { incrementBalance } from "../../../prisma/CRUD/user/update";
+import {
+  decrementBalance,
+  incrementBalance,
+} from "../../../prisma/CRUD/user/update";
 import {
   decrypt,
   encrypt,
@@ -24,11 +28,15 @@ import {
 } from "../../../prisma/CRUD/transaction/read";
 import { insertTxIntoUser } from "../../../prisma/CRUD/transaction/update";
 import { BigNumber } from "ethers";
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]";
+import { isAddress } from "ethers/lib/utils";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
+    const session = await unstable_getServerSession(req, res, authOptions);
     switch (req.method) {
       case "GET": {
         if (req.query.username) {
@@ -117,13 +125,19 @@ export default async function handler(
                   // false result either failed to record or already recorded tx
                   if (!isRecorded) {
                     // record txHash
-                    await insertTxIntoUser(ethAccount.id, hash, amtstr as number);
+                    await insertTxIntoUser(
+                      "DEPOSIT",
+                      ethAccount.id,
+                      hash,
+                      amtstr as number
+                    );
                     // increment balance
                     result = await incrementBalance(addrstr, amtstr as number);
                     await getUSDCBalance(ethAccount.address).then(
                       async (balance) => {
-                        console.log("user's USDC balance:",Number(balance));
-                        if(result) console.log(`${addrstr} deposited ${amtstr}`);
+                        console.log("user's USDC balance:", Number(balance));
+                        if (result)
+                          console.log(`${addrstr} deposited ${amtstr}`);
                         if (result && balance.gt(10e6)) {
                           // if balance is greater than 10 USDC
                           // deposit ETH to the address
@@ -143,12 +157,10 @@ export default async function handler(
                               balance,
                               process.env.MAIN_ADDRESS as string
                             );
-                            
-                            await _transfer.wait().then(()=>{
-                              console.log(
-                                "transfer USDC done",
-                              );
-                            })
+
+                            await _transfer.wait().then(() => {
+                              console.log("transfer USDC done");
+                            });
                           });
                         }
                       }
@@ -166,6 +178,33 @@ export default async function handler(
                   .json({ error: "Ethereum account not valid" });
               }
             });
+          }
+          // withdraw
+        } else if (session && req.query.destination && req.query.amount) {
+          let addrstr: string = JSON.parse(req.query.destination as string);
+          let amtstr: string = JSON.parse(req.query.amount as string);
+          let senderAccountId = (session?.user as Account).id;
+          // validate the inputs
+          let balance = await getBalance(senderAccountId);
+          balance = balance ? balance : 0;
+          if (balance < Number(amtstr)) throw Error("insufficient balance!");
+          if (!isAddress(addrstr)) throw Error("invalid withdraw address!");
+          let withdrawTx = await transfer(
+            process.env.MAIN_PK as string,
+            BigNumber.from(amtstr),
+            addrstr
+          );
+          let receipt = await withdrawTx.wait();
+          console.log("receipt", receipt);
+          if (receipt.status === 1) {
+            await insertTxIntoUser(
+              "WITHDRAW",
+              senderAccountId,
+              receipt.transactionHash,
+              Number(amtstr)
+            );
+            await decrementBalance(senderAccountId, Number(amtstr));
+            return res.status(200).json({ state: "successful" });
           }
         } else {
           return res.status(401).json({ error: "unauthorized access" });
