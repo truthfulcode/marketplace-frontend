@@ -47,9 +47,9 @@ const view = () => {
                     
                     marginInline:"150px",
                     background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                    borderRadius:'8px',
+                    borderRadius:'15px 50px 30px',
                     boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-                    padding:'8px',
+                    padding:'12px',
                     color: "white",
                     marginTop:"10px",
 
@@ -61,9 +61,9 @@ const view = () => {
                 background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
                 boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
                 color: "white",
-                borderRadius:'8px',
+                borderRadius:'15px 50px 30px',
                 marginTop:"10px",
-                padding:'8px',
+                padding:'12px',
             }}
             ><strong>Duration :</strong> 4 weeks</Typography>
             <Typography
@@ -74,8 +74,8 @@ const view = () => {
                     background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
                     boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
                     color: "white",
-                    borderRadius:'8px',
-                    padding:'8px',
+                    borderRadius:'15px 50px 30px',
+                    padding:'12px',
                 }}
             ><strong>Status :</strong>Active </Typography>
             <Typography
@@ -84,9 +84,9 @@ const view = () => {
                 background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
                 boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
                 color: "white",
-                borderRadius:'8px',
+                borderRadius:'15px 50px 30px',
                 marginTop:"10px",
-                padding:'8px',
+                padding:'12px',
             }}
             ><strong>Author :</strong>Mohand Alaa </Typography>
             <Typography
@@ -95,44 +95,15 @@ const view = () => {
                 background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
                 boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
                 color: "white",
-                borderRadius:'8px',    
+                borderRadius:' 50px ',    
                 marginTop:"10px",
-                padding:'8px',
+                padding:'20px',
             }}
             ><strong>Description :</strong> Our team will design a new website for ABC Company that is modern, responsive and user-friendly.</Typography>
 
 
 
 
-            {/*
-      <Typography variant="h5" component="h3" align="center">
-        Proposal Details
-      </Typography>
-      <Typography component="p"
-      sx={{margin:'10px',...styles.center}}
-      >
-        <strong>Title:</strong> New Website Design
-      </Typography>
-      <Typography component="p"
-      sx={{margin:'10px',...styles.center}}
-      >
-        <strong>Client:</strong> ABC Company
-      </Typography>
-      <Typography component="p"
-      sx={{margin:'10px',...styles.center}}
-      >
-        <strong>Budget:</strong> $10,000
-      </Typography>
-      <Typography component="p"
-      sx={{margin:'10px',...styles.center}}
-      >
-        <strong>Duration:</strong> 4 weeks
-      </Typography>
-      <Typography component="p"
-      sx={{margin:'10px',...styles.center}}>
-        <strong>Description:</strong> Our team will design a new website for ABC Company that is modern, responsive and user-friendly.
-      </Typography>
-       */}
         </div>
     );
 

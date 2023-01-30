@@ -22,9 +22,16 @@ const list = () => {
         <div>
             <Navbar/>
             <Typography variant="h2"
-                sx={{ ...styles.center, ...styles.header }}
+                sx={{ ...styles.center, position:"relative",
+                minHeight: "440px",
+                padding:"16px",
+                fontWeight: 'bold',
+                background: 'linear-gradient(to right, #0052D4, #65C7F7, #9CECFB)',
+                color:'white'
+
+            }}
             >List of Proposals</Typography>
-            <Box sx={{ flexDirection: "column", ...styles.center }}>
+            <Box sx={{ flexDirection: "column", ...styles.center ,marginTop:"10px"}}>
                 <TableContainer sx={{ maxWidth: 1280 }} component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
