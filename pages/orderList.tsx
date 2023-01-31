@@ -12,7 +12,7 @@ const OrderList = () => {
       <Navbar/>
       <Box sx={{...styles.center, marginTop:"50px;"}}>
         <TextField style={{width:"600px", outline:"100px", borderRadius:"100px", border:"none", marginRight:"0"}} placeholder="Search orders..."></TextField>
-        <Button style={{background:"#355C7D", marginLeft:"0px", height:"60px", borderRadius:"0", width:"80px", backgroundImage:'url("/img/search.png")', backgroundRepeat:"no-repeat", backgroundSize:"30px", backgroundPosition:"center"}}></Button>
+        <Button style={{background:"#355C7D", marginLeft:"0px", height:"60px", borderRadius:"0", width:"auto", backgroundImage:'url("/img/search.png")', backgroundRepeat:"no-repeat", backgroundSize:"30px", backgroundPosition:"center"}}></Button>
       </Box>
       <Box sx={{...styles.center}}>
         <Box sx={{display:"grid", gridTemplateColumns:"repeat( auto-fit, minmax(300px, 1fr) );", marginTop:"50px;", width:"50vw", minHeight:"600px", height:"auto", marginLeft:"0"}}>
