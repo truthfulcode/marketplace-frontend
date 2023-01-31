@@ -16,20 +16,16 @@ export async function incrementBalance(address: string, amount: number) {
     return result != null;
   });
 }
-// check address existence then decrement
-export async function decrementBalance(address: string, amount: number) {
-  await getAddressId(address).then(async (res) => {
+// decrement an account balance
+export async function decrementBalance(accountId: string, amount: number) {
     let result: EthereumAccount | null = null;
-    if (res) {
       result = await prisma.ethereumAccount
         .update({
-          where: { id: res.id },
+          where: { id: accountId },
           data: { balance: { decrement: amount } },
         })
         console.log("updated record");
-    }
     return result != null;
-  });
 }
 // check address existence then increment
 export async function incrementLockedBalance(address: string, amount: number) {
@@ -48,7 +44,7 @@ export async function incrementLockedBalance(address: string, amount: number) {
 }
 // check address existence then decrement
 export async function decrementLockedBalance(address: string, amount: number) {
-  await getAddressId(address).then(async (res) => {
+  return await getAddressId(address).then(async (res) => {
     let result : EthereumAccount | null = null;
     if (res) {
       result = await prisma.ethereumAccount

@@ -5,7 +5,7 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { Box, IconButton } from "@mui/material";
 import { styles } from "./StyledComponents";
 // last Link with add icon and the remaining with remove icon
-const ExtendableLinkFields = ({ links, pushLink, removeLink }) => {
+const ExtendableLinkFields = ({ links, pushLink, removeLink, onLinkChange }) => {
   let styling = { ...styles.center };
   return (
     <>
@@ -14,7 +14,7 @@ const ExtendableLinkFields = ({ links, pushLink, removeLink }) => {
           <TextField
             sx={{ flex: 1 }}
             defaultValue={value}
-            onChange={(event) => {}}
+            onChange={(event) => {onLinkChange(index, event.target.value)}}
             placeholder={"Link " + (Number(index) + 1)}
             type="text"
           />

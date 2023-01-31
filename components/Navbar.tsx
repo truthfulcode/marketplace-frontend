@@ -37,7 +37,6 @@ const LinkTab = ({ dest, title }) => (
   </Link>
 );
 function Navbar({accountType = undefined}){
-  console.log("acc type", accountType);
   const { data, status } = useSession();
   return (
     <Box

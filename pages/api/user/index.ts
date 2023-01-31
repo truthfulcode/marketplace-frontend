@@ -180,9 +180,11 @@ export default async function handler(
             });
           }
           // withdraw
-        } else if (session && req.query.destination && req.query.amount) {
-          let addrstr: string = JSON.parse(req.query.destination as string);
-          let amtstr: string = JSON.parse(req.query.amount as string);
+        } else if (session) {
+          if(!req.body.destination) throw Error("unprovided destination!")
+          if(!req.body.amount) throw Error("unprovided amount!")
+          let addrstr: string = req.body.destination as string;
+          let amtstr: string = req.body.amount as string;
           let senderAccountId = (session?.user as Account).id;
           // validate the inputs
           let balance = await getBalance(senderAccountId);
@@ -197,13 +199,13 @@ export default async function handler(
           let receipt = await withdrawTx.wait();
           console.log("receipt", receipt);
           if (receipt.status === 1) {
-            await insertTxIntoUser(
+            console.log("insert",await insertTxIntoUser(
               "WITHDRAW",
               senderAccountId,
               receipt.transactionHash,
               Number(amtstr)
-            );
-            await decrementBalance(senderAccountId, Number(amtstr));
+            ));
+            console.log("decrement",await decrementBalance(senderAccountId, Number(amtstr)));
             return res.status(200).json({ state: "successful" });
           }
         } else {

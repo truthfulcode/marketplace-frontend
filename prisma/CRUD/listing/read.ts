@@ -24,6 +24,18 @@ export async function getCustomerListings(customerId: string) : Promise<Listing[
   return result ? result.listings : [];
 }
 
+export async function getListingCustomerId(listingId: string) : Promise<string | null>{
+  let result = await prisma.listing.findFirst({
+    where: {
+      id:listingId
+    },
+    select: {
+      customerId:true
+    }
+  });
+  return result ? result.customerId : null;
+}
+
 export async function getListingStatus(listingId: string) : Promise<ListingStatus | null>{
   let result = await prisma.listing.findUnique({
     where:{

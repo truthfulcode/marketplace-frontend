@@ -30,8 +30,8 @@ const Activity = ({ txs }) => {
               <TableRow>
                 <TableCell>Transaction Id</TableCell>
                 <TableCell align="center">Transaction Type</TableCell>
-                <TableCell align="center">status</TableCell>
-                <TableCell align="center">amount</TableCell>
+                <TableCell align="center">Status</TableCell>
+                <TableCell align="center">Amount</TableCell>
                 <TableCell align="center">Date</TableCell>
               </TableRow>
             </TableHead>
@@ -55,9 +55,9 @@ const Activity = ({ txs }) => {
                       </Link>
                     </Typography>
                   </TableCell>
-                  <TableCell align="center">{tx.txType}</TableCell>
+                  <TableCell sx={{color:tx.txType==="DEPOSIT" ? "green" : "red"}} align="center">{tx.txType}</TableCell>
                   <TableCell align="center">{tx.status}</TableCell>
-                  <TableCell align="center">{tx.amount}</TableCell>
+                  <TableCell align="center">{tx.amount/1e6}</TableCell>
                   <TableCell align="center">{(tx.timestamp as Date)?.toString().substring(0,10)}</TableCell>
                 </TableRow>
               ))}
