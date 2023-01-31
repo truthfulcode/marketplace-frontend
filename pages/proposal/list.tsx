@@ -1,9 +1,10 @@
 import React from "react";
 import {
     Box,
-    Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Grid
+    Typography, Grid
 } from "@mui/material";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import ListCard from '../../components/Listcard'
 import {
     styles,
@@ -71,6 +72,7 @@ const list = () => {
                 </Grid>
 
             </Box>
+            <Footer />
         </div>
     )
 }

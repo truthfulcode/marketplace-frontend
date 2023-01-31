@@ -1,22 +1,10 @@
 import React from "react";
-import {
-    Box,
-    TextareaAutosize,
-    TextField,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    SelectChangeEvent,
-    Typography, Paper, makeStyles,
-} from "@mui/material";
+import {Box,Typography, Grid} from "@mui/material";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import ListCard from '../../components/Listcard'
 import {
-    styles,
-    SubmitButton,
-    TitleText,
-} from "../../components/StyledComponents";
+    styles,SubmitButton, TitleText,} from "../../components/StyledComponents";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Account, Listing, Proposal } from "@prisma/client";
@@ -25,10 +13,8 @@ import { Theme, unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { CenterFocusStrong } from "@mui/icons-material";
 
-
 const list = () => {
-
-    return(
+    return (
         <div>
             <Navbar />
             <Typography variant="h2"
@@ -42,19 +28,43 @@ const list = () => {
                     animation: 'gradient 15s ease infinite'
                 }}
             >Listings</Typography>
-
-
-
-
-
-
-
-
-
-        <Footer/>
+            <Box sx={{ display: "flex", margin: "12px" }} >
+                <Grid sx={{ padding: "10px 0px" }}
+                    container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    <Grid item xs={8} md={3}>
+                        <ListCard
+                            service='UI/UX'
+                            description='we offer the best freelancers for interfce design and development'
+                        />
+                    </Grid>
+                    <Grid item xs={8} md={3} >
+                        <ListCard
+                            service='UI/UX'
+                            description='we offer the best freelancers for interfce design and development'
+                        />
+                    </Grid>
+                    <Grid item xs={8} md={3}>
+                        <ListCard
+                            service='UI/UX'
+                            description='we offer the best freelancers for interfce design and development'
+                        />
+                    </Grid>
+                    <Grid item xs={8} md={3}>
+                        <ListCard
+                            service='UI/UX'
+                            description='we offer the best freelancers for interfce design and development'
+                        />
+                    </Grid>
+                    <Grid item xs={8} md={3}>
+                        <ListCard
+                            service='UI/UX'
+                            description='we offer the best freelancers for interfce design and development'
+                        />
+                    </Grid>
+                </Grid>
+            </Box>
+            <Footer />
         </div>
-
     )
-
 }
 export default list
