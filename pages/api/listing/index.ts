@@ -74,8 +74,7 @@ export default async function handler(
             title: title,
           };
           const _listing = await createListing(listing);
-          console.log("listing", _listing);
-          return res.json(_listing);
+          return res.status(200).json(_listing);
         } else {
           return res.status(403).json({ error: "Invalid session!" });
         }
@@ -87,25 +86,12 @@ export default async function handler(
             let customerId = (session.user as Account).id
             if((session.user as Account).accountType !== "CUSTOMER") throw Error("invalid access for only customer!")
             let listing : Listing = req.body.listing as Listing
-            console.log("listing",listing)
             let result = await updateListing(listing);
             if(listing.status === "ACTIVE"){
               await lockBalance(customerId,listing.price)
             }
             return res.status(200).json({ state: result });
           }
-          // else if (
-          //   req.query.address &&
-          //   req.query.amount &&
-          //   req.query.txHash
-          // ) {
-          //   let addrstr: string = req.query.address as string;
-          //   let amtstr: Number = Number(req.query.amount);
-          //   let hash: string = req.query.txHash as string;
-          //   console.log("deposit", addrstr, amtstr, hash);
-          //   // checks it's a valid address
-            
-          // }
         } else {
           return res.status(401).json({ error: "Invalid session!" });
         }

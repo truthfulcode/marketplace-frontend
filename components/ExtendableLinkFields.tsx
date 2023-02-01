@@ -10,7 +10,7 @@ const ExtendableLinkFields = ({ links, pushLink, removeLink, onLinkChange }) => 
   return (
     <>
       {links.map((value, index) => (
-        <div style={styling}>
+        <div style={styling} key={index}>
           <TextField
             sx={{ flex: 1 }}
             defaultValue={value}

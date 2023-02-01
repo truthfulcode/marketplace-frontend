@@ -21,7 +21,6 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   let txs: Transaction[] | null = null;
   let address: string | null = null;
   let balance: number | null = 0;
-  console.log("session", session, accountType);
   if (session) {
     id = (session?.user as Account).id;
     accountType = (session?.user as Account).accountType;

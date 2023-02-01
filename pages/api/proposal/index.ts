@@ -6,7 +6,7 @@ import {
   isValidAddress,
   isValidAddresses,
 } from "../../../prisma/CRUD/user/read";
-import { Proposal } from "@prisma/client";
+import { Account, Order, Proposal } from "@prisma/client";
 import { incrementBalance } from "../../../prisma/CRUD/user/update";
 import {
   getTransactionsOfEthereumAccountUsingAddress,
@@ -16,6 +16,11 @@ import { insertTxIntoUser } from "../../../prisma/CRUD/transaction/update";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
 import createProposal from "../../../prisma/CRUD/proposal/create";
+import { confirmListing } from "../../../prisma/CRUD/listing/update";
+import createOrder from "../../../prisma/CRUD/order/create";
+import { increaseTime } from "../../../utils/helpers";
+import { getProposal } from "../../../prisma/CRUD/proposal/read";
+import { getListing } from "../../../prisma/CRUD/listing/read";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -43,90 +48,68 @@ export default async function handler(
         }
       }
       case "POST": {
-        const session = await unstable_getServerSession(req,res,authOptions);
-        if(session){
-          const { id: listingId, status, description, duration, freelancerId, title } = req.body;
+        const session = await unstable_getServerSession(req, res, authOptions);
+        if (session) {
+          const {
+            id: listingId,
+            status,
+            description,
+            duration,
+            freelancerId,
+            title,
+          } = req.body;
           const proposal: Proposal = {
             id: "",
-            description:description,
-            duration:duration,
-            status:status,
-            title:title,
-            freelancerId:freelancerId
+            description: description,
+            duration: duration,
+            status: status,
+            title: title,
+            freelancerId: freelancerId,
           };
-          try{
-            const _proposal = await createProposal(proposal,listingId);
-            console.log("user",_proposal)
+          try {
+            const _proposal = await createProposal(proposal, listingId);
+            console.log("proposal", _proposal);
             return res.json(_proposal);
-          }catch(err){
-            console.log("err listing",err)
+          } catch (err) {
+            console.log("err listing", err);
             return res.status(403).json(err);
           }
-        }else{
-          return res.status(403).json({error:"Invalid session"});
+        } else {
+          return res.status(403).json({ error: "Invalid session" });
         }
       }
       case "PUT": {
-        if (req.headers.key === process.env.DEPOSITS_KEY) {
-          if (req.query.addresses && req.query.amounts) {
-            let addrstr: string = JSON.parse(req.query.addresses as string);
-            let amtstr: string = JSON.parse(req.query.amounts as string);
-            const addresses = addrstr.split(",");
-            const amounts = amtstr.split(",");
-            // ensure matching length
-            let commands: Promise<boolean>[] = [];
-            addresses.map((addr, index) =>
-              commands.push(incrementBalance(addr, Number(amounts[index])))
-            );
-            let result = await Promise.all(commands);
-            return res.status(200).json({ state: result });
-          } else if (
-            req.query.address &&
-            req.query.amount &&
-            req.query.txHash
-          ) {
-            let addrstr: string = req.query.address as string;
-            let amtstr: Number = Number(req.query.amount);
-            let hash: string = req.query.txHash as string;
-            console.log("deposit", addrstr, amtstr, hash);
-            // checks it's a valid address
-            await getEthAccountByAddress(addrstr).then(async (ethAccount) => {
-              // check account validity
-              if (ethAccount) {
-                await isTxHashRecorded(hash).then(async (isRecorded) => {
-                  let result = false;
-                  // checks it's a valid transaction
-                  // false result either failed to record or already recorded tx
-                  if (!isRecorded) {
-                    // record txHash
-                    // await insertTxIntoUser(ethAccount.id, hash, amtstr as number);
-                    // increment balance
-                    result = await incrementBalance(addrstr, amtstr as number);
-                    console.log(
-                      "TRANSACTIONS",
-                      await getTransactionsOfEthereumAccountUsingAddress(
-                        addrstr
-                      )
-                    );
-                    return res.status(200).json({ state: result });
-                  } else {
-                    return res
-                      .status(403)
-                      .json({ error: "Already Recorded Tx" });
-                  }
-                });
-              } else {
-                return res
-                  .status(403)
-                  .json({ error: "Ethereum account not valid" });
-              }
-            });
+        const session = await unstable_getServerSession(req, res, authOptions);
+        if (session) {
+          console.log("req", req.body.proposalId, req.body.listingId);
+          if (req.body.proposalId && req.body.listingId) {
+            let proposalId = req.body.proposalId as string;
+            let listingId = req.body.listingId as string;
+            let customerId = (session.user as Account).id;
+            let proposal = await getProposal(proposalId);
+            let listing = await getListing(listingId);
+            if (listing?.customerId !== customerId)
+              Error("only valid customer can access!");
+            if (listing?.status !== "ACTIVE") Error("Inactive listing!");
+            if (proposal?.status !== "PENDING")
+              Error("invalid proposal status!");
+            let duration = proposal?.duration as number;
+            console.log("now", new Date(), "end", increaseTime(duration));
+            let order: Order = {
+              id: "",
+              createdAt: new Date(),
+              endsAt: increaseTime(duration),
+              customerId: customerId,
+              freelancerId: proposal?.freelancerId as string,
+              price: listing?.price as number,
+              status: "ACTIVE",
+            };
+            let result = await createOrder(order, listingId, proposalId);
+            res.status(200).json(result);
           }
         } else {
           return res.status(401).json({ error: "unauthorized access" });
         }
-      }
-      case "DELETE": {
       }
     }
   } catch (error: any) {

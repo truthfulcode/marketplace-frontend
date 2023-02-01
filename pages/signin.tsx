@@ -63,7 +63,6 @@ const signIn = () => {
     isUser: boolean,
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    console.log("session", session);
     let isError = false;
     let errorMessage;
     let value = event.target.value;
@@ -133,7 +132,6 @@ export default signIn;
 export const getServerSideProps: GetServerSideProps = async (c) => {
   const session = await unstable_getServerSession(c.req, c.res, authOptions);
   let accountType: AccountType | null = null;
-  console.log("session server", session);
   if (session) {
     accountType = (session?.user as Account).accountType;
   }

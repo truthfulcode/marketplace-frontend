@@ -24,6 +24,7 @@ export async function getProposalsByListingId(listingId: string) : Promise<Propo
   return result ? result.proposals : [];
 }
 
+
 export async function getProposalsByFreelancerId(accountId: string) : Promise<Proposal[]>{
   let result = await prisma.freelancer.findUnique({
     where: {

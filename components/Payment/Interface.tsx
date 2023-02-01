@@ -83,7 +83,7 @@ const Interface = ({
             ? ["activity", "deposit", "withdraw"]
             : ["activity", "withdraw"]
           ).map((value, index) => (
-            <>
+            <div key={index}>
               <Link href={"/payment/" + value}>
                 <ListItemButton
                   sx={{ ...styles.sideBarText, ...styles.button }}
@@ -92,7 +92,7 @@ const Interface = ({
                 </ListItemButton>
               </Link>
               <Divider />
-            </>
+            </div>
           ))}
         </List>
       </Box>

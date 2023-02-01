@@ -1,6 +1,6 @@
 import { Box, List, ListItem, Typography } from "@mui/material";
 import Button from "@mui/material/Button/Button";
-import { Account, AccountType, Listing, Proposal } from "@prisma/client";
+import { Account, AccountType, Listing, Order, Proposal } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Link from "next/link";
@@ -17,25 +17,26 @@ import {
   getListingsAppliedByFreelancer,
   getListingsBySerachQuery,
 } from "../../prisma/CRUD/listing/read";
+import {
+  getOrdersByCustomerId,
+  getOrdersByFreelancerId,
+} from "../../prisma/CRUD/order/read";
 import { PaymentPage } from "../../utils/types";
 import { authOptions } from "../api/auth/[...nextauth]";
 
 // display list of listings
-const CustomerDisplay = ({ listings }) => (
+const CustomerDisplay = ({ orders }) => (
   <>
-    <Box sx={{ width: "80vw", position: "relative", m: "auto", mt: 8 }}>
-      <Link href="/listing/create">
-        <MainButton sx={{ zIndex: 1 }}>CREATE LISTING</MainButton>
-      </Link>
+    <Box sx={{ width: "80vw", position: "relative", m: "auto", mt: 16 }}>
       <TitleText sx={{ position: "absolute", right: 0, left: 0, bottom: 0 }}>
-        My Listings
+        My Orders
       </TitleText>
     </Box>
     <List sx={{ width: "80vw", m: "auto" }}>
-      {Array.from(listings).length === 0 ? (
+      {Array.from(orders).length === 0 ? (
         <Typography sx={{ ...styles.center }}>No Records</Typography>
       ) : (
-        listings.map((element, index) => (
+        orders.map((element, index) => (
           <ListItem
             key={index}
             sx={{
@@ -49,20 +50,17 @@ const CustomerDisplay = ({ listings }) => (
               mb: 2,
             }}
           >
-            {/* <Link href={{pathname:"listing/view",query:{
-              listingId:element.id
-            }}}> */}
             <Typography
-              variant="h4"
+              variant="body2"
               sx={{ position: "absolute", left: 16, top: 8 }}
             >
-              {element.title}
+              Created At: {element.createdAt}
             </Typography>
             <Typography
               sx={{ position: "absolute", left: 16, bottom: 8 }}
-              variant="h6"
+              variant="body2"
             >
-              {element.description}
+              Ends At: {element.endsAt}
             </Typography>
             <Typography
               variant="h5"
@@ -80,36 +78,25 @@ const CustomerDisplay = ({ listings }) => (
             <Box sx={{ position: "absolute", right: 8, bottom: 0 }}>
               <Link
                 href={{
-                  pathname: "listing/view",
+                  pathname: "order/view",
                   query: {
-                    listingId: element.id,
+                    orderId: element.id,
                   },
                 }}
               >
                 <MainButton>VIEW</MainButton>
               </Link>
-              {element.status === "DRAFT" && (
+
+              {element.status !== "CANCELLED" && (
                 <Link
                   href={{
-                    pathname: "listing/update",
+                    pathname: "submission/view",
                     query: {
-                      listingId: element.id,
+                      submissionId: element.id,
                     },
                   }}
                 >
-                  <MainButton>UPDATE</MainButton>
-                </Link>
-              )}
-              {element.status === "ACTIVE" && (
-                <Link
-                  href={{
-                    pathname: "proposal/",
-                    query: {
-                      listingId: element.id,
-                    },
-                  }}
-                >
-                  <MainButton>PROPOSALS</MainButton>
+                  <MainButton>SUBMISSION</MainButton>
                 </Link>
               )}
             </Box>
@@ -120,23 +107,20 @@ const CustomerDisplay = ({ listings }) => (
   </>
 );
 
-const FreelancerDisplay = ({ listings, isAppliedListings }) => (
+const FreelancerDisplay = ({ orders }) => (
   <>
-    {console.log("listings", listings)}
+    {console.log("orders", orders)}
 
-    <Box sx={{ width: "80vw", position: "relative", m: "auto", mt: 8 }}>
-      <Link href="/listing/create">
-        <MainButton sx={{ zIndex: 1 }}>CREATE LISTING</MainButton>
-      </Link>
+    <Box sx={{ width: "80vw", position: "relative", m: "auto", mt: 16 }}>
       <TitleText sx={{ position: "absolute", right: 0, left: 0, bottom: 0 }}>
-        Listings Search
+        Orders List
       </TitleText>
     </Box>
     <List sx={{ width: "80vw", m: "auto" }}>
-      {Array.from(listings).length === 0 ? (
+      {Array.from(orders).length === 0 ? (
         <Typography sx={{ ...styles.center }}>No Records</Typography>
       ) : (
-        listings.map((element, index) => (
+        orders.map((element, index) => (
           <ListItem
             key={index}
             sx={{
@@ -150,20 +134,17 @@ const FreelancerDisplay = ({ listings, isAppliedListings }) => (
               mb: 2,
             }}
           >
-            {/* <Link href={{pathname:"listing/view",query:{
-              listingId:element.id
-            }}}> */}
             <Typography
-              variant="h4"
+              variant="h6"
               sx={{ position: "absolute", left: 16, top: 8 }}
             >
-              {element.title}
+              {element.createdAt}
             </Typography>
             <Typography
               sx={{ position: "absolute", left: 16, bottom: 8 }}
               variant="h6"
             >
-              {element.description}
+              {element.endsAt}
             </Typography>
             <Typography
               variant="h5"
@@ -181,15 +162,25 @@ const FreelancerDisplay = ({ listings, isAppliedListings }) => (
             <Box sx={{ position: "absolute", right: 8, bottom: 0 }}>
               <Link
                 href={{
-                  pathname: "listing/view",
+                  pathname: "order/view",
                   query: {
-                    listingId: element.id,
+                    orderId: element.id,
                   },
                 }}
               >
                 <MainButton>VIEW</MainButton>
               </Link>
-              {isAppliedListings[index] ? 
+              <Link
+                href={{
+                  pathname: "submission/create",
+                  query: {
+                    orderId: element.id,
+                  },
+                }}
+              >
+                <MainButton>SUBMIT</MainButton>
+              </Link>
+              {/* {isAppliedListings[index] ? 
               <MainButton disableTouchRipple sx={{cursor:"unset"}}>SUBMITTED</MainButton>
               :
               <Link
@@ -200,10 +191,9 @@ const FreelancerDisplay = ({ listings, isAppliedListings }) => (
                   },
                 }}
               >
-                <MainButton>SUBMIT PROPOSAL</MainButton>
+                <MainButton>SUBMIT</MainButton>
               </Link>
-              }
-              
+              } */}
             </Box>
           </ListItem>
         ))
@@ -213,17 +203,14 @@ const FreelancerDisplay = ({ listings, isAppliedListings }) => (
 );
 
 const index = (props) => {
-  const { accountType, listings, isAppliedListings } = props;
+  const { accountType, orders } = props;
   return (
     <Box>
       <Navbar />
       {accountType === "CUSTOMER" ? (
-        <CustomerDisplay listings={listings} />
+        <CustomerDisplay orders={orders} />
       ) : (
-        <FreelancerDisplay
-          isAppliedListings={isAppliedListings}
-          listings={listings}
-        />
+        <FreelancerDisplay orders={orders} />
       )}
     </Box>
   );
@@ -233,43 +220,33 @@ export default index;
 export const getServerSideProps: GetServerSideProps = async (c) => {
   const session = await unstable_getServerSession(c.req, c.res, authOptions);
   let accountType: AccountType | null = null;
-  let listings: Listing[] | null = null;
-  let appliedListingsIds: string[] = [];
-  let isAppliedListings: boolean[] = [];
-  let search = c.query.search as string;
-  console.log("search query", c.query);
-  console.log("session server", session);
+  let _orders: Order[] | null = [];
+
   if (session) {
     accountType = (session?.user as Account).accountType;
-    if (search === "" || search === " ") {
-      listings = [];
-    } else if (accountType === "CUSTOMER") {
-      listings = await getCustomerListings((session?.user as Account).id);
+    console.log("user id",(session?.user as Account).id)
+    if (accountType === "CUSTOMER") {
+      _orders = await getOrdersByCustomerId((session?.user as Account).id);
     } else {
-      listings = await getListingsBySerachQuery(search);
-      let _appliedListings = await getListingsAppliedByFreelancer(
-        (session?.user as Account).id
-      );
-      appliedListingsIds = _appliedListings
-        ? _appliedListings.map((listing) => listing.id)
-        : [];
-      console.log("listings", listings?.length);
-      console.log("applied listing", appliedListingsIds.length);
-      if (listings) {
-        listings.map((value) => {
-          isAppliedListings.push(
-            appliedListingsIds.includes(value.id) ? true : false
-          );
-        });
-      }
+      _orders = await getOrdersByFreelancerId((session?.user as Account).id);
     }
   }
+  let orders = _orders.map((order) => ({
+    id: order.id,
+    createdAt: order.createdAt.toString().substring(0, 25),
+    endsAt: order.endsAt.toString().substring(0, 25),
+    price: order.price,
+    status: order.status,
+    freelancerId: order.freelancerId,
+    customerId: order.customerId,
+  }));
+  console.log("orders", orders);
+
   return session
     ? {
         props: {
           accountType: accountType,
-          listings: listings,
-          isAppliedListings: isAppliedListings,
+          orders: orders,
         },
       }
     : {

@@ -1,5 +1,5 @@
 import { prisma } from "../../../utils/prisma";
-import { Listing, ListingStatus } from "@prisma/client";
+import { Listing, ListingStatus, Proposal } from "@prisma/client";
 
 
 // returns null when if email is not found
@@ -34,6 +34,18 @@ export async function getListingCustomerId(listingId: string) : Promise<string |
     }
   });
   return result ? result.customerId : null;
+}
+
+export async function getListingsBySerachQuery(searchQuery: string) : Promise<Listing[] | null>{
+  let result = await prisma.listing.findMany({
+    where: {
+      title:{
+        contains:searchQuery
+      },
+      status:"ACTIVE"
+    },
+  });
+  return result ? result : null;
 }
 
 export async function getListingStatus(listingId: string) : Promise<ListingStatus | null>{
@@ -78,4 +90,17 @@ export async function getListing(listingId: string) : Promise<Listing | null> {
       }
     });
     return result ? result.listing : null ;
+  }
+
+  export async function getListingsAppliedByFreelancer(freelancerId: string) : Promise<Listing[] | null>{
+    let result = await prisma.listing.findMany({
+      where:{
+        proposals:{
+          some:{
+            freelancerId:freelancerId
+          }
+        }
+      },
+    })
+    return result ? result : null;
   }

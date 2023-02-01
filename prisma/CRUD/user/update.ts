@@ -24,7 +24,6 @@ export async function decrementBalance(accountId: string, amount: number) {
           where: { id: accountId },
           data: { balance: { decrement: amount } },
         })
-        console.log("updated record");
     return result != null;
 }
 // check address existence then increment
@@ -52,7 +51,6 @@ export async function decrementLockedBalance(address: string, amount: number) {
           where: { id: res.id },
           data: { lockedBalance: { decrement: amount } },
         })
-        console.log("updated record");
     }
     return result != null;
   });

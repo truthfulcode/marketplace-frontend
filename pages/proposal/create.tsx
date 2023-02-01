@@ -1,5 +1,10 @@
 import React, { useEffect } from "react";
-import { Box, TextareaAutosize, TextField, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import {
+  Box,
+  TextareaAutosize,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Navbar from "../../components/Navbar";
 import {
   styles,
@@ -13,53 +18,41 @@ import { Account, Listing, Proposal } from "@prisma/client";
 import { GetServerSideProps, GetStaticProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
+import { performPOST } from "../../utils/helpers";
+import { getListing } from "../../prisma/CRUD/listing/read";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 
-const createProposal = (props:any) => {
-    const {accountId, accountType} = props;
-    const [duration, setDuation] = React.useState(0);
-    const [title, setTitle] = React.useState('');
-    const [description, setDescription] = React.useState('');
-    let router = useRouter();
-    var {data, status} = useSession();
-
-  useEffect(()=>{
-    if(status !== 'authenticated' && accountType !== "CUSTOMER"){
-      // transfer to 404
-      router.push('/');
-    }
-  },[status])
-  const createNewListing = async () => {
-    if(!accountId) return;
+const createProposal = (props: any) => {
+  const { accountId, listingId, listing, accountType } = props;
+  const [duration, setDuation] = React.useState(0);
+  const [title, setTitle] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  let router = useRouter();
+  var { data, status } = useSession();
+  const titles = ["Title", "Price", "Description"];
+  const keys = ["title", "price", "description"];
+  const createNewProposal = async () => {
+    if (!accountId) return;
     const proposal: Proposal = {
-      id: "",
-      freelancerId:"",
-      duration:duration,
-      status:"PENDING",
+      id: listingId,
+      freelancerId: accountId,
+      duration: duration * 86400,
+      status: "PENDING",
       title: title,
       description: description,
     };
-    console.log("listing",proposal)
-    try {
-      const response = await fetch("./api/proposal", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(proposal),
-      });
-      console.log("client-side",response)
-      const isSuccess = response.ok && response.status == 200;
-      if (isSuccess) {
-        console.log("SUCCESS");
+    await performPOST(
+      "http://localhost:3000/api/proposal",
+      JSON.stringify(proposal),
+      (response) => {
+        console.log("response", response);
         router.push("/");
-      } else {
-        const message = await response.json();
-        console.log("ERROR");
-        console.log("create listing response", message);
+      },
+      (error) => {
+        console.log("err response", error);
       }
-    } catch (err) {
-
-    }
+    );
   };
   return (
     <Box
@@ -73,42 +66,93 @@ const createProposal = (props:any) => {
       <Navbar />
       <FormWrapper method="POST" onSubmit={() => {}}>
         {/* Contact Form */}
-        <TitleText>Create A Listing</TitleText>
-        <TextField 
-        onChange={(event)=>{setTitle(event.target.value as string)}}
-        placeholder="Title" />
-        <TextField 
-        onChange={(event)=>{setDuation(Number(event.target.value))}}
-        placeholder="Duration (Days)" type="number" />
-        <br></br>
-        <label style={{ fontWeight: "bold" }}>Images:</label>
-        <br></br>
-        <input type="file" id="files" name="files" multiple></input>
+        <TitleText>Create A Proposal</TitleText>
+        {/* Listing details */}
+        <List>
+          {titles.map((element, index) => (
+            <ListItem
+              key={index}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+              }}
+            >
+              <Typography variant="body2">{titles[index]}</Typography>
+              <Typography variant="h6">
+                {keys[index] !== "price"
+                  ? listing && listing[keys[index]]
+                  : listing && listing.price / 1e6 + "$"}
+              </Typography>
+            </ListItem>
+          ))}
+        </List>
+        {/* Proposal details */}
+        <TextField
+          onChange={(event) => {
+            setTitle(event.target.value as string);
+          }}
+          placeholder="Title"
+        />
+        <TextField
+          onChange={(event) => {
+            setDuation(Number(event.target.value));
+          }}
+          placeholder="Duration (Days)"
+          type="number"
+        />
         <br></br>
         <TextareaAutosize
-          onChange={(event)=>{setDescription(event.target.value as string)}}
+          onChange={(event) => {
+            setDescription(event.target.value as string);
+          }}
           style={styles.formMessage}
           placeholder="Description"
         />
         <br></br>
-        <SubmitButton onClick={createNewListing}>CREATE</SubmitButton>
+        <SubmitButton onClick={createNewProposal}>CREATE</SubmitButton>
       </FormWrapper>
     </Box>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async (c) => {
-  const session = await unstable_getServerSession(c.req,c.res,authOptions);
-  let id :string | null = null;
-  let accountType :string | null = null;
-  if(session){
+  const session = await unstable_getServerSession(c.req, c.res, authOptions);
+  let id: string | null = null;
+  let accountType: string | null = null;
+  let listingId: string = c.query.listingId as string;
+  let listing: Listing | null = null;
+  if (session) {
     id = (session?.user as Account).id;
-    accountType = (session?.user as Account).accountType;    
+    listing = await getListing(listingId);
+    accountType = (session?.user as Account).accountType;
   }
-  return {props:{
-    accountId:id,
-    accountType:accountType
-  }}
-}
+  if (accountType === "FREELANCER") {
+    return {
+      props: {
+        accountId: id,
+        listing: listing,
+        listingId: listing?.id,
+        accountType: accountType,
+      },
+    };
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  }
+  // return {
+  //   props: {
+  //     accountId: id,
+  //     listing:listing,
+  //     listingId: listing?.id,
+  //     accountType: accountType,
+  //   },
+  // };
+};
 
 export default createProposal;

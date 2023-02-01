@@ -19,25 +19,28 @@ import {
 } from "../../components/StyledComponents";
 import FormWrapper from "../../components/FormWrapper";
 import { useRouter } from "next/router";
-import { Account, Listing, ListingCategory } from "@prisma/client";
+import { Account, Listing, ListingCategory, Order } from "@prisma/client";
 import { GetServerSideProps, GetStaticProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import ExtendableLinkFields from "../../components/ExtendableLinkFields";
 import { getListing } from "../../prisma/CRUD/listing/read";
 import Link from "next/link";
-import { keys, titles } from "../../utils/constants";
+import { getOrder } from "../../prisma/CRUD/order/read";
 
-const createListing = (props: any) => {
-  const { accountId, listing: _listing } = props;
-  const [listing, setListing] = React.useState<Listing>();
+const viewOrder = (props: any) => {
+  const titles = ["Status", "Price", "Created At", "Ends At"];
+  const keys = ["status", "price", "createdAt", "endsAt"];
+  const { accountId, order:_order} = props;
 
+  const [order, setOrder] = React.useState<Listing>();
 
   useEffect(() => {
-    if (_listing) {
-      setListing(JSON.parse(_listing));
+    if (_order) {
+      setOrder(JSON.parse(_order));
     }
   }, []);
+  console.log("order",order)
   return (
     <Box
       sx={{
@@ -64,27 +67,11 @@ const createListing = (props: any) => {
               <Typography variant="body2">{titles[index]}</Typography>
               <Typography variant="h6">
                 {keys[index] !== "price"
-                  ? listing && listing[keys[index]]
-                  : listing && listing.price / 1e6 + "$"}
+                  ? order && order[keys[index]]
+                  : order && order.price / 1e6 + "$"}
               </Typography>
             </ListItem>
           ))}
-          <ListItem
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "start",
-            }}
-          >
-            <Typography variant="body2">Files</Typography>
-            {listing?.files.length === 0
-              ? "No Files!"
-              : listing?.files.map((ele) => (
-                  <Link href={ele} target="_blank">
-                    <Typography variant="h6">{ele}</Typography>
-                  </Link>
-                ))}
-          </ListItem>
         </List>
       </FormWrapper>
     </Box>
@@ -95,18 +82,18 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   const session = await unstable_getServerSession(c.req, c.res, authOptions);
   let id: string | null = null;
   let accountType: string | null = null;
-  let listingId = c.query.listingId;
-  let listing: Listing | null = null;
-  if (session && listingId) {
+  let orderId = c.query.orderId as string;
+  let order: Order | null = null;
+  if (session && orderId) {
+    order = await getOrder(orderId);
     id = (session?.user as Account).id;
     accountType = (session?.user as Account).accountType;
-    listing = await getListing(listingId as string);
   }
-  if (listingId) {
+  if (orderId) {
     return {
       props: {
         accountId: id,
-        listing: JSON.stringify(listing),
+        order: JSON.stringify(order),
       },
     };
   } else {
@@ -120,4 +107,4 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   }
 };
 
-export default createListing;
+export default viewOrder;

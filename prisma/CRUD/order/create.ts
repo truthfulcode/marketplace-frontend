@@ -37,33 +37,31 @@ export default async function createOrder(
         status:"REJECTED"
       },
     });
-    return await getProposal(proposalId).then(async (proposal) => {
-      return await prisma.order.create({
-        data: {
-          price: price,
-          status: "ACTIVE",
-          createdAt: new Date(),
-          endsAt: increaseTime(proposal?.duration ? proposal?.duration : 86400),
-          listing: {
-            connect: {
-              id: listingId,
-            },
-          },
-          orderFreelancer: {
-            connect: {
-              id: freelancerId,
-            },
-          },
-          submission: {
-            create: { description: "" },
-          },
-          orderCustomer: {
-            connect: {
-              id: customerId,
-            },
+    return await prisma.order.create({
+      data: {
+        price: obj.price,
+        status: "ACTIVE",
+        createdAt: obj.createdAt,
+        endsAt: obj.endsAt,
+        listing: {
+          connect: {
+            id: listingId,
           },
         },
-      });
+        orderFreelancer: {
+          connect: {
+            id: freelancerId,
+          },
+        },
+        submission: {
+          create: { description: "" },
+        },
+        orderCustomer: {
+          connect: {
+            id: customerId,
+          },
+        },
+      },
     });
   });
 }

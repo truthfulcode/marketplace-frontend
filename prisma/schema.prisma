@@ -166,6 +166,7 @@ enum ProposalStatus {
 }
 
 enum ListingStatus {
+  CANCELLED
   DRAFT
   ACTIVE
   COMPLETED

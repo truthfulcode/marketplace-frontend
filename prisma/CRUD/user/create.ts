@@ -17,12 +17,10 @@ export default async function createUser(obj: Account) {
   } = obj;
   const isCustomer = accountType === "CUSTOMER";
   /// @dev check that username | email is not already taken
-  console.log("user", obj);
   // check userType is valid
   if (!["CUSTOMER", "FREELANCER"].includes(accountType))
     throw Error("incorrect userType");
   // if(!email.match(mailFormat)) throw Error("invalid email format");
-  console.log("req object", obj);
   if (typeof username !== "string") throw Error("invalid username");
   if (password.length != 128) throw Error("invalid password");
   if (await isValidUsernameOrEmail(username, email))

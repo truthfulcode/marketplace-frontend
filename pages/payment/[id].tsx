@@ -11,13 +11,8 @@ import { authOptions } from "../api/auth/[...nextauth]";
 
 const Dest = (props) => {
   const { accountId, accountType, txs, address, balance } = props;
-  useEffect(() => {
-    console.log("accType", accountType);
-    console.log("deposit address", address);
-  });
   const router = useRouter();
   let query = router.query.id;
-  console.log("query", query, accountType);
   if (accountType === "CUSTOMER") {
     if (query === "" || query === "/" || query === "activity") {
       return <Interface isDeposit={true} page={PaymentPage.Activity} txs={txs} />;
@@ -51,7 +46,6 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   let txs: Transaction[] | null = null;
   let address: string | null = null;
   let balance: number | null = 0;
-  console.log("session", session, accountType);
   if (session) {
     id = (session?.user as Account).id;
     accountType = (session?.user as Account).accountType;

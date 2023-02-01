@@ -18,6 +18,7 @@ import Image from "next/image";
 import { ValueNumberWithError, ValueWithError } from "../../utils/types";
 import { isAddress } from "ethers/lib/utils";
 import { useRouter } from "next/router";
+import { performPUT } from "../../utils/helpers";
 const Withdraw = ({ balance = 0 }) => {
   const router = useRouter();
   const [address, setAddress] = useState<ValueWithError>({
@@ -48,8 +49,7 @@ const Withdraw = ({ balance = 0 }) => {
     let _error: string | undefined = undefined;
     let newValue = event.target.value;
     if (!isAddress(newValue)) _error = "invalid ethereum address!";
-    if(!newValue || newValue === "") _error = undefined;
-    console.log("new",newValue,_error)
+    if (!newValue || newValue === "") _error = undefined;
     setAddress((obj) =>
       Object.assign({}, obj, {
         value: newValue,
@@ -58,53 +58,36 @@ const Withdraw = ({ balance = 0 }) => {
     );
   };
   const withdraw = async () => {
-    if (Number(amount.value) < 10 || !isAddress(address.value as string)) return;
-    try {
-      const response = await fetch("http://localhost:3000/api/user", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          destination:address.value as string,
-          amount:((amount.value as number) * 1e6).toString()
-        }),
-      });
-      console.log("response",response)
-      console.log("response",JSON.stringify({
-        destination:address.value,
-        amount:((amount.value as number) * 1e6)
-      }))
-      const isSuccess = response.ok && response.status == 200;
-      if (isSuccess) {
+    if (Number(amount.value) < 10 || !isAddress(address.value as string))
+      return;
+    await performPUT(
+      "http://localhost:3000/api/user",
+      JSON.stringify({
+        destination: address.value as string,
+        amount: ((amount.value as number) * 1e6).toString(),
+      }),
+      (response) => {
         console.log("SUCCESS");
         router.push("/payment/activity");
-      } else {
-        const message = await response.json();
+      },
+      (err) => {
         console.log("ERROR");
-        console.log("response", message);
+        console.log("response", err);
       }
-    } catch (err) {
-      console.log("failed request",err)
-    }
+    );
   };
   return (
     <Box sx={{ flexDirection: "column" }}>
       <Box sx={{ ...styles.center, mt: 4 }}>
         <Box>
           <Typography variant="h5">USDC Balance : ${balance / 1e6}</Typography>
-            Supported Crypto
-            <List sx={{ ...styles.center }}>
-              <ListItem sx={{ ...styles.center, flexDirection: "column" }}>
-                <Image
-                  src={"/img/USDC.png"}
-                  width={48}
-                  height={48}
-                  alt="USDC"
-                />
-                <ListItemText>USDC</ListItemText>
-              </ListItem>
-            </List>
+          Supported Crypto
+          <List sx={{ ...styles.center }}>
+            <ListItem sx={{ ...styles.center, flexDirection: "column" }}>
+              <Image src={"/img/USDC.png"} width={48} height={48} alt="USDC" />
+              <ListItemText>USDC</ListItemText>
+            </ListItem>
+          </List>
           <Typography>
             Make sure to provide the right address, since transactions cannot be
             reverted!
@@ -130,7 +113,9 @@ const Withdraw = ({ balance = 0 }) => {
                 }}
                 label="AMOUNT"
               />
-              <Button onClick={withdraw} sx={{ ...styles.button, p: 2, mt: 2 }}>WITHDRAW</Button>
+              <Button onClick={withdraw} sx={{ ...styles.button, p: 2, mt: 2 }}>
+                WITHDRAW
+              </Button>
             </FormControl>
           </Box>
         </Box>

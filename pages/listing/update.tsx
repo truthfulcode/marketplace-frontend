@@ -22,33 +22,29 @@ import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import ExtendableLinkFields from "../../components/ExtendableLinkFields";
 import { getListing } from "../../prisma/CRUD/listing/read";
+import { performPUT } from "../../utils/helpers";
 
 const updateListing = (props: any) => {
-  const { accountId, listing: _listing } = props;
-  const [listing, setListing] = React.useState<Listing>();
+  const { accountId, listing } = props;
   const [category, setCategory] = React.useState<string>("");
   const [listingId, setListingId] = React.useState<string>("");
   const [price, setPrice] = React.useState<number>(0);
-  const [links, setLinks] = React.useState<Array<string>>((JSON.parse(_listing) as Listing).files);
+  const [links, setLinks] = React.useState<Array<string>>((listing as Listing).files);
   const [title, setTitle] = React.useState<string>("");
   const [description, setDescription] = React.useState<string>("");
   useEffect(() => {
-    if (_listing) {
-      let __listing = JSON.parse(_listing) as Listing
-      setListing(JSON.parse(_listing))
-      setListingId(__listing.id)
-      setPrice(__listing.price / 1e6)
-      setLinks(__listing.files.length > 0 ? __listing.files : [""])
-      setTitle(__listing.title)
-      setCategory(__listing.category)
-      setDescription(__listing.description)
-      console.log(links)
+    if (listing) {
+      setListingId(listing.id)
+      setPrice(listing.price / 1e6)
+      setLinks(listing.files.length > 0 ? listing.files : [""])
+      setTitle(listing.title)
+      setCategory(listing.category)
+      setDescription(listing.description)
     }
   }, []);
   
   let router = useRouter();
   const pushLink = (newLink: string) => {
-    console.log("push link");
     setLinks((oldLinks) => [...oldLinks, newLink]);
   };
   const rmoveLink = (index: number) => {
@@ -67,26 +63,17 @@ const updateListing = (props: any) => {
       description: description,
       files: _files,
     };
-    console.log("listing", listing);
-    try {
-      const response = await fetch("/api/listing", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({listing:listing as Listing}),
-      });
-      console.log("client-side", response);
-      const isSuccess = response.ok && response.status == 200;
-      if (isSuccess) {
-        console.log("SUCCESS");
-        router.push("/listing");
-      } else {
-        const message = await response.json();
-        console.log("ERROR");
-        console.log("create listing response", message);
-      }
-    } catch (err) {}
+    await performPUT("/api/listing",
+    JSON.stringify({listing:listing as Listing}),
+    (response) => {
+      console.log("SUCCESS");
+      router.push("/listing");
+    },
+    (err) => {
+      console.log("ERROR");
+      console.log("response", err);
+    }
+    )
   };
   return (
     <Box
@@ -190,7 +177,7 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
     return {
       props: {
         accountId: id,
-        listing: JSON.stringify(listing),
+        listing: listing,
       },
     };
   } else {

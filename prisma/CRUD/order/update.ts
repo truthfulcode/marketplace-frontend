@@ -1,3 +1,4 @@
+import { Submission } from "@prisma/client";
 import { prisma } from "../../../utils/prisma";
 import { getAddressId } from "../user/read";
 import { decrementLockedBalance, incrementBalance } from "../user/update";
