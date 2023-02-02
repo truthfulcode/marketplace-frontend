@@ -12,6 +12,31 @@ export async function getAddressId(address: string){
   });
   return result ? result : null;
 }
+
+export async function getBalance(accountId: string){
+  let result = await prisma.ethereumAccount.findUnique({
+    where: {
+      id:accountId
+    },
+    select: {
+      balance : true
+    }
+  });
+  return result ? result.balance : null;
+}
+
+export async function getAddressByCustomerId(customerId: string){
+  let result = await prisma.ethereumAccount.findUnique({
+    where: {
+      id:customerId
+    },
+    select: {
+      address:true
+    }
+  });
+  return result ? result.address : null;
+}
+
 export async function isValidUsername(username: string) {
   let result = await prisma.account.findFirst({
     where: {
@@ -40,20 +65,16 @@ export async function isValidUsernameOrEmail(username: string, email: string) {
 }
 // returns null when if username or email is not found
 export async function getUser(input: string, password:string) {
-  console.log("get user",input,password,validEmail(input))
   let res;
   if(validEmail(input)){
     res = await prisma.account.findUnique({
       where: { email : input},
     })
-    console.log("check email")
   }else{
     res = await prisma.account.findUnique({
       where: { username : input},
     })
-    console.log("check username")
   }
-  console.log("get user values", res, sha512(password))
   return res && res.password === sha512(password) ? res : null;    
 }
 // returns null when username is not found

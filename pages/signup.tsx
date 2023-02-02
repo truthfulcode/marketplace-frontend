@@ -25,6 +25,7 @@ import {
   encrypt,
   isString,
   onlyString,
+  performPOST,
   sha512,
   validEmail,
 } from "../utils/helpers";
@@ -101,24 +102,17 @@ const signup = () => {
   const createUser = async () => {
     let [isFound, _account] = verifyInputs();
     if (isFound) return;
-    try {
-      const response = await fetch("./api/user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(_account),
-      });
-      const isSuccess = response.ok && response.status == 200;
-      if (isSuccess) {
-        console.log("SUCCESS");
+    await performPOST(
+      "http://localhost:3000/api/user",
+      JSON.stringify(_account),
+      (response) => {
+        console.log("response", response);
         router.push("/signin");
-      } else {
-        const message = await response.json();
-        console.log("ERROR");
-        console.log("response", message);
+      },
+      (error) => {
+        console.log("err response", error);
       }
-    } catch (err) {}
+    );
   };
 
   const checkValidity = (key: FormInput, value: string) => {
@@ -172,11 +166,9 @@ const signup = () => {
     value: String | undefined,
     error?: String
   ) => {
-    console.log("pre", key, account[key]?.value);
     setAccount((account) =>
       Object.assign({}, account, { [key]: { value: value, error: error } })
     );
-    console.log("post", key, account[key]?.value);
   };
   useEffect(() => {
     setAccountValue("U_T", "CUSTOMER");
@@ -200,7 +192,7 @@ const signup = () => {
         backgroundSize: "cover",
       }}
     >
-      <Navbar signin={true} />
+      <Navbar />
       <FormWrapper method="POST" onSubmit={() => {}}>
         <TitleText>SIGN UP</TitleText>
         <TextField

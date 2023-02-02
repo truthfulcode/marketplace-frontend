@@ -3,18 +3,9 @@ import {
   Box,
   Divider,
   List,
-  ListItem,
   ListItemButton,
   ListItemText,
-  Paper,
   styled,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
 } from "@mui/material";
 import {
   MainButton,
@@ -27,10 +18,15 @@ import { PaymentPage, transaction } from "../../utils/types";
 import Activity from "../../components/Payment/Activity";
 import Deposit from "../../components/Payment/Deposit";
 import Withdraw from "../../components/Payment/Withdraw";
-import Setting from "../../components/Payment/Setting";
 import Link from "next/link";
 
-const Interface = ({page = PaymentPage.Activity}) => {
+const Interface = ({
+  isDeposit = false,
+  page = PaymentPage.Activity,
+  txs = undefined,
+  address = undefined,
+  balance = 0,
+}) => {
   // const [page, setPage] = useState<PaymentPage>(PaymentPage.Activity)
   const SideBarButton = styled(MainButton)({
     fontSize: 12,
@@ -39,50 +35,69 @@ const Interface = ({page = PaymentPage.Activity}) => {
     border: "none",
     backgroundColor: "#E9E9E9",
   });
+  const paymentButtonTitles = ["activity", "deposit", "withdraw"];
+  const paymentButtonDests = [
+    "/payment/activity",
+    "/payment/deposit",
+    "/payment/withdraw",
+  ];
   const MainDisplay = () => {
-    switch(page){
-      case PaymentPage.Deposit:{
-        return <Deposit/>
+    switch (page) {
+      case PaymentPage.Deposit: {
+        return <Deposit address={address} balance={balance} />;
       }
-      case PaymentPage.Withdraw:{
-        return <Withdraw/>
+      case PaymentPage.Withdraw: {
+        return <Withdraw balance={balance} />;
       }
-      case PaymentPage.Setting:{
-        return <Setting/>
-      }
-      default : {
-        return <Activity/>
+      default: {
+        return <Activity txs={txs} />;
       }
     }
-  }
+  };
   return (
     <Box
       sx={{
-        height: "71vh",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <Navbar />
-
       <TitleText sx={{ mt: 8 }}>Payment</TitleText>
       <Box
-        sx={{ width: "100vw",height:"100%", display: "flex", flexDirection: "row", mt: 4 }}
+        sx={{
+          width: "100vw",
+          height: "100%",
+          display: "flex",
+          flexDirection: "row",
+          mt: 4,
+        }}
       >
-        <Box flex={3} sx={{padding:2}}>
-          <MainDisplay/>
+        <Box flex={3} sx={{ padding: 2 }}>
+          <MainDisplay />
         </Box>
 
-        <List sx={{  ...styles.background, flex: 1, mt:2,p:0 }}>
-          {["activity", "deposit", "withdraw", "setting"].map((value,index) => (
-            <>
-            <Link href={"/payment/"+value}>
-            <ListItemButton sx={{ ...styles.sideBarText, ...styles.button }}>
-              <ListItemText sx={{ ...styles.center }}>
-                {value}
-              </ListItemText>
-            </ListItemButton>
+        <List sx={{ ...styles.background, flex: 1, mt: 2, p: 0 }}>
+          {(isDeposit
+            ? ["activity", "deposit", "withdraw"]
+            : ["activity", "withdraw"]
+          ).map((value, index) => (
+            <div key={index}>
+              <Link href={"/payment/" + value}>
+                <ListItemButton
+                  sx={{
+                    ...styles.sideBarText,
+                    ...styles.center,
+                    border: "black solid 1px",
+                    mb: "2px",
+                    ...styles.button,
+                  }}
+                >
+                  <ListItemText sx={{ ...styles.center }}>{value}</ListItemText>
+                </ListItemButton>
               </Link>
-            <Divider/>
-            </>
+              <Divider />
+            </div>
           ))}
         </List>
       </Box>

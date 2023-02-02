@@ -11,7 +11,7 @@ const forgot = () => {
       ...styles.shadow,
       height:"100vh",}}>
       <Navbar/>
-      <FormWrapper>
+      <FormWrapper method={()=>{}} onSubmit={()=>{}}>
         <TitleText>Reset Password</TitleText>
         <TextField placeholder='Email | Username'/>
         <SubmitButton>RESET</SubmitButton>

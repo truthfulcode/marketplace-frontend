@@ -16,6 +16,10 @@ import {
 } from "next-auth/react";
 import Router, { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
+import { GetServerSideProps } from "next";
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { Account, AccountType } from "@prisma/client";
 
 const signIn = () => {
   const [username, setUsername] = useState<ValueWithError>();
@@ -32,44 +36,25 @@ const signIn = () => {
     let _u = username?.value;
     let _p = password?.value;
     let defaultBody = {
-      // grant_type: "",
       username: _u ? _u : "asdf@gmail.com",
       password: _p ? _p : "asdf",
-      // scope: "",
-      // client_id: "",
-      // client_secret: "",
+
     };
     try {
       const body = { ...defaultBody };
-      // console.log(`POSTing ${JSON.stringify(body, null, 2)}`);
-      // console.log("object submitted", {
-      //   ...body,
-      //   callbackUrl: router.query.callbackUrl,
-      // });
+
       let res = await signIN("credentials", {
         ...body,
-        // callbackUrl: router.query.callbackUrl as string,
       });
-      // console.log(`signing:onsubmit:res`, res);
+      console.log(`signing:onsubmit:res`, res);
     } catch (err) {
       console.error(err);
     }
-    
   };
-  useEffect(()=>{
-    if (status === "authenticated") {
-      router.push("/", {
-        query: {
-          // callbackUrl: router.query.callbackUrl,
-        },
-      });
-    }
-  },[status])
   const handleChange = (
     isUser: boolean,
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    console.log("session", session);
     let isError = false;
     let errorMessage;
     let value = event.target.value;
@@ -98,7 +83,7 @@ const signIn = () => {
         height: "100vh",
       }}
     >
-      <Navbar signup={true} />
+      <Navbar />
       <FormWrapper method="POST" onSubmit={handleSubmit(onSubmit)}>
         <TitleText>SIGN IN</TitleText>
         <TextField
@@ -135,3 +120,24 @@ const signIn = () => {
 };
 
 export default signIn;
+
+export const getServerSideProps: GetServerSideProps = async (c) => {
+  const session = await unstable_getServerSession(c.req, c.res, authOptions);
+  let accountType: AccountType | null = null;
+  if (session) {
+    accountType = (session?.user as Account).accountType;
+  }
+  return !session
+    ? {
+        props: {
+          accountType: accountType,
+        },
+      }
+    : {
+        redirect: {
+          permanent: false,
+          destination: "/",
+        },
+        props: {},
+      };
+};

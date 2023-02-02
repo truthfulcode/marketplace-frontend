@@ -21,35 +21,40 @@ import { GetServerSideProps, GetStaticProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import ExtendableLinkFields from "../../components/ExtendableLinkFields";
-import { performPOST } from "../../utils/helpers";
+import { getListing } from "../../prisma/CRUD/listing/read";
+import { performPUT } from "../../utils/helpers";
 
-const createListing = (props: any) => {
-  const { accountId } = props;
-  const [category, setCategory] = React.useState("");
-  const [price, setPrice] = React.useState(0);
-  const [links, setLinks] = React.useState<Array<string>>([""]);
-  const [title, setTitle] = React.useState("");
-  const [description, setDescription] = React.useState("");
+const updateListing = (props: any) => {
+  const { accountId, listing } = props;
+  const [category, setCategory] = React.useState<string>("");
+  const [listingId, setListingId] = React.useState<string>("");
+  const [price, setPrice] = React.useState<number>(0);
+  const [links, setLinks] = React.useState<Array<string>>((listing as Listing).files);
+  const [title, setTitle] = React.useState<string>("");
+  const [description, setDescription] = React.useState<string>("");
+  useEffect(() => {
+    if (listing) {
+      setListingId(listing.id)
+      setPrice(listing.price / 1e6)
+      setLinks(listing.files.length > 0 ? listing.files : [""])
+      setTitle(listing.title)
+      setCategory(listing.category)
+      setDescription(listing.description)
+    }
+  }, []);
+  
   let router = useRouter();
   const pushLink = (newLink: string) => {
     setLinks((oldLinks) => [...oldLinks, newLink]);
   };
   const rmoveLink = (index: number) => {
-    if (links.length > 1) {
-      setLinks((_links) => _links.filter((link, i) => i !== index));
-    }
+    setLinks((oldLinks) => oldLinks.filter((link, i) => i !== index));
   };
-
-  const onLinkChange = (index: number, newValue: string) => {
-    let array = [...links];
-    array[index] = newValue;
-    setLinks(array);
-  };
-  const createNewListing = async (isActive: boolean) => {
+  const createNewListing = async (isActive:boolean) => {
     if (!accountId) return;
-    let _files = links[0] === "" && links.length === 1 ? [] : links;
+    let _files = links[0] === "" && links.length === 1 ? [] : links
     const listing: Listing = {
-      id: "",
+      id: listingId,
       status: isActive ? "ACTIVE" : "DRAFT",
       category: category as ListingCategory,
       customerId: accountId,
@@ -58,17 +63,17 @@ const createListing = (props: any) => {
       description: description,
       files: _files,
     };
-    await performPOST(
-      "http://localhost:3000/api/listing",
-      JSON.stringify(listing),
-      (response) => {
-        console.log("response", response);
-        router.push("/listing");
-      },
-      (error) => {
-        console.log("err response", error);
-      }
-    );
+    await performPUT("/api/listing",
+    JSON.stringify({listing:listing as Listing}),
+    (response) => {
+      console.log("SUCCESS");
+      router.push("/listing");
+    },
+    (err) => {
+      console.log("ERROR");
+      console.log("response", err);
+    }
+    )
   };
   return (
     <Box
@@ -82,25 +87,22 @@ const createListing = (props: any) => {
       <Navbar />
       <FormWrapper method="POST" onSubmit={() => {}}>
         {/* Contact Form */}
-        <TitleText>Create A Listing</TitleText>
+        <TitleText>Update A Listing</TitleText>
         <TextField
+          value={title}
           onChange={(event) => {
             setTitle(event.target.value as string);
           }}
-          label="Title"
           placeholder="Title"
         />
-        <br></br>
         <TextField
+          value={price}
           onChange={(event) => {
             setPrice(Number(event.target.value));
           }}
           placeholder="Price"
-          label="Price"
           type="number"
         />
-        <br></br>
-
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Category</InputLabel>
           <Select
@@ -126,13 +128,14 @@ const createListing = (props: any) => {
         </FormControl>
         <br></br>
         <ExtendableLinkFields
-          onLinkChange={onLinkChange}
+          onLinkChange={links}
           links={links}
           pushLink={pushLink}
           removeLink={rmoveLink}
         />
         <br></br>
         <TextareaAutosize
+          value={description}
           onChange={(event) => {
             setDescription(event.target.value as string);
           }}
@@ -145,7 +148,7 @@ const createListing = (props: any) => {
             await createNewListing(true);
           }}
         >
-          CREATE
+          PUBLISH
         </SubmitButton>
         <SubmitButton
           onClick={async () => {
@@ -163,14 +166,18 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   const session = await unstable_getServerSession(c.req, c.res, authOptions);
   let id: string | null = null;
   let accountType: string | null = null;
-  if (session) {
+  let listingId = c.query.listingId;
+  let listing: Listing | null = null;
+  if (session && listingId) {
     id = (session?.user as Account).id;
     accountType = (session?.user as Account).accountType;
+    listing = await getListing(listingId as string);
   }
-  if (accountType === "CUSTOMER") {
+  if (listingId) {
     return {
       props: {
         accountId: id,
+        listing: listing,
       },
     };
   } else {
@@ -184,4 +191,4 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   }
 };
 
-export default createListing;
+export default updateListing;

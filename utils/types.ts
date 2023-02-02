@@ -18,6 +18,10 @@ export type ValueWithError = {
     value:String | undefined,
     error:String | undefined
   }
+export type ValueNumberWithError = {
+    value:Number | undefined,
+    error:String | undefined
+  }
 export enum PaymentType {
     Bank, Crypto
 } 
