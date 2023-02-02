@@ -36,25 +36,17 @@ const signIn = () => {
     let _u = username?.value;
     let _p = password?.value;
     let defaultBody = {
-      // grant_type: "",
       username: _u ? _u : "asdf@gmail.com",
       password: _p ? _p : "asdf",
-      // scope: "",
-      // client_id: "",
-      // client_secret: "",
+
     };
     try {
       const body = { ...defaultBody };
-      // console.log(`POSTing ${JSON.stringify(body, null, 2)}`);
-      // console.log("object submitted", {
-      //   ...body,
-      //   callbackUrl: router.query.callbackUrl,
-      // });
+
       let res = await signIN("credentials", {
         ...body,
-        // callbackUrl: router.query.callbackUrl as string,
       });
-      // console.log(`signing:onsubmit:res`, res);
+      console.log(`signing:onsubmit:res`, res);
     } catch (err) {
       console.error(err);
     }

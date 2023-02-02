@@ -25,19 +25,21 @@ import { authOptions } from "../api/auth/[...nextauth]";
 // display list of listings
 const index = (props) => {
   const { accountType, proposals, listingId } = props;
-  const router = useRouter()
+  console.log("proposals",proposals)
+  const router = useRouter();
   const acceptProposalAndCreateOrder = async (_proposalId, _listingId) => {
-    await performPUT("/api/proposal",
-    JSON.stringify({proposalId:_proposalId, listingId:_listingId}),
-    (response) => {
-      console.log("SUCCESS");
-      router.push("/listing");
-    },
-    (err) => {
-      console.log("ERROR");
-      console.log("response", err);
-    }
-    )
+    await performPUT(
+      "/api/proposal",
+      JSON.stringify({ proposalId: _proposalId, listingId: _listingId }),
+      (response) => {
+        console.log("SUCCESS");
+        router.push("/order");
+      },
+      (err) => {
+        console.log("ERROR");
+        console.log("response", err);
+      }
+    );
   };
   return (
     <Box>
@@ -62,52 +64,82 @@ const index = (props) => {
                     borderRadius: 4,
                     border: "black solid 3px",
                     flexDirection: "row",
-                    minHeight: "120px",
-                    maxHeight: "200px",
+                    height: "100%",
                     mb: 2,
                   }}
                 >
-                  <Typography
-                    variant="h4"
-                    sx={{ position: "absolute", left: 16, top: 8 }}
+                  <Box
+                    sx={{
+                      // position: "absolute",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                      height: "100%",
+                      flex: 1,
+                    }}
                   >
-                    {element.title}
-                  </Typography>
-                  <Typography
-                    sx={{ position: "absolute", left: 16, bottom: 8 }}
-                    variant="h6"
+                    <Typography variant="h4">{element.title}</Typography>
+                    <Typography variant="h6">{element.description}</Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      flex: 0,
+                      height: "100%",
+                      alignItems: "flex-end",
+                      alignContent: "flex-end",
+                    }}
                   >
-                    {element.description}
-                  </Typography>
-                  <Typography
-                    variant="h5"
-                    sx={{ position: "absolute", right: 96, top: 4 }}
-                  >
-                    {"duration: " + element.duration/86400}days
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    sx={{ position: "absolute", right: 16, top: 12 }}
-                  >
-                    {element.status}
-                  </Typography>
-                  {/* </Link> */}
-                  <Box sx={{ position: "absolute", right: 8, bottom: 0 }}>
-                    <Link
-                      href={{
-                        pathname: "listing/view",
-                        query: {
-                          listingId: element.id,
-                        },
+                    <Box
+                      sx={{
+                        right: 16,
+                        top: 8,
+                        display: "flex",
+                        flexDirection: "row",
+                        height: "100%",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
                       }}
                     >
-                      <MainButton>VIEW</MainButton>
-                    </Link>
-                    {element.status === "PENDING" && (                      
-                        <MainButton onClick={async()=>{
-                          await acceptProposalAndCreateOrder(element.id,listingId)
-                        }}>ACCEPT</MainButton>
-                    )}
+                      <Typography variant="body2" sx={{mr:1}}>
+                        {"duration: " + element.duration / 86400+" days "}
+                      </Typography>
+                      <Typography variant="body1">{element.status}</Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        // position: "absolute",
+                        right: 8,
+                        bottom: 0,
+                        display: "flex",
+                        flexDirection: "row",
+                      }}
+                    >
+                      <Link
+                        href={{
+                          pathname: "listing/view",
+                          query: {
+                            listingId: element.id,
+                          },
+                        }}
+                      >
+                        <MainButton>VIEW</MainButton>
+                      </Link>
+                      {element.status === "PENDING" && (
+                        <MainButton
+                          onClick={async () => {
+                            await acceptProposalAndCreateOrder(
+                              element.id,
+                              listingId
+                            );
+                          }}
+                        >
+                          ACCEPT
+                        </MainButton>
+                      )}
+                    </Box>
                   </Box>
                 </ListItem>
               ))
@@ -155,7 +187,7 @@ const index = (props) => {
                     variant="h5"
                     sx={{ position: "absolute", right: 96, top: 8 }}
                   >
-                    {"duration: " + element.duration/86400}days
+                    {"duration: " + element.duration / 86400}days
                   </Typography>
                   <Typography
                     variant="body1"
@@ -175,7 +207,6 @@ const index = (props) => {
                     >
                       <MainButton>VIEW</MainButton>
                     </Link>
-                    
                   </Box>
                 </ListItem>
               ))
@@ -193,7 +224,7 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   let accountType: AccountType | null = null;
   let proposals: Proposal[] | null = null;
   let listingId: string = c.query.listingId as string;
-  listingId = listingId ? listingId : "" 
+  listingId = listingId ? listingId : "";
   if (session) {
     accountType = (session?.user as Account).accountType;
     if (listingId && accountType === "CUSTOMER") {
@@ -207,8 +238,8 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   console.log("object", {
     accountType: accountType,
     proposals: proposals,
-    listingId: listingId
-  },)
+    listingId: listingId,
+  });
   // for customer, it would be to inspect a listing proposals
   // for freelancer, it would be to navigate his own proposals
   return session
@@ -216,7 +247,7 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
         props: {
           accountType: accountType,
           proposals: proposals,
-          listingId: listingId
+          listingId: listingId,
         },
       }
     : {

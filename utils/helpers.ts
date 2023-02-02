@@ -176,13 +176,13 @@ export const decrypt = (hash: Hash) => {
 
 // for crypto library
 export const provider = () => {
-  return new ethers.providers.JsonRpcProvider(process.env.LOCAL_TESTNET);
+  return new ethers.providers.JsonRpcProvider(process.env.GOERLI_TESTNET);
 };
 
 // reads the token balance, it doesn't need a signer
 export const balanceOf = async (address: string) => {
   const contract = new ethers.Contract(
-    process.env.LOCAL_TOKEN_ADDRESS as string,
+    process.env.TOKEN_ADDRESS as string,
     abi
   );
 
@@ -198,7 +198,7 @@ export const transfer = async (
   const signer = new ethers.Wallet(pk, provider());
 
   const contract = new ethers.Contract(
-    process.env.LOCAL_TOKEN_ADDRESS as string,
+    process.env.TOKEN_ADDRESS as string,
     abi,
     provider()
   ) as ERC20;
@@ -210,7 +210,7 @@ export const transferAll = async (pk: string, destinationAddress: string) => {
   const signer = new ethers.Wallet(pk, provider());
 
   const contract = new ethers.Contract(
-    process.env.LOCAL_TOKEN_ADDRESS as string,
+    process.env.TOKEN_ADDRESS as string,
     abi,
     provider()
   ) as ERC20;
@@ -225,7 +225,7 @@ export const transferAll = async (pk: string, destinationAddress: string) => {
 
 export const getUSDCBalance = async (address: string) => {
   const contract = new ethers.Contract(
-    process.env.LOCAL_TOKEN_ADDRESS as string,
+    process.env.TOKEN_ADDRESS as string,
     abi,
     provider()
   ) as ERC20;
@@ -239,8 +239,9 @@ export const transferETHForGas = async (
   destinationAddress: string
 ) => {
   const signer = new ethers.Wallet(pk, provider());
-  let gasPrice = provider().getGasPrice();
-  let amount = (await gasPrice).mul(100000);
+  // let gasPrice = await provider().getGasPrice();
+  // let amount = (await gasPrice).mul(100000);
+  let amount = ethers.utils.parseEther('0.001');
   // transaction fee = gas price * gas used
   return await signer.sendTransaction({
     to: destinationAddress,

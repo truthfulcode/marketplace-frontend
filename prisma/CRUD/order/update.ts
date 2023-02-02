@@ -29,6 +29,7 @@ export async function confirmOrder(orderId: string) {
   let orderStatus = await getOrderStatus(orderId);
   if (!orderStatus) throw Error("Not active order!");
   let order = await getOrder(orderId);
+  console.log("order",order ,order?.price)
   if (order) {
     await decrementLockedBalance(order.customerId, order.price);
     await incrementBalance(order.freelancerId, order.price);
@@ -51,6 +52,7 @@ export async function cancelOrder(orderId: string) {
   let orderStatus = await getOrderStatus(orderId);
   if (!orderStatus) throw Error("Not active order!");
   let order = await getOrder(orderId);
+  console.log("order",order)
   if (order) {
     await decrementLockedBalance(order.customerId, order.price);
     await incrementBalance(order.customerId, order.price);

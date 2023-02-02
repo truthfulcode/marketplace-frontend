@@ -43,62 +43,83 @@ const CustomerDisplay = ({ orders }) => (
               borderRadius: 4,
               border: "black solid 3px",
               flexDirection: "row",
-              minHeight: "120px",
-              maxHeight: "200px",
-              // display: "flex",
-              // alignItems: "flex-start",
+              height: "100%",
               mb: 2,
             }}
           >
-            <Typography
-              variant="body2"
-              sx={{ position: "absolute", left: 16, top: 8 }}
+            <Box
+              sx={{
+                // position: "absolute",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+                height: "100%",
+                flex: 1,
+              }}
             >
-              Created At: {element.createdAt}
-            </Typography>
-            <Typography
-              sx={{ position: "absolute", left: 16, bottom: 8 }}
-              variant="body2"
+              <Typography variant="h4">
+                Created At: {element.createdAt}
+              </Typography>
+              <Typography variant="h6">Ends At: {element.endsAt}</Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                flex: 0,
+                height: "100%",
+                alignItems: "flex-end",
+                alignContent: "flex-end",
+              }}
             >
-              Ends At: {element.endsAt}
-            </Typography>
-            <Typography
-              variant="h5"
-              sx={{ position: "absolute", right: 84, top: 8 }}
-            >
-              {element.price / 1e6}$
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ position: "absolute", right: 16, top: 12 }}
-            >
-              {element.status}
-            </Typography>
-            {/* </Link> */}
-            <Box sx={{ position: "absolute", right: 8, bottom: 0 }}>
-              <Link
-                href={{
-                  pathname: "order/view",
-                  query: {
-                    orderId: element.id,
-                  },
+              <Box
+                sx={{
+                  right: 16,
+                  top: 8,
+                  display: "flex",
+                  flexDirection: "row",
+                  height: "100%",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
                 }}
               >
-                <MainButton>VIEW</MainButton>
-              </Link>
-
-              {element.status !== "CANCELLED" && (
+                <Typography marginRight={1} variant="h5">{element.price / 1e6}$</Typography>
+                <Typography variant="body1">{element.status}</Typography>
+              </Box>
+              <Box
+                sx={{
+                  // position: "absolute",
+                  right: 8,
+                  bottom: 0,
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
                 <Link
                   href={{
-                    pathname: "submission/view",
+                    pathname: "order/view",
                     query: {
-                      submissionId: element.id,
+                      orderId: element.id,
                     },
                   }}
                 >
-                  <MainButton>SUBMISSION</MainButton>
+                  <MainButton>VIEW</MainButton>
                 </Link>
-              )}
+
+                {element.status !== "CANCELLED" && (
+                  <Link
+                    href={{
+                      pathname: "submission/view",
+                      query: {
+                        submissionId: element.id,
+                      },
+                    }}
+                  >
+                    <MainButton>SUBMISSION</MainButton>
+                  </Link>
+                )}
+              </Box>
             </Box>
           </ListItem>
         ))
@@ -127,59 +148,88 @@ const FreelancerDisplay = ({ orders }) => (
               borderRadius: 4,
               border: "black solid 3px",
               flexDirection: "row",
-              minHeight: "120px",
-              maxHeight: "200px",
-              // display: "flex",
-              // alignItems: "flex-start",
+              height: "100%",
               mb: 2,
             }}
           >
-            <Typography
-              variant="h6"
-              sx={{ position: "absolute", left: 16, top: 8 }}
+            <Box
+              sx={{
+                // position: "absolute",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+                height: "100%",
+                flex: 1,
+              }}
             >
-              {element.createdAt}
-            </Typography>
-            <Typography
-              sx={{ position: "absolute", left: 16, bottom: 8 }}
-              variant="h6"
+              <Typography variant="h4">
+                Created At: {element.createdAt}
+              </Typography>
+              <Typography variant="h6">Ends At: {element.endsAt}</Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                flex: 0,
+                height: "100%",
+                alignItems: "flex-end",
+                alignContent: "flex-end",
+              }}
             >
-              {element.endsAt}
-            </Typography>
-            <Typography
-              variant="h5"
-              sx={{ position: "absolute", right: 84, top: 8 }}
-            >
-              {element.price / 1e6}$
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ position: "absolute", right: 16, top: 12 }}
-            >
-              {element.status}
-            </Typography>
+              <Box
+                sx={{
+                  right: 16,
+                  top: 8,
+                  display: "flex",
+                  flexDirection: "row",
+                  height: "100%",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <Typography marginRight={1} variant="h5">{element.price / 1e6}$</Typography>
+                <Typography variant="body1">{element.status}</Typography>
+              </Box>
+              <Box
+                sx={{
+                  // position: "absolute",
+                  right: 8,
+                  bottom: 0,
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
+                <Link
+                  href={{
+                    pathname: "order/view",
+                    query: {
+                      orderId: element.id,
+                    },
+                  }}
+                >
+                  <MainButton>VIEW</MainButton>
+                </Link>
+                {element.status === "ACTIVE" ? (
+                  <Link
+                    href={{
+                      pathname: "submission/create",
+                      query: {
+                        orderId: element.id,
+                      },
+                    }}
+                  >
+                    <MainButton>SUBMIT</MainButton>
+                  </Link>
+                ) : (
+                  ""
+                )}
+              </Box>
+            </Box>
+
             {/* </Link> */}
             <Box sx={{ position: "absolute", right: 8, bottom: 0 }}>
-              <Link
-                href={{
-                  pathname: "order/view",
-                  query: {
-                    orderId: element.id,
-                  },
-                }}
-              >
-                <MainButton>VIEW</MainButton>
-              </Link>
-              <Link
-                href={{
-                  pathname: "submission/create",
-                  query: {
-                    orderId: element.id,
-                  },
-                }}
-              >
-                <MainButton>SUBMIT</MainButton>
-              </Link>
               {/* {isAppliedListings[index] ? 
               <MainButton disableTouchRipple sx={{cursor:"unset"}}>SUBMITTED</MainButton>
               :
@@ -224,7 +274,7 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
 
   if (session) {
     accountType = (session?.user as Account).accountType;
-    console.log("user id",(session?.user as Account).id)
+    console.log("user id", (session?.user as Account).id);
     if (accountType === "CUSTOMER") {
       _orders = await getOrdersByCustomerId((session?.user as Account).id);
     } else {

@@ -52,7 +52,7 @@ const createSubmission = (props: any) => {
     };
     await performPUT(
       "http://localhost:3000/api/order",
-      JSON.stringify(submission),
+      JSON.stringify({submit:submission}),
       (response) => {
         console.log("response", response);
         router.push("/order");

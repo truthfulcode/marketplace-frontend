@@ -87,15 +87,20 @@ const createListing = (props: any) => {
           onChange={(event) => {
             setTitle(event.target.value as string);
           }}
+          label="Title"
           placeholder="Title"
         />
+        <br></br>
         <TextField
           onChange={(event) => {
             setPrice(Number(event.target.value));
           }}
           placeholder="Price"
+          label="Price"
           type="number"
         />
+        <br></br>
+
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Category</InputLabel>
           <Select

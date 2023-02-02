@@ -63,7 +63,6 @@ const Interface = ({
       }}
     >
       <Navbar />
-
       <TitleText sx={{ mt: 8 }}>Payment</TitleText>
       <Box
         sx={{
@@ -86,7 +85,13 @@ const Interface = ({
             <div key={index}>
               <Link href={"/payment/" + value}>
                 <ListItemButton
-                  sx={{ ...styles.sideBarText, ...styles.button }}
+                  sx={{
+                    ...styles.sideBarText,
+                    ...styles.center,
+                    border: "black solid 1px",
+                    mb: "2px",
+                    ...styles.button,
+                  }}
                 >
                   <ListItemText sx={{ ...styles.center }}>{value}</ListItemText>
                 </ListItemButton>

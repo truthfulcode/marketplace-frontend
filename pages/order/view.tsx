@@ -1,12 +1,6 @@
 import React, { useEffect } from "react";
 import {
   Box,
-  TextareaAutosize,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Typography,
   ListItem,
   List,
@@ -14,18 +8,13 @@ import {
 import Navbar from "../../components/Navbar";
 import {
   styles,
-  SubmitButton,
   TitleText,
 } from "../../components/StyledComponents";
 import FormWrapper from "../../components/FormWrapper";
-import { useRouter } from "next/router";
 import { Account, Listing, ListingCategory, Order } from "@prisma/client";
 import { GetServerSideProps, GetStaticProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
-import ExtendableLinkFields from "../../components/ExtendableLinkFields";
-import { getListing } from "../../prisma/CRUD/listing/read";
-import Link from "next/link";
 import { getOrder } from "../../prisma/CRUD/order/read";
 
 const viewOrder = (props: any) => {

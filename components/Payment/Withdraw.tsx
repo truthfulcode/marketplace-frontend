@@ -34,6 +34,7 @@ const Withdraw = ({ balance = 0 }) => {
   ) => {
     let _error: string | undefined = undefined;
     let newValue = Number(event.target.value);
+    if (newValue > balance/1e6) _error = "insufficient balance to be withdrawn!";
     if (newValue < 10) _error = "must be greater or equal to 10$";
     if (newValue === 0) _error = undefined;
     setAmount((obj) =>

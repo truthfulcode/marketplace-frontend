@@ -15,6 +15,7 @@ const Deposit = ({address,balance=0}) => {
         <Typography variant='h5'>USDC Balance: ${_balance}</Typography>
         <Typography>
             Supported Crypto
+        </Typography>
             <List sx={{...styles.center}}>
             <ListItem sx={{ ...styles.center, flexDirection:"column" }}>
               <Image
@@ -26,8 +27,6 @@ const Deposit = ({address,balance=0}) => {
               <ListItemText>USDC</ListItemText>
             </ListItem>
             </List>
-            
-        </Typography>
         <Typography>Make sure to transfer the supported crypto to the following address:</Typography>
         <Typography>Deposits reflect within 1-2 minutes:</Typography>
         <Box  sx={{...styles.center, p:4, mt:4, ...styles.textBackground}}>

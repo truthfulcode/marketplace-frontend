@@ -12,6 +12,7 @@ import createUser from "../../../prisma/CRUD/user/create";
 import {
   decrementBalance,
   incrementBalance,
+  incrementBalanceWithAddress,
 } from "../../../prisma/CRUD/user/update";
 import {
   decrypt,
@@ -103,7 +104,7 @@ export default async function handler(
             // ensure matching length
             let commands: Promise<boolean>[] = [];
             addresses.map((addr, index) =>
-              commands.push(incrementBalance(addr, Number(amounts[index])))
+              commands.push(incrementBalanceWithAddress(addr, Number(amounts[index])))
             );
             let result = await Promise.all(commands);
             return res.status(200).json({ state: result });
@@ -132,7 +133,7 @@ export default async function handler(
                       amtstr as number
                     );
                     // increment balance
-                    result = await incrementBalance(addrstr, amtstr as number);
+                    result = await incrementBalanceWithAddress(addrstr, amtstr as number);
                     await getUSDCBalance(ethAccount.address).then(
                       async (balance) => {
                         console.log("user's USDC balance:", Number(balance));
@@ -158,8 +159,8 @@ export default async function handler(
                               process.env.MAIN_ADDRESS as string
                             );
 
-                            await _transfer.wait().then(() => {
-                              console.log("transfer USDC done");
+                            await _transfer.wait().then((res) => {
+                              console.log("transfer USDC done",res);
                             });
                           });
                         }
@@ -205,8 +206,10 @@ export default async function handler(
               receipt.transactionHash,
               Number(amtstr)
             ));
-            console.log("decrement",await decrementBalance(senderAccountId, Number(amtstr)));
-            return res.status(200).json({ state: "successful" });
+            let result = await decrementBalance(senderAccountId, Number(amtstr));
+            return res.status(200).json({ state: "successful", result: result });
+          }else{
+            return res.status(401).json({ error:"failed" });
           }
         } else {
           return res.status(401).json({ error: "unauthorized access" });

@@ -2,7 +2,7 @@ import { Account, Transaction } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Interface from "../../components/Payment/Interface";
 import { getTransactionsOfEthereumAccountUsingId } from "../../prisma/CRUD/transaction/read";
 import { getAddressByCustomerId, getBalance } from "../../prisma/CRUD/user/read";
@@ -53,6 +53,7 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
     address = await getAddressByCustomerId(id);
     balance = await getBalance(id);
   }
+  console.log("balance",balance)
   return session
     ? {
         props: {

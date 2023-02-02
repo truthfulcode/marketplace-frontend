@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import Navbar from "../../components/Navbar";
 import {
+  MainButton,
   styles,
   SubmitButton,
   TitleText,
@@ -25,12 +26,85 @@ import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { getOrder, getSubmission } from "../../prisma/CRUD/order/read";
 import Link from "next/link";
+import { performPUT } from "../../utils/helpers";
 
 const viewOrder = (props: any) => {
-  const { accountId, submission: _submission } = props;
+  const { accountId, accountType, submission: _submission } = props;
 
   const [submission, setSubmission] = React.useState<Submission>();
-
+  const router = useRouter()
+  const CustomerDisplay = () => (
+    <>
+      <FormWrapper method="POST" onSubmit={() => {}}>
+        {/* Contact Form */}
+        <TitleText>Submission Details</TitleText>
+        {submission?.files.length === 0 && submission?.description === "" ? (
+          <Typography sx={{ ...styles.center }}>No Records</Typography>
+        ) : (
+          <>
+            <List>
+              <ListItem
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "start",
+                }}
+              >
+                <Typography variant="body2">Description</Typography>
+                <Typography variant="h6">{submission?.description}</Typography>
+              </ListItem>
+              <ListItem
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "start",
+                }}
+              >
+                <Typography variant="body2">Files</Typography>
+                {submission?.files.map((file) => (
+                  <Link href={file} target="_blank">
+                    <Typography variant="h6">
+                      {file.length > 38 ? file.substring(0, 38) + "...." : file}
+                    </Typography>
+                  </Link>
+                ))}
+              </ListItem>
+            </List>
+          </>
+        )}
+        {/* {submission ? <></> : ""} */}
+        <SubmitButton onClick={confirmOrder}>CONFIRM</SubmitButton>
+        <SubmitButton onClick={cancelOrder}>CANCEL</SubmitButton>
+      </FormWrapper>
+    </>
+  );
+  const confirmOrder = async () => {
+    await performPUT(
+      "http://localhost:3000/api/order",
+      JSON.stringify({ confirm: true, orderId: submission?.id }),
+      (response) => {
+        console.log("response", response);
+        router.push("/order");
+      },
+      (err) => {
+        console.log("error", err);
+      }
+    );
+  };
+  const cancelOrder = async () => {
+    await performPUT(
+      "http://localhost:3000/api/order",
+      JSON.stringify({ cancel: true, orderId : submission?.id }),
+      (response) => {
+        console.log("response", response);
+        router.push("/order");
+      },
+      (err) => {
+        console.log("error", err);
+      }
+    );
+  };
+  const FreelancerDisplay = () => <></>;
   useEffect(() => {
     if (_submission) {
       setSubmission(JSON.parse(_submission));
@@ -47,36 +121,7 @@ const viewOrder = (props: any) => {
     >
       {/* Main Wrapper */}
       <Navbar />
-      <FormWrapper method="POST" onSubmit={() => {}}>
-        {/* Contact Form */}
-        <TitleText>Listing Details</TitleText>
-        <List>
-          <ListItem
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "start",
-            }}
-          >
-            <Typography variant="body2">Description</Typography>
-            <Typography variant="h6">{submission?.description}</Typography>
-          </ListItem>
-          <ListItem
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "start",
-            }}
-          >
-            <Typography variant="body2">Files</Typography>
-            {submission?.files.map((file) => (
-              <Link href={file} target="_blank">
-                <Typography variant="h6">{file}</Typography>
-              </Link>
-            ))}
-          </ListItem>
-        </List>
-      </FormWrapper>
+      {accountType === "CUSTOMER" ? <CustomerDisplay /> : <FreelancerDisplay />}
     </Box>
   );
 };
@@ -98,6 +143,7 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
       props: {
         accountId: id,
         submission: JSON.stringify(submission),
+        accountType: accountType,
       },
     };
   } else {
