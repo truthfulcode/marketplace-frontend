@@ -71,7 +71,7 @@ function addressDeposit(address, amount, txHash) {
 }
 function main() {
     var _this = this;
-    var provider = new ethers_1.ethers.providers.JsonRpcProvider(process.env.GOERLI_TESTNET);
+    var provider = new ethers_1.ethers.providers.JsonRpcProvider(process.env.GOERLI_TESTNET_RPC);
     var contract = new ethers_1.ethers.Contract(process.env.TOKEN_ADDRESS, abi_1.abi, provider);
     contract.on("Transfer", function (from, to, value, event) { return __awaiter(_this, void 0, void 0, function () {
         var transferEvent;

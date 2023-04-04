@@ -10,6 +10,7 @@ import { BigNumber, ethers } from "ethers";
 import { ERC20 } from "../hardhat/typechain-types";
 import abi from "./abi.json";
 import { EthereumAccount } from "./types";
+import { NETWORK_OPTION, NetworksRPCs, SupportedToken } from "./constants";
 
 export const sha512 = (data: String) => {
   return createHash("sha512")
@@ -176,13 +177,14 @@ export const decrypt = (hash: Hash) => {
 
 // for crypto library
 export const provider = () => {
-  return new ethers.providers.JsonRpcProvider(process.env.GOERLI_TESTNET);
+  // @ts-ignore
+  return new ethers.providers.JsonRpcProvider(NetworksRPCs[NETWORK_OPTION]);
 };
 
 // reads the token balance, it doesn't need a signer
 export const balanceOf = async (address: string) => {
   const contract = new ethers.Contract(
-    process.env.TOKEN_ADDRESS as string,
+    SupportedToken[NETWORK_OPTION] as string,
     abi
   );
 
@@ -198,7 +200,7 @@ export const transfer = async (
   const signer = new ethers.Wallet(pk, provider());
 
   const contract = new ethers.Contract(
-    process.env.TOKEN_ADDRESS as string,
+    SupportedToken[NETWORK_OPTION] as string,
     abi,
     provider()
   ) as ERC20;
@@ -210,7 +212,7 @@ export const transferAll = async (pk: string, destinationAddress: string) => {
   const signer = new ethers.Wallet(pk, provider());
 
   const contract = new ethers.Contract(
-    process.env.TOKEN_ADDRESS as string,
+    SupportedToken[NETWORK_OPTION] as string,
     abi,
     provider()
   ) as ERC20;
@@ -225,7 +227,7 @@ export const transferAll = async (pk: string, destinationAddress: string) => {
 
 export const getUSDCBalance = async (address: string) => {
   const contract = new ethers.Contract(
-    process.env.TOKEN_ADDRESS as string,
+    SupportedToken[NETWORK_OPTION] as string,
     abi,
     provider()
   ) as ERC20;

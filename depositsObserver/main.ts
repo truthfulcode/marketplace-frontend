@@ -2,6 +2,8 @@ import { ethers, providers } from "ethers";
 import * as dotenv from "dotenv";
 import {abi} from "./abi";
 import axios from "axios";
+import { NETWORK_OPTION, NetworksRPCs, SupportedToken } from "../utils/constants";
+import { Network } from "../utils/types";
 dotenv.config();
 
 async function addressDeposit(address:string, amount:string, txHash:string){
@@ -16,8 +18,9 @@ async function addressDeposit(address:string, amount:string, txHash:string){
 }
 
 function main() {
-    const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_TESTNET);
-    const contract = new ethers.Contract(process.env.TOKEN_ADDRESS as string, abi, provider);
+    // @ts-ignore
+    const provider = new ethers.providers.JsonRpcProvider(NetworksRPCs[NETWORK_OPTION]);
+    const contract = new ethers.Contract(SupportedToken[NETWORK_OPTION] as string, abi, provider);
     contract.on("Transfer",async (from, to, value, event)=>{
         let transferEvent ={
             from: from,
