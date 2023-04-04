@@ -43,3 +43,8 @@ export type EthereumAccount = {
 export type AccountRegsiterState = {
   [key in FormInput] : ValueWithError | undefined
 }
+// @notice needs to update the dependencies when altered
+export enum Network {
+  Localhost, Goerli
+}
+
