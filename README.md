@@ -1,6 +1,6 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Notice
+## Notice ⚠️
 
 This is an experimental project, it is not recommended to be used for any production use, since one of the aspects is that for crypto deposit, there need to be a waiting period for 12 confirmation blocks (~144 seconds) for a transcation to be considered as final. beside that the system have not been thoroughly tested, nor audited.
 
