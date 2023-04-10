@@ -65,8 +65,13 @@ RPC URL: http://localhost:8545
 Chain ID: 1337
 Currency Symbol: ETH
 
-After getting the network to be used settled, run the development server:
+After getting the network to be used settled, open a new terminal and to run a bot to listen to blockchain transactions for any new deposits to update the database record for the respective , run:
 
+```bash
+cd ./depositsObserver/; tsc main.ts; node main.js
+```
+
+Finally, to run the development server:
 ```bash
 npm run dev
 # or

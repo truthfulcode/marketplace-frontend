@@ -75,6 +75,7 @@ export async function getUser(input: string, password:string) {
       where: { username : input},
     })
   }
+  console.log("result user",res, sha512(password));
   return res && res.password === sha512(password) ? res : null;    
 }
 // returns null when username is not found

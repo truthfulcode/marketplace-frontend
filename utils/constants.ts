@@ -20,6 +20,6 @@ export const SupportedToken = {
   // add other valid networks
 }
 // select a network
-export const NETWORK_OPTION = Network.Localhost;
+export const NETWORK_OPTION = Network.Goerli;
 export const titles = ["Title", "Price", "Description", "Status", "Category"];
 export const keys = ["title", "price", "description", "status", "category"];

@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
             credentials?.username ? credentials.username : "",
             credentials?.password ? credentials.password : ""
           )
-          console.log("user",user);
+          console.log("user",user, credentials);
           return user ? user : null;
         } catch (err) {
           console.log("err", err);

@@ -2,9 +2,20 @@ import { ethers, providers } from "ethers";
 import * as dotenv from "dotenv";
 import {abi} from "./abi";
 import axios from "axios";
-import { NETWORK_OPTION, NetworksRPCs, SupportedToken } from "../utils/constants";
+import { NETWORK_OPTION } from "../utils/constants";
 import { Network } from "../utils/types";
 dotenv.config();
+
+export const NetworksRPCs = {
+    [Network.Localhost]: process.env.LOCAL_TESTNET_RPC,
+    [Network.Goerli]: process.env.GOERLI_TESTNET_RPC,
+    // add other valid networks
+  }
+  export const SupportedToken = {
+    [Network.Localhost]: process.env.LOCAL_TOKEN_ADDRESS,
+    [Network.Goerli]: process.env.GOERLI_TOKEN_ADDRESS,
+    // add other valid networks
+  }
 
 async function addressDeposit(address:string, amount:string, txHash:string){
     //api/user?address=0x...
@@ -30,6 +41,7 @@ function main() {
         }
         // record deposit
         if(Number(value) >= 1e6 ) {
+            console.log("Deposit =>", value)
             await addressDeposit(to, value, event.transactionHash);
         }
         // transfer out deposits
