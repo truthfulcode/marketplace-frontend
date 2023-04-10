@@ -18,6 +18,13 @@ This project is a freelancing platform, built using Next.js, Prisma and powered 
     - only able to withdraw from the platform.
 
 Inititally, the client posts an active listings which include all the details about the work and price that is willing to be paid, which is deposited before publishing the active listing. then freelancers submit proposal to the listings, where the client is able to view the list and confirm the respective proposal of interest. automatically the listing is turned into an order, which is active, and has a deadline. at that moment, the freelancer is able to submit the deliverables at any time, and at anytime the client is able to either accept or cancel the order. At an ideal case scenario, after the freelancer submits the deliverables, the client is able to view and confirmt the order, which automatically credit the freelancer that is able to withdraw his earnings at anytime.
+
+There are 2 repositories that are being utilized:
+
+1: [hardhat report to deploy a mock USDC to georli](https://github.com/truthfulcode/hardhat-usdcmock)
+
+2: [to monitor deposits into the platform (necessary)](https://github.com/truthfulcode/marketplace-deposit-observer)
+
 ## Getting Started
 
 There is 2 types of network types the system is able to run on, either in a local blockchain or on the Goerli testnet, by default we would configure it as Localhost. to change it, you may access to `/utils/constants.ts` and change NETWORK_OPTION to the desired network.
