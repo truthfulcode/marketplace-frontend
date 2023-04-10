@@ -17,7 +17,7 @@ import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { getOrder } from "../../prisma/CRUD/order/read";
 
-const viewOrder = (props: any) => {
+const ViewOrder = (props: any) => {
   const titles = ["Status", "Price", "Created At", "Ends At"];
   const keys = ["status", "price", "createdAt", "endsAt"];
   const { accountId, order:_order} = props;
@@ -28,7 +28,7 @@ const viewOrder = (props: any) => {
     if (_order) {
       setOrder(JSON.parse(_order));
     }
-  }, []);
+  }, [_order]);
   console.log("order",order)
   return (
     <Box
@@ -96,4 +96,4 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   }
 };
 
-export default viewOrder;
+export default ViewOrder;

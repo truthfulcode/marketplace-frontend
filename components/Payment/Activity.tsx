@@ -20,7 +20,7 @@ const Activity = ({ txs }) => {
     if(txs){
       setTransactions(JSON.parse(txs))
     }
-  },[])
+  },[txs])
   return (
     <div>
       <Box sx={{ flexDirection: "column", ...styles.center }}>

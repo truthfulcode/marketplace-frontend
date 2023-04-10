@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Navbar from '../components/Navbar';
 import {styles, TitleText, MainButton} from '../components/StyledComponents'
 
-const forgot = () => {
+const NotFound = () => {
   return (
     <Box sx={{
       ...styles.header, 
@@ -21,4 +21,4 @@ const forgot = () => {
   )
 }
 
-export default forgot;
+export default NotFound;

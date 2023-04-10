@@ -23,7 +23,7 @@ import { PaymentPage } from "../../utils/types";
 import { authOptions } from "../api/auth/[...nextauth]";
 
 // display list of listings
-const index = (props) => {
+const Index = (props) => {
   const { accountType, proposals, listingId } = props;
   console.log("proposals",proposals)
   const router = useRouter();
@@ -218,7 +218,7 @@ const index = (props) => {
   );
   // return <Interface isDeposit={accountType==="CUSTOMER"} page={PaymentPage.Activity} />;
 };
-export default index;
+export default Index;
 export const getServerSideProps: GetServerSideProps = async (c) => {
   const session = await unstable_getServerSession(c.req, c.res, authOptions);
   let accountType: AccountType | null = null;

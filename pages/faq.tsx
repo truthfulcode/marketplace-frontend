@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
 import Footer from '../components/Footer';
 
-const faq = () => {
+const Faq = () => {
   return (
     <Box sx={{ ...styles.header, ...styles.header, ...styles.shadow, height:"100vh"}}> {/* Main Wrapper */}
       <Navbar/>
@@ -38,4 +38,4 @@ const faq = () => {
   )
 }
 
-export default faq;
+export default Faq;

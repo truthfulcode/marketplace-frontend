@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
 import FormWrapper from '../components/FormWrapper';
 
-const forgot = () => {
+const Forgot = () => {
   return (
     <Box sx={{
       ...styles.header, 
@@ -20,4 +20,4 @@ const forgot = () => {
   )
 }
 
-export default forgot;
+export default Forgot;

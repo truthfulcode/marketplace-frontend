@@ -24,7 +24,7 @@ import ExtendableLinkFields from "../../components/ExtendableLinkFields";
 import { getListing } from "../../prisma/CRUD/listing/read";
 import { performPUT } from "../../utils/helpers";
 
-const updateListing = (props: any) => {
+const UpdateListing = (props: any) => {
   const { accountId, listing } = props;
   const [category, setCategory] = React.useState<string>("");
   const [listingId, setListingId] = React.useState<string>("");
@@ -41,7 +41,7 @@ const updateListing = (props: any) => {
       setCategory(listing.category)
       setDescription(listing.description)
     }
-  }, []);
+  }, [listing]);
   
   let router = useRouter();
   const pushLink = (newLink: string) => {
@@ -191,4 +191,4 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   }
 };
 
-export default updateListing;
+export default UpdateListing;

@@ -23,7 +23,7 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import ExtendableLinkFields from "../../components/ExtendableLinkFields";
 import { performPOST } from "../../utils/helpers";
 
-const createListing = (props: any) => {
+const CreateListing = (props: any) => {
   const { accountId } = props;
   const [category, setCategory] = React.useState("");
   const [price, setPrice] = React.useState(0);
@@ -184,4 +184,4 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   }
 };
 
-export default createListing;
+export default CreateListing;

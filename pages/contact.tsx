@@ -4,14 +4,14 @@ import Navbar from '../components/Navbar';
 import {styles, SubmitButton, TitleText} from '../components/StyledComponents'
 import FormWrapper from '../components/FormWrapper';
 
-const contact = () => {
+const Contact = () => {
   return (
     <Box sx={{ 
       ...styles.header, 
       ...styles.shadow,
       height:"100vh"}}> {/* Main Wrapper */}
       <Navbar/>
-      <FormWrapper> {/* Contact Form */}
+      <FormWrapper method={()=>{}} onSubmit={()=>{}}> {/* Contact Form */}
         <TitleText>Contact Us</TitleText>
         <TextField placeholder='First Name'/>
         <TextField placeholder='Last Name'/>
@@ -23,4 +23,4 @@ const contact = () => {
   )
 }
 
-export default contact;
+export default Contact;

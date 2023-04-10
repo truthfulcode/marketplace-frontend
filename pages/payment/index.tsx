@@ -8,11 +8,11 @@ import { getAddressByCustomerId, getBalance } from "../../prisma/CRUD/user/read"
 import { PaymentPage } from "../../utils/types";
 import { authOptions } from "../api/auth/[...nextauth]";
 
-const index = (props) => {
+const Index = (props) => {
   const {accountType, txs} = props
   return <Interface isDeposit={accountType==="CUSTOMER"} page={PaymentPage.Activity} txs={txs} />;
 };
-export default index;
+export default Index;
 
 export const getServerSideProps: GetServerSideProps = async (c) => {
   const session = await unstable_getServerSession(c.req, c.res, authOptions);

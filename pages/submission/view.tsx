@@ -28,7 +28,7 @@ import { getOrder, getSubmission } from "../../prisma/CRUD/order/read";
 import Link from "next/link";
 import { performPUT } from "../../utils/helpers";
 
-const viewOrder = (props: any) => {
+const ViewOrder = (props: any) => {
   const { accountId, accountType, submission: _submission } = props;
 
   const [submission, setSubmission] = React.useState<Submission>();
@@ -61,8 +61,8 @@ const viewOrder = (props: any) => {
                 }}
               >
                 <Typography variant="body2">Files</Typography>
-                {submission?.files.map((file) => (
-                  <Link href={file} target="_blank">
+                {submission?.files.map((file, index) => (
+                  <Link key={index} href={file} target="_blank">
                     <Typography variant="h6">
                       {file.length > 38 ? file.substring(0, 38) + "...." : file}
                     </Typography>
@@ -109,7 +109,7 @@ const viewOrder = (props: any) => {
     if (_submission) {
       setSubmission(JSON.parse(_submission));
     }
-  }, []);
+  }, [_submission]);
   console.log("order", submission);
   return (
     <Box
@@ -157,4 +157,4 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   }
 };
 
-export default viewOrder;
+export default ViewOrder;

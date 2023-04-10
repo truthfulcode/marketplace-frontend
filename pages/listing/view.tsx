@@ -18,7 +18,6 @@ import {
   TitleText,
 } from "../../components/StyledComponents";
 import FormWrapper from "../../components/FormWrapper";
-import { useRouter } from "next/router";
 import { Account, Listing, ListingCategory } from "@prisma/client";
 import { GetServerSideProps, GetStaticProps } from "next";
 import { unstable_getServerSession } from "next-auth";
@@ -28,7 +27,7 @@ import { getListing } from "../../prisma/CRUD/listing/read";
 import Link from "next/link";
 import { keys, titles } from "../../utils/constants";
 
-const createListing = (props: any) => {
+const ViewListing = (props: any) => {
   const { accountId, listing: _listing } = props;
   const [listing, setListing] = React.useState<Listing>();
 
@@ -37,7 +36,7 @@ const createListing = (props: any) => {
     if (_listing) {
       setListing(JSON.parse(_listing));
     }
-  }, []);
+  }, [_listing]);
   return (
     <Box
       sx={{
@@ -79,8 +78,8 @@ const createListing = (props: any) => {
             <Typography variant="body2">Files</Typography>
             {listing?.files.length === 0
               ? "No Files!"
-              : listing?.files.map((ele) => (
-                  <Link href={ele} target="_blank">
+              : listing?.files.map((ele, index) => (
+                  <Link key={index} href={ele} target="_blank">
                     <Typography variant="h6">{ele}</Typography>
                   </Link>
                 ))}
@@ -120,4 +119,4 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   }
 };
 
-export default createListing;
+export default ViewListing;

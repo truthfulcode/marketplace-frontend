@@ -21,7 +21,7 @@ import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { Account, AccountType } from "@prisma/client";
 
-const signIn = () => {
+const SignIn = () => {
   const [username, setUsername] = useState<ValueWithError>();
   const [password, setPassword] = useState<ValueWithError>();
   let router = useRouter();
@@ -119,7 +119,7 @@ const signIn = () => {
   );
 };
 
-export default signIn;
+export default SignIn;
 
 export const getServerSideProps: GetServerSideProps = async (c) => {
   const session = await unstable_getServerSession(c.req, c.res, authOptions);

@@ -23,7 +23,7 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import ExtendableLinkFields from "../../components/ExtendableLinkFields";
 import { performPOST, performPUT } from "../../utils/helpers";
 
-const createSubmission = (props: any) => {
+const CreateSubmission = (props: any) => {
   const { accountId, orderId } = props;
   const [links, setLinks] = React.useState<Array<string>>([""]);
   const [description, setDescription] = React.useState("");
@@ -130,4 +130,4 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   }
 };
 
-export default createSubmission;
+export default CreateSubmission;

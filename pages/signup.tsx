@@ -38,7 +38,7 @@ import {
 import { useRouter } from "next/router";
 import { calculateSizeAdjustValues } from "next/dist/server/font-utils";
 
-const signup = () => {
+const SignUp = () => {
   const [account, setAccount] = useState<AccountRegsiterState>(defaultAccount);
   const router = useRouter();
   const getValueById = (id: string) => {
@@ -172,6 +172,7 @@ const signup = () => {
   };
   useEffect(() => {
     setAccountValue("U_T", "CUSTOMER");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const setAccountValueOnly = (key: FormInput, value: String | undefined) => {
     let _account: AccountRegsiterState = account;
@@ -292,4 +293,4 @@ const signup = () => {
   );
 };
 
-export default signup;
+export default SignUp;

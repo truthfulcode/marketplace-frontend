@@ -23,7 +23,7 @@ import { getListing } from "../../prisma/CRUD/listing/read";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 
-const createProposal = (props: any) => {
+const CreateProposal = (props: any) => {
   const { accountId, listingId, listing, accountType } = props;
   const [duration, setDuation] = React.useState(0);
   const [title, setTitle] = React.useState("");
@@ -155,4 +155,4 @@ export const getServerSideProps: GetServerSideProps = async (c) => {
   // };
 };
 
-export default createProposal;
+export default CreateProposal;

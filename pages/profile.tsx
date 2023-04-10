@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Navbar from '../components/Navbar';
 import {MainButton, styles, SubmitButton, TitleText} from '../components/StyledComponents'
 
-const profile = () => {
+const Profile = () => {
   return (
     <Box sx={{...styles.header, ...styles.shadow, height:"100vh"}}> {/* Body */}
       <Navbar/>
@@ -49,4 +49,4 @@ const profile = () => {
   )
 }
 
-export default profile;
+export default Profile;

@@ -246,7 +246,7 @@ const FreelancerDisplay = ({ listings, isAppliedListings }) => (
   </>
 );
 
-const index = (props) => {
+const Index = (props) => {
   const { accountType, listings, isAppliedListings } = props;
   return (
     <Box>
@@ -263,7 +263,7 @@ const index = (props) => {
   );
   // return <Interface isDeposit={accountType==="CUSTOMER"} page={PaymentPage.Activity} />;
 };
-export default index;
+export default Index;
 export const getServerSideProps: GetServerSideProps = async (c) => {
   const session = await unstable_getServerSession(c.req, c.res, authOptions);
   let accountType: AccountType | null = null;
