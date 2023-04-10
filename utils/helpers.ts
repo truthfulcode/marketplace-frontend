@@ -7,7 +7,7 @@ import {
   createDecipheriv,
 } from "crypto";
 import { BigNumber, ethers } from "ethers";
-import { ERC20 } from "../hardhat/typechain-types";
+import { ERC20 } from "./ERC20";
 import abi from "./abi.json";
 import { EthereumAccount } from "./types";
 import { NETWORK_OPTION, NetworksRPCs, SupportedToken } from "./constants";
