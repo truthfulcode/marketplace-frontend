@@ -51,7 +51,7 @@ const CreateSubmission = (props: any) => {
       files: _files,
     };
     await performPUT(
-      "http://localhost:3000/api/order",
+      "/api/order",
       JSON.stringify({submit:submission}),
       (response) => {
         console.log("response", response);

@@ -80,7 +80,7 @@ const ViewOrder = (props: any) => {
   );
   const confirmOrder = async () => {
     await performPUT(
-      "http://localhost:3000/api/order",
+      "/api/order",
       JSON.stringify({ confirm: true, orderId: submission?.id }),
       (response) => {
         console.log("response", response);
@@ -93,7 +93,7 @@ const ViewOrder = (props: any) => {
   };
   const cancelOrder = async () => {
     await performPUT(
-      "http://localhost:3000/api/order",
+      "/api/order",
       JSON.stringify({ cancel: true, orderId : submission?.id }),
       (response) => {
         console.log("response", response);

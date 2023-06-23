@@ -59,7 +59,7 @@ const CreateListing = (props: any) => {
       files: _files,
     };
     await performPOST(
-      "http://localhost:3000/api/listing",
+      "/api/listing",
       JSON.stringify(listing),
       (response) => {
         console.log("response", response);

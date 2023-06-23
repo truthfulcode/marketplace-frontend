@@ -62,7 +62,7 @@ const Withdraw = ({ balance = 0 }) => {
     if (Number(amount.value) < 10 || !isAddress(address.value as string))
       return;
     await performPUT(
-      "http://localhost:3000/api/user",
+      "/api/user",
       JSON.stringify({
         destination: address.value as string,
         amount: ((amount.value as number) * 1e6).toString(),

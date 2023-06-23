@@ -43,7 +43,7 @@ const CreateProposal = (props: any) => {
       description: description,
     };
     await performPOST(
-      "http://localhost:3000/api/proposal",
+      "/api/proposal",
       JSON.stringify(proposal),
       (response) => {
         console.log("response", response);

@@ -103,7 +103,7 @@ const SignUp = () => {
     let [isFound, _account] = verifyInputs();
     if (isFound) return;
     await performPOST(
-      "http://localhost:3000/api/user",
+      "/api/user",
       JSON.stringify(_account),
       (response) => {
         console.log("response", response);
